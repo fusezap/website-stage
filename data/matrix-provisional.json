@@ -1,0 +1,249 @@
+{
+ "_comment": "PROVISIONAL. A snapshot (2 Nov 2026) of FuseZap's support matrix: one entry per model and chip, with its status, verdict where shown, key metric, baseline and the date it was verified. It will be replaced by the matrix published with each release. Evidence paths point into the FuseZap engine repository.",
+ "status_definitions": {
+  "Supported": "Passed a gate on real hardware (Validate PROMOTE, or our package gate), with evidence.",
+  "Preview": "Ran on real hardware, but not gated yet, or gated once with a caveat noted in the cell.",
+  "Experimental": "Simulator only, or behind a flag.",
+  "Planned": "Not run yet. No date is promised."
+ },
+ "chips": [
+  {
+   "id": "nvidia-h100",
+   "name": "NVIDIA H100",
+   "detail": "1 GPU"
+  },
+  {
+   "id": "nvidia-h200",
+   "name": "NVIDIA H200",
+   "detail": "2 GPUs, tensor parallel"
+  },
+  {
+   "id": "nvidia-rtx4090",
+   "name": "NVIDIA RTX 4090",
+   "detail": "1 GPU"
+  },
+  {
+   "id": "aws-inf2",
+   "name": "AWS Inferentia2",
+   "detail": "one chip, 2 NeuronCores"
+  },
+  {
+   "id": "aws-trn1",
+   "name": "AWS Trainium1",
+   "detail": "1 NeuronCore"
+  },
+  {
+   "id": "apple-metal",
+   "name": "Apple silicon",
+   "detail": "Metal"
+  },
+  {
+   "id": "cpu",
+   "name": "CPU",
+   "detail": "C backend, the correctness reference"
+  },
+  {
+   "id": "amd",
+   "name": "AMD (HIP)",
+   "detail": "backend planned"
+  }
+ ],
+ "models": [
+  "Qwen2.5-0.5B-Instruct",
+  "Qwen2.5-7B-Instruct",
+  "Qwen2.5-32B-Instruct",
+  "Qwen2.5-72B-Instruct",
+  "Llama-3.3-70B-Instruct"
+ ],
+ "cells": [
+  {
+   "model": "Qwen2.5-0.5B-Instruct",
+   "chip": "aws-inf2",
+   "status": "Supported",
+   "verified": "2026-10-26",
+   "verdict": "PROMOTE",
+   "metric": "27.1 ms a token",
+   "baseline": null,
+   "chip_note": "fp32, 1 NeuronCore (inf2.xlarge)",
+   "note": "Measured before the 27 Oct to 1 Nov kernel work",
+   "verified_text": null,
+   "config": "fp32, 1 NeuronCore (inf2.xlarge), fusezap serve",
+   "gate": "Validate accuracy over HTTP (top-1 1.0, greedy exact 1.0); 24/24 prompts token-exact vs the float32 reference",
+   "evidence": [
+    "6e8ce58535b5dd49ba56a015aee452550cda51c0:docs/status/nki-n6-run1/nki_n6/validate.log",
+    "6e8ce58535b5dd49ba56a015aee452550cda51c0:docs/status/nki-n6-run1/nki_n6/SUMMARY.txt"
+   ]
+  },
+  {
+   "model": "Qwen2.5-7B-Instruct",
+   "chip": "aws-inf2",
+   "status": "Supported",
+   "verified": "2026-11-01",
+   "verdict": "PROMOTE",
+   "metric": "38.8 ms a token",
+   "baseline": "AWS NxD Inference: 40.6",
+   "chip_note": "bf16, both NeuronCores (inf2.8xlarge)",
+   "note": null,
+   "verified_text": null,
+   "config": "bf16, TP=2 (2 NeuronCores, inf2.8xlarge), fusezap serve --tp 2",
+   "gate": "Validate accuracy + performance over HTTP (top-1 0.9987, greedy exact 0.9668), prewarm probe PASS",
+   "evidence": [
+    "6e8ce58535b5dd49ba56a015aee452550cda51c0:docs/status/nki-n8-pfk2-confirm-inf2/README.md",
+    "6e8ce58535b5dd49ba56a015aee452550cda51c0:docs/status/nki-n8-pfk2-confirm-inf2/nki_n8_pfk2/SUMMARY.txt"
+   ]
+  },
+  {
+   "model": "Qwen2.5-0.5B-Instruct",
+   "chip": "aws-trn1",
+   "status": "Supported",
+   "verified": "2026-10-27",
+   "verdict": "PROMOTE",
+   "metric": "14.9 ms a token",
+   "baseline": "AWS vLLM + vllm-neuron: 16.3",
+   "chip_note": "fp32, trn1.2xlarge",
+   "note": null,
+   "verified_text": null,
+   "config": "fp32, 1 NeuronCore (trn1.2xlarge), fusezap serve",
+   "gate": "Validate accuracy + performance (top-1 1.0, greedy exact 1.0), every server passed the correctness gate",
+   "evidence": [
+    "6e8ce58535b5dd49ba56a015aee452550cda51c0:docs/status/nki-n7-serve-trn1/README.md"
+   ]
+  },
+  {
+   "model": "Qwen2.5-7B-Instruct",
+   "chip": "nvidia-h100",
+   "status": "Supported",
+   "verified": "2026-10-26",
+   "verdict": "PROMOTE",
+   "metric": "5.57 ms a token",
+   "baseline": "vLLM 0.32: 5.85",
+   "chip_note": "bf16",
+   "note": null,
+   "verified_text": null,
+   "config": "bf16, 1 GPU, fusezap serve",
+   "gate": "Validate accuracy + performance (top-1 0.9960), same pod as vLLM; earlier the SPEC throughput gate (>= 50% of vLLM) PASS on 22 Oct",
+   "evidence": [
+    "2d2f422de25fddd30a00db789fcc4373d0eba7ea:docs/status/h100-7b-2026-10-26/h100_7b_summary.json",
+    "2d2f422de25fddd30a00db789fcc4373d0eba7ea:docs/status/h100-7b-2026-10-26/logs/validate-fusezap-qwen7b-h100.log",
+    "docs/bench-h100.md"
+   ]
+  },
+  {
+   "model": "Qwen2.5-72B-Instruct",
+   "chip": "nvidia-h200",
+   "status": "Supported",
+   "verified": "2026-10-25",
+   "verdict": "PROMOTE",
+   "metric": "20.7 ms a token",
+   "baseline": "vLLM 0.32: 20.1",
+   "chip_note": "bf16",
+   "note": "Full Validate suite 25 Oct; speed re-measured 26 Oct",
+   "verified_text": "25–26 Oct 2026",
+   "config": "bf16, TP=2 (2x H200), fusezap serve --tp 2",
+   "gate": "full Validate suite (accuracy top-1 0.9933, functional, structured tools + JSON, performance, stability)",
+   "evidence": [
+    "docs/status/tp-m3/logs/validate-qwen2.5-72b-instruct.log",
+    "docs/status/tp-m3/validate/qwen2.5-72b-instruct/performance.csv",
+    "518082c:docs/status/tp-m6-qwen72b-h200/validate/qwen2.5-72b-instruct/report.json"
+   ]
+  },
+  {
+   "model": "Qwen2.5-0.5B-Instruct",
+   "chip": "apple-metal",
+   "status": "Supported",
+   "verified": "2026-10-16",
+   "verdict": null,
+   "metric": "149 tok/s decode, one request",
+   "baseline": null,
+   "chip_note": "float16",
+   "note": null,
+   "verified_text": null,
+   "config": "float32 / float16, fusezap serve --device METAL",
+   "gate": "package gates on the Mac (token-identical to HF for 64 tokens in f32; 32 concurrent requests equal to alone-greedy; OpenAI client end to end)",
+   "evidence": [
+    "docs/status/B1-INT.md",
+    "docs/STATUS.md"
+   ]
+  },
+  {
+   "model": "Qwen2.5-32B-Instruct",
+   "chip": "nvidia-h100",
+   "status": "Preview",
+   "verified": "2026-10-21",
+   "verdict": null,
+   "metric": "31.4 tok/s, one request",
+   "baseline": "vLLM 0.32: 40.1",
+   "chip_note": "bf16",
+   "note": "One measurement, before the 22 to 26 Oct speed work; no Validate run yet",
+   "verified_text": null,
+   "config": "bf16 (and fp8), 1 GPU",
+   "gate": null,
+   "evidence": [
+    "docs/status/H100-32B.md"
+   ]
+  },
+  {
+   "model": "Llama-3.3-70B-Instruct",
+   "chip": "nvidia-h200",
+   "status": "Preview",
+   "verified": "2026-10-26",
+   "verdict": null,
+   "metric": "20.1 ms a token",
+   "baseline": "vLLM 0.32: 19.5",
+   "chip_note": "bf16",
+   "note": null,
+   "verified_text": null,
+   "config": "bf16, TP=2 (2x H200), fusezap serve --tp 2",
+   "gate": null,
+   "evidence": [
+    "docs/status/tp-m6-h200/validate/llama-3.3-70b-instruct/performance.csv",
+    "8cdbeba9934d49476cf64c180fda53ab56265fe4"
+   ]
+  },
+  {
+   "model": "Qwen2.5-7B-Instruct",
+   "chip": "nvidia-rtx4090",
+   "status": "Preview",
+   "verified": "2026-10-25",
+   "verdict": "PROMOTE",
+   "metric": "16.6 ms a token",
+   "baseline": null,
+   "chip_note": "bf16",
+   "note": "One repeat, no same-machine vLLM comparison",
+   "verified_text": null,
+   "config": "bf16, 1 GPU (also TP=2 on 2x RTX 4090)",
+   "gate": "Validate accuracy + performance, 1 repeat (top-1 0.996 TP=1, 0.998 TP=2)",
+   "evidence": [
+    "docs/status/tp-m1/logs/validate-q7-tp1.log",
+    "docs/status/tp-m1/logs/validate-q7-tp2.log"
+   ]
+  },
+  {
+   "model": "Qwen2.5-0.5B-Instruct",
+   "chip": "cpu",
+   "status": "Preview",
+   "verified": "2026-10-25",
+   "verdict": null,
+   "metric": "Tensor-parallel tests pass",
+   "baseline": null,
+   "chip_note": "float32",
+   "note": "No serving benchmark or Validate run yet",
+   "verified_text": null,
+   "config": "float32, C backend",
+   "gate": null,
+   "evidence": [
+    "docs/STATUS.md"
+   ]
+  }
+ ],
+ "planned": [
+  {
+   "chip": "amd",
+   "status": "Planned"
+  }
+ ],
+ "generator_snapshot": {
+  "schema": "fusezap.matrix/v1",
+  "updated": "2026-11-02"
+ }
+}

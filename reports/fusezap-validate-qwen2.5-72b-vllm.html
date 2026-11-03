@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FuseZap Validate report</title>
+<style>
+:root {
+  --bg:#f4f3f8; --paper:#ffffff; --fg:#1c1a26; --muted:#625f70; --line:#e4e1ec; --soft:#f6f5fa;
+  --accent:#6c3bff; --accent-soft:#efe9ff;
+  --ok:#157f3b; --ok-soft:#e6f6ec; --bad:#b42318; --bad-soft:#fdecea; --warn:#b45309; --warn-soft:#fff4e0; --info:#175cd3; --info-soft:#eaf1fd;
+  --body: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg:#121118; --paper:#1b1a23; --fg:#eceaf4; --muted:#a19db3; --line:#2f2d3b; --soft:#23212d;
+  --accent:#9b7bff; --accent-soft:#2a2342;
+  --ok:#5bd68a; --ok-soft:#173325; --bad:#ff8a7e; --bad-soft:#3a1d1b; --warn:#f2b35b; --warn-soft:#3a2a14; --info:#7fb0ff; --info-soft:#1a2740;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg:#121118; --paper:#1b1a23; --fg:#eceaf4; --muted:#a19db3; --line:#2f2d3b; --soft:#23212d;
+  --accent:#9b7bff; --accent-soft:#2a2342;
+  --ok:#5bd68a; --ok-soft:#173325; --bad:#ff8a7e; --bad-soft:#3a1d1b; --warn:#f2b35b; --warn-soft:#3a2a14; --info:#7fb0ff; --info-soft:#1a2740;
+  color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.5 var(--body); }
+main { max-width: 1060px; margin: 0 auto; padding: 20px 16px 48px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+code, .mono { font-family: var(--mono); font-size: .86em; }
+.muted { color: var(--muted); } .small { font-size: 12px; }
+.paper { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 28px clamp(16px, 4vw, 40px); }
+.rtop { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 3px solid var(--accent); }
+.brand { font-weight: 800; font-size: 17px; letter-spacing: -.01em; } .brand span { color: var(--accent); }
+.cbrand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 17px; letter-spacing: -.01em; }
+.cbrand .sub { font-weight: 500; color: var(--muted); }
+.clogo { width: 30px; height: 30px; border-radius: 7px; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 13px; flex: none; }
+.brandlogo { height: 30px; max-width: 160px; object-fit: contain; flex: none; }
+.runid { font: 500 12px var(--mono); color: var(--muted); }
+.rtitle { font-weight: 700; font-size: 24px; line-height: 1.2; letter-spacing: -.02em; margin: 18px 0 4px; }
+.rlede { color: var(--muted); margin: 0 0 6px; max-width: 80ch; }
+.rel { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: stretch; margin: 16px 0 4px; }
+.rel.one { grid-template-columns: 1fr; }
+.relcard { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+.relcard.cand { border-color: var(--accent); background: var(--accent-soft); }
+.relcard b { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+.relcard .nm { font-weight: 700; font-size: 15px; margin: 2px 0; overflow-wrap: anywhere; }
+.relcard .sub { font-size: 12.5px; color: var(--muted); overflow-wrap: anywhere; }
+.vs { align-self: center; font: 700 12px var(--mono); color: var(--muted); }
+.meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px 20px; background: var(--soft); border-radius: 10px; padding: 14px 16px; font-size: 13px; margin-top: 10px; }
+.meta div { min-width: 0; overflow-wrap: anywhere; } .meta b { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); font-weight: 700; }
+.verdict { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; align-items: center; margin: 18px 0 8px; padding: 16px 18px; border: 1.5px solid var(--bad); background: var(--bad-soft); border-radius: 10px; }
+.verdict .big { font-weight: 800; font-size: 22px; letter-spacing: .01em; color: var(--bad); white-space: nowrap; }
+.verdict p { margin: 0; min-width: 0; }
+.verdict .decision { display: block; margin-top: 3px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.verdict.pass { border-color: var(--ok); background: var(--ok-soft); } .verdict.pass .big { color: var(--ok); }
+.verdict.inconclusive { border-color: var(--warn); background: var(--warn-soft); } .verdict.inconclusive .big { color: var(--warn); }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0 6px; }
+.kpi { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-width: 0; }
+.kpi b { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+.kpi .v { font-weight: 700; font-size: 20px; font-variant-numeric: tabular-nums; } .kpi .d { font-size: 12px; color: var(--muted); }
+section.rsec { margin-top: 28px; }
+.rsec h2 { font-weight: 700; font-size: 16px; margin-bottom: 8px; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.rsec h2 small { font-weight: 500; font-size: 12px; color: var(--muted); }
+.rsec h3 { font-weight: 600; font-size: 13px; margin: 14px 0 6px; }
+.tbl { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 7px 8px; border-bottom: 1.5px solid var(--line); white-space: nowrap; }
+td { padding: 8px; border-bottom: 1px solid var(--line); vertical-align: top; font-variant-numeric: tabular-nums; }
+td.r, th.r { text-align: right; }
+td.groupcap { font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); background: var(--soft); padding: 5px 8px; }
+td.groupcap span { text-transform: none; letter-spacing: 0; font-weight: 500; margin-left: 8px; }
+tr.failrow td { background: color-mix(in srgb, var(--bad-soft) 60%, transparent); }
+tr.inconcrow td { background: color-mix(in srgb, var(--warn-soft) 60%, transparent); }
+.pill { display: inline-block; font-weight: 700; font-size: 11px; letter-spacing: .03em; padding: 2px 9px; border-radius: 999px; white-space: nowrap; text-transform: uppercase; }
+.pill.pass { background: var(--ok-soft); color: var(--ok); } .pill.fail { background: var(--bad-soft); color: var(--bad); }
+.pill.skip { background: var(--soft); color: var(--muted); } .pill.inconclusive, .pill.warning, .pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.info { background: var(--info-soft); color: var(--info); }
+.ci { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.gsub { font-size: 11.5px; color: var(--muted); }
+.obs { font-weight: 600; font-size: 10px; letter-spacing: .05em; text-transform: uppercase; padding: 1px 6px; border-radius: 4px; margin-left: 6px; white-space: nowrap; }
+.obs.o { background: var(--info-soft); color: var(--info); } .obs.d { background: var(--soft); color: var(--muted); border: 1px solid var(--line); }
+.vline + .vline { margin-top: 2px; }
+.flag { color: var(--warn); font-weight: 600; font-size: 12px; }
+.delta { font-size: 12px; color: var(--muted); }
+.note { color: var(--muted); font-size: 12.5px; margin: 8px 0 0; max-width: 85ch; }
+.box { background: var(--soft); border-left: 3px solid var(--warn); border-radius: 0 8px 8px 0; padding: 8px 12px; margin: 8px 0; font-size: 13px; }
+.box.info { border-left-color: var(--info); }
+.method { display: flex; gap: 10px; flex-wrap: wrap; align-items: baseline; margin-bottom: 8px; font-size: 13px; }
+.method span:last-child { min-width: 0; flex: 1 1 300px; }
+.charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.chart { min-width: 0; } .chart h3 { font-weight: 600; font-size: 13px; margin: 0 0 4px; }
+.chart svg { width: 100%; height: auto; display: block; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 4px; }
+.legend i { display: inline-block; width: 18px; height: 0; border-top: 2.5px solid var(--accent); vertical-align: middle; margin-right: 6px; }
+.legend i.base { border-top: 2px dashed var(--muted); } .legend i.gate { border-top: 1.5px dashed var(--bad); }
+.evid { background: var(--soft); border-radius: 8px; padding: 10px 12px; font: 12px/1.55 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; margin-top: 8px; }
+.evid b { font-family: var(--body); } .evid .bad { color: var(--bad); }
+.scope { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px 16px; font-size: 13px; }
+.scope div { display: flex; gap: 8px; align-items: baseline; min-width: 0; }
+.scope .n { font: 600 11px var(--mono); color: var(--accent); flex: none; width: 22px; }
+.repro { background: var(--soft); border-radius: 8px; padding: 12px 14px; overflow-x: auto; font: 12.5px/1.6 var(--mono); white-space: pre-wrap; word-break: break-all; }
+footer.rfoot { margin-top: 28px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: space-between; }
+.powered { font-weight: 600; font-size: 11px; letter-spacing: .02em; }
+.print-only { display: none; }
+@media (max-width: 640px) { .rel { grid-template-columns: 1fr; } .vs { justify-self: center; } .verdict { grid-template-columns: 1fr; } }
+
+/* ---------- print / PDF: page 1 = one-page summary, then the detail pages ---------- */
+@page { size: Letter; margin: 12mm 12mm 14mm; }
+@media print {
+  :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+    --bg:#fff; --paper:#fff; --fg:#1c1a26; --muted:#55525f; --line:#d9d6e2; --soft:#f4f3f8;
+    --ok:#157f3b; --ok-soft:#e6f6ec; --bad:#b42318; --bad-soft:#fdecea; --warn:#b45309; --warn-soft:#fff4e0; --info:#175cd3; --info-soft:#eaf1fd;
+--accent:#6c3bff; --accent-soft:#efe9ff;    color-scheme: light; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-size: 10.5px; background: #fff; }
+  main { max-width: none; padding: 0; } .paper { border: 0; border-radius: 0; padding: 0; }
+  .print-only { display: block; }
+  .screen-only { display: none !important; }
+  .sumpage { break-after: page; page-break-after: always; display: flex; flex-direction: column; gap: 8px; }
+  .sumpage .rtitle { font-size: 18px; margin: 8px 0 0; }
+  .sumpage .verdict { margin: 4px 0 0; padding: 10px 14px; }
+  .sumpage .verdict .big { font-size: 18px; }
+  .sumpage table { font-size: 9.5px; } .sumpage th { font-size: 8.5px; padding: 3px 6px; } .sumpage td { padding: 3px 6px; }
+  .sumpage td.groupcap { padding: 3px 6px; font-size: 8.5px; }
+  .sumpage .ci { font-size: 8.5px; } .sumpage .pill { font-size: 8.5px; padding: 1px 6px; }
+  .sumpage .charts { grid-template-columns: 1fr 1fr; gap: 14px; }
+  .sumpage .chart h3 { font-size: 10px; } .sumpage .legend { font-size: 9px; margin-top: 2px; }
+  .sumpage .pfoot { border-top: 1px solid var(--line); padding-top: 6px; color: var(--muted); display: flex; justify-content: space-between; font-size: 9px; }
+  .rsec h2 { break-after: avoid; } tr, .kpis, .verdict, .chart, .box, .evid, .relcard { break-inside: avoid; }
+  .tbl { overflow: visible; }
+  section.rsec { margin-top: 18px; }
+  .charts { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<main>
+
+<div class="print-only sumpage">
+  <div class="rtop">
+<div class="brand">Fuse<span>Zap</span> Validate</div>  <div class="runid">20261025T073306Z-37c4e6</div>
+</div>
+  <div><h1 class="rtitle">70B check: Qwen/Qwen2.5-72B-Instruct on vLLM 0.32.0 (TP=2, 2x H200)</h1>
+    <div class="muted">Qwen/Qwen2.5-72B-Instruct &middot; 2x H200 141 GB (RunPod) &middot; one release</div></div>
+  <div class="verdict pass"><span class="big">QUALIFIED<span class="decision">Decision: PROMOTE</span></span>
+  <p><b>PROMOTE</b>: every gate passed on valid data: the candidate can replace the baseline. <b>0 failed, 0 inconclusive, 22 passed, 12 skipped</b> of 34 gates. every gate passed. <span class="muted">Exit code 0.</span></p></div>
+  <div class="tbl"><table><thead><tr><th>Gate</th><th class="r">Limit</th><th class="r">Value</th><th>Status</th></tr></thead><tbody>
+<tr><td class="groupcap" colspan="4">Accuracy<span>1 pass, 3 skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">accuracy.top1_agreement</span> <span class="muted">Top-1 agreement with the reference (teacher-forced)</span></td>
+  <td class="r">≥ 98%</td>
+  <td class="r"><b>99.02%</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">accuracy.greedy_exact_match</span> <span class="muted">Greedy output matches the reference (text method)</span></td>
+  <td class="r">≥ 70%</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">relative.top1_agreement</span> <span class="muted">Top-1 agreement not more than 0.2 points below the baseline</span></td>
+  <td class="r">≥ -0.2 pts vs baseline</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">relative.greedy_exact_match</span> <span class="muted">Greedy match not more than 5 points below the baseline (text method, paired 95% interval)</span></td>
+  <td class="r">≥ -5.0 pts vs baseline</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr><td class="groupcap" colspan="4">Functional<span>9 pass</span></td></tr>
+<tr><td colspan="3">9 gates: greedy_determinism, max_tokens, stop_sequence, stream_consistency, usage, chat_template, bad_requests, n_choices, seed_reproducible</td><td><span class="pill pass">pass</span></td></tr>
+<tr><td class="groupcap" colspan="4">Structured output and tools<span>2 pass, 2 skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">structured.json_schema_valid</span> <span class="muted">JSON output valid against its schema (best supported mode, Wilson 95% interval)</span></td>
+  <td class="r">≥ 90%</td>
+  <td class="r"><b>100.00%</b><div class="ci">95%: 92.87% – 100.00%</div></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">structured.tool_calls_valid</span> <span class="muted">Tool calls correct (right tool or none, arguments valid against the schema, expected values; Wilson 95% interval)</span></td>
+  <td class="r">≥ 90%</td>
+  <td class="r"><b>98.92%</b><div class="ci">95%: 94.16% – 99.81%</div></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">relative.json_schema_valid</span> <span class="muted">JSON schema-valid rate not more than 5 points below the baseline</span></td>
+  <td class="r">≥ -5.0 pts vs baseline</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">relative.tool_calls_valid</span> <span class="muted">Tool-call valid rate not more than 5 points below the baseline</span></td>
+  <td class="r">≥ -5.0 pts vs baseline</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr><td class="groupcap" colspan="4">Performance<span>0 pass, 3 skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">relative.throughput@1</span> <span class="muted">Output tok/s at least 97% of the baseline (c=1)</span></td>
+  <td class="r">≥ 97% of baseline</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">relative.throughput@8</span> <span class="muted">Output tok/s at least 97% of the baseline (c=8)</span></td>
+  <td class="r">≥ 97% of baseline</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">relative.throughput@32</span> <span class="muted">Output tok/s at least 97% of the baseline (c=32)</span></td>
+  <td class="r">≥ 97% of baseline</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr><td class="groupcap" colspan="4">Stability<span>1 pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">stability.drift</span> <span class="muted">Throughput drift, start vs end of the stability run</span></td>
+  <td class="r">within ±10%</td>
+  <td class="r"><b>+6.3%</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr><td class="groupcap" colspan="4">Reliability<span>8 pass</span></td></tr>
+<tr><td colspan="3">8 gates: overload_survives, overload_clean_errors, overload_recovery, cancel_stream_drain, cancel_stream_serves, abandon_drain, abandon_serves, restart_recovery</td><td><span class="pill pass">pass</span></td></tr>
+<tr><td class="groupcap" colspan="4">Requests and errors<span>1 pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">errors.error_rate</span> <span class="muted">No failed requests (all checks)</span></td>
+  <td class="r">= 0%</td>
+  <td class="r"><b>0.00%</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+</tbody></table></div>
+<div class="charts"><div class="chart"><h3>Output tokens per second</h3><svg viewBox="0 0 460 220" role="img" aria-label="output tok/s by concurrency"><line x1="64" x2="446" y1="186.0" y2="186.0" stroke="var(--line)" stroke-width="1"/><text x="56" y="190.0" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">0</text><line x1="64" x2="446" y1="143.5" y2="143.5" stroke="var(--line)" stroke-width="1"/><text x="56" y="147.5" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">375</text><line x1="64" x2="446" y1="101.0" y2="101.0" stroke="var(--line)" stroke-width="1"/><text x="56" y="105.0" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">750</text><line x1="64" x2="446" y1="58.5" y2="58.5" stroke="var(--line)" stroke-width="1"/><text x="56" y="62.5" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">1,125</text><line x1="64" x2="446" y1="16.0" y2="16.0" stroke="var(--line)" stroke-width="1"/><text x="56" y="20.0" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">1,500</text><text x="64.0" y="206" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">1</text><text x="255.0" y="206" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">8</text><text x="446.0" y="206" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">32</text><text x="255.0" y="219" text-anchor="middle" font-size="10.5" fill="var(--muted)">concurrent requests</text><text x="12" y="101.0" text-anchor="middle" font-size="10.5" fill="var(--muted)" transform="rotate(-90 12 101.0)">output tok/s</text><polygon points="64.0,186.0 64.0,180.4 255.0,145.4 446.0,47.6 446.0,186.0" fill="var(--accent)" fill-opacity=".10"/><polyline points="64.0,180.4 255.0,145.4 446.0,47.6" fill="none" stroke="var(--accent)" stroke-width="2.5"/><line x1="64.0" x2="64.0" y1="180.4" y2="180.4" stroke="var(--accent)" stroke-width="1.5"/><line x1="60.0" x2="68.0" y1="180.4" y2="180.4" stroke="var(--accent)" stroke-width="1.5"/><line x1="60.0" x2="68.0" y1="180.4" y2="180.4" stroke="var(--accent)" stroke-width="1.5"/><circle cx="64.0" cy="180.4" r="3.5" fill="var(--accent)" stroke="var(--paper)" stroke-width="1.5"/><line x1="255.0" x2="255.0" y1="145.8" y2="145.1" stroke="var(--accent)" stroke-width="1.5"/><line x1="251.0" x2="259.0" y1="145.8" y2="145.8" stroke="var(--accent)" stroke-width="1.5"/><line x1="251.0" x2="259.0" y1="145.1" y2="145.1" stroke="var(--accent)" stroke-width="1.5"/><circle cx="255.0" cy="145.4" r="3.5" fill="var(--accent)" stroke="var(--paper)" stroke-width="1.5"/><line x1="446.0" x2="446.0" y1="48.5" y2="46.7" stroke="var(--accent)" stroke-width="1.5"/><line x1="442.0" x2="450.0" y1="48.5" y2="48.5" stroke="var(--accent)" stroke-width="1.5"/><line x1="442.0" x2="450.0" y1="46.7" y2="46.7" stroke="var(--accent)" stroke-width="1.5"/><circle cx="446.0" cy="47.6" r="3.5" fill="var(--accent)" stroke="var(--paper)" stroke-width="1.5"/></svg>
+  <div class="legend"><span><i></i>measured, 95% interval</span></div></div><div class="chart"><h3>Time to first token, slowest 1% (p99)</h3><svg viewBox="0 0 460 220" role="img" aria-label="TTFT p99 (ms) by concurrency"><line x1="64" x2="446" y1="186.0" y2="186.0" stroke="var(--line)" stroke-width="1"/><text x="56" y="190.0" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">0</text><line x1="64" x2="446" y1="143.5" y2="143.5" stroke="var(--line)" stroke-width="1"/><text x="56" y="147.5" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">200</text><line x1="64" x2="446" y1="101.0" y2="101.0" stroke="var(--line)" stroke-width="1"/><text x="56" y="105.0" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">400</text><line x1="64" x2="446" y1="58.5" y2="58.5" stroke="var(--line)" stroke-width="1"/><text x="56" y="62.5" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">600</text><line x1="64" x2="446" y1="16.0" y2="16.0" stroke="var(--line)" stroke-width="1"/><text x="56" y="20.0" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">800</text><text x="64.0" y="206" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">1</text><text x="255.0" y="206" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">8</text><text x="446.0" y="206" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">32</text><text x="255.0" y="219" text-anchor="middle" font-size="10.5" fill="var(--muted)">concurrent requests</text><text x="12" y="101.0" text-anchor="middle" font-size="10.5" fill="var(--muted)" transform="rotate(-90 12 101.0)">TTFT p99 (ms)</text><polyline points="64.0,176.6 255.0,143.2 446.0,48.4" fill="none" stroke="var(--accent)" stroke-width="2.5"/><line x1="64.0" x2="64.0" y1="179.0" y2="175.2" stroke="var(--accent)" stroke-width="1.5"/><line x1="60.0" x2="68.0" y1="179.0" y2="179.0" stroke="var(--accent)" stroke-width="1.5"/><line x1="60.0" x2="68.0" y1="175.2" y2="175.2" stroke="var(--accent)" stroke-width="1.5"/><circle cx="64.0" cy="176.6" r="3.5" fill="var(--accent)" stroke="var(--paper)" stroke-width="1.5"/><line x1="255.0" x2="255.0" y1="148.0" y2="141.3" stroke="var(--accent)" stroke-width="1.5"/><line x1="251.0" x2="259.0" y1="148.0" y2="148.0" stroke="var(--accent)" stroke-width="1.5"/><line x1="251.0" x2="259.0" y1="141.3" y2="141.3" stroke="var(--accent)" stroke-width="1.5"/><circle cx="255.0" cy="143.2" r="3.5" fill="var(--accent)" stroke="var(--paper)" stroke-width="1.5"/><line x1="446.0" x2="446.0" y1="57.0" y2="45.0" stroke="var(--accent)" stroke-width="1.5"/><line x1="442.0" x2="450.0" y1="57.0" y2="57.0" stroke="var(--accent)" stroke-width="1.5"/><line x1="442.0" x2="450.0" y1="45.0" y2="45.0" stroke="var(--accent)" stroke-width="1.5"/><circle cx="446.0" cy="48.4" r="3.5" fill="var(--accent)" stroke="var(--paper)" stroke-width="1.5"/></svg>
+  <div class="legend"><span><i></i>measured, 95% interval</span></div></div></div>  <div class="pfoot"><span>FuseZap Validate 0.1.0 &middot; 20261025T073306Z-37c4e6 &middot; generated from report.json</span><span>Detail on the following pages</span></div>
+</div>
+
+<article class="paper">
+<div class="rtop">
+<div class="brand">Fuse<span>Zap</span> Validate</div>  <div class="runid">20261025T073306Z-37c4e6 &middot; schema fusezap.validate/v0</div>
+</div>
+<h1 class="rtitle">70B check: Qwen/Qwen2.5-72B-Instruct on vLLM 0.32.0 (TP=2, 2x H200)</h1>
+<p class="rlede">Qwen/Qwen2.5-72B-Instruct on 2x H200 141 GB (RunPod).
+One release checked on its own; 3 performance repeats; accuracy against a float32 reference, from <code>qwen2.5-72b-instruct.json</code>.</p>
+
+<div class="rel one">
+  <div class="relcard cand"><b>Release</b><div class="nm">vLLM 0.32.0 TP=2</div><div class="sub">vllm 0.32.0 &middot; 2x H200 141 GB (RunPod) &middot; <span class="mono">http://&lt;host&gt;:18001</span></div></div>
+</div>
+
+<div class="verdict pass"><span class="big">QUALIFIED<span class="decision">Decision: PROMOTE</span></span>
+  <p><b>PROMOTE</b>: every gate passed on valid data: the candidate can replace the baseline. <b>0 failed, 0 inconclusive, 22 passed, 12 skipped</b> of 34 gates. every gate passed. <span class="muted">Exit code 0.</span></p></div>
+
+<div class="kpis">
+<div class="kpi"><b>Top-1 agreement</b><div class="v">99.02%</div><div class="d">teacher-forced, vs reference</div></div><div class="kpi"><b>Greedy exact match</b><div class="v">71.9%</div><div class="d">logprobs method</div></div><div class="kpi"><b>Peak tok/s (c=32)</b><div class="v">1,221</div><div class="d"></div></div><div class="kpi"><b>TTFT p50 / TPOT p50 at c=1</b><div class="v">36 / 20.1 ms</div><div class="d"></div></div><div class="kpi"><b>Tool calls valid</b><div class="v">98.9%</div><div class="d">93 tasks; JSON schema-valid 100%</div></div><div class="kpi"><b>Stability drift</b><div class="v">+6.3%</div><div class="d">error rate 0.00%</div></div></div>
+
+<section class="rsec"><h2>1. Gates <small>default gates; relative gates compare the candidate with the baseline and decide on the 95% interval</small></h2>
+<div class="tbl"><table><thead><tr><th>Gate</th><th>Type</th><th class="r">Limit</th><th class="r">Value</th><th>Status</th></tr></thead><tbody>
+<tr><td class="groupcap" colspan="5">Accuracy<span>1 pass, 3 skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">accuracy.top1_agreement</span> Top-1 agreement with the reference (teacher-forced)</td>
+<td class="small">absolute</td>  <td class="r">≥ 98%</td>
+  <td class="r"><b>99.02%</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">accuracy.greedy_exact_match</span> Greedy output matches the reference (text method)<div class="note" style="margin-top:2px">not applicable: accuracy.method is &#39;logprobs&#39;, not &#39;text&#39;</div></td>
+<td class="small">absolute</td>  <td class="r">≥ 70%</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">relative.top1_agreement</span> Top-1 agreement not more than 0.2 points below the baseline<div class="note" style="margin-top:2px">no baseline in this run</div></td>
+<td class="small">relative (delta)</td>  <td class="r">≥ -0.2 pts vs baseline</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">relative.greedy_exact_match</span> Greedy match not more than 5 points below the baseline (text method, paired 95% interval)<div class="note" style="margin-top:2px">no baseline in this run</div></td>
+<td class="small">relative (delta)</td>  <td class="r">≥ -5.0 pts vs baseline</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr><td class="groupcap" colspan="5">Long context<span>0 pass, 4 skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">long_context.needle_found</span> Long context *: the answer contains the needle<div class="note" style="margin-top:2px">the long_context check did not run</div></td>
+<td class="small">absolute</td>  <td class="r">≥ 80%</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">long_context.top1_agreement</span> Long context *: top-1 agreement with the reference (teacher-forced)<div class="note" style="margin-top:2px">the long_context check did not run</div></td>
+<td class="small">absolute</td>  <td class="r">≥ 95%</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">relative.long_context.needle_found</span> Long context *: needle found at most one prompt in 5 less often than the baseline<div class="note" style="margin-top:2px">the long_context check did not run</div></td>
+<td class="small">relative (delta)</td>  <td class="r">≥ -20.0 pts vs baseline</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">relative.long_context.top1_agreement</span> Long context *: top-1 agreement not more than 2 points below the baseline<div class="note" style="margin-top:2px">the long_context check did not run</div></td>
+<td class="small">relative (delta)</td>  <td class="r">≥ -2.0 pts vs baseline</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr><td class="groupcap" colspan="5">Functional<span>9 pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">functional.greedy_determinism</span> Functional: greedy_determinism</td>
+<td class="small">absolute</td>  <td class="r">= pass</td>
+  <td class="r"><b>pass</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">functional.max_tokens</span> Functional: max_tokens</td>
+<td class="small">absolute</td>  <td class="r">= pass</td>
+  <td class="r"><b>pass</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">functional.stop_sequence</span> Functional: stop_sequence</td>
+<td class="small">absolute</td>  <td class="r">= pass</td>
+  <td class="r"><b>pass</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">functional.stream_consistency</span> Functional: stream_consistency</td>
+<td class="small">absolute</td>  <td class="r">= pass</td>
+  <td class="r"><b>pass</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">functional.usage</span> Functional: usage</td>
+<td class="small">absolute</td>  <td class="r">= pass</td>
+  <td class="r"><b>pass</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">functional.chat_template</span> Functional: chat_template</td>
+<td class="small">absolute</td>  <td class="r">= pass</td>
+  <td class="r"><b>pass</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">functional.bad_requests</span> Functional: bad_requests</td>
+<td class="small">absolute</td>  <td class="r">= pass</td>
+  <td class="r"><b>pass</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">functional.n_choices</span> Functional: n_choices</td>
+<td class="small">absolute</td>  <td class="r">= pass</td>
+  <td class="r"><b>pass</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">functional.seed_reproducible</span> Functional: seed_reproducible</td>
+<td class="small">absolute</td>  <td class="r">= pass</td>
+  <td class="r"><b>pass</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr><td class="groupcap" colspan="5">Structured output and tools<span>2 pass, 2 skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">structured.json_schema_valid</span> JSON output valid against its schema (best supported mode, Wilson 95% interval)</td>
+<td class="small">absolute</td>  <td class="r">≥ 90%</td>
+  <td class="r"><b>100.00%</b><div class="ci">95%: 92.87% – 100.00%</div></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">structured.tool_calls_valid</span> Tool calls correct (right tool or none, arguments valid against the schema, expected values; Wilson 95% interval)</td>
+<td class="small">absolute</td>  <td class="r">≥ 90%</td>
+  <td class="r"><b>98.92%</b><div class="ci">95%: 94.16% – 99.81%</div></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">relative.json_schema_valid</span> JSON schema-valid rate not more than 5 points below the baseline<div class="note" style="margin-top:2px">no baseline in this run</div></td>
+<td class="small">relative (delta)</td>  <td class="r">≥ -5.0 pts vs baseline</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">relative.tool_calls_valid</span> Tool-call valid rate not more than 5 points below the baseline<div class="note" style="margin-top:2px">no baseline in this run</div></td>
+<td class="small">relative (delta)</td>  <td class="r">≥ -5.0 pts vs baseline</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr><td class="groupcap" colspan="5">Performance<span>0 pass, 3 skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">relative.throughput@1</span> Output tok/s at least 97% of the baseline (c=1)<div class="note" style="margin-top:2px">no baseline in this run</div></td>
+<td class="small">relative (ratio)</td>  <td class="r">≥ 97% of baseline</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">relative.throughput@8</span> Output tok/s at least 97% of the baseline (c=8)<div class="note" style="margin-top:2px">no baseline in this run</div></td>
+<td class="small">relative (ratio)</td>  <td class="r">≥ 97% of baseline</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr class="">
+  <td><span class="mono">relative.throughput@32</span> Output tok/s at least 97% of the baseline (c=32)<div class="note" style="margin-top:2px">no baseline in this run</div></td>
+<td class="small">relative (ratio)</td>  <td class="r">≥ 97% of baseline</td>
+  <td class="r"><b>—</b></td>
+  <td><span class="pill skip">skip</span></td></tr>
+<tr><td class="groupcap" colspan="5">Stability<span>1 pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">stability.drift</span> Throughput drift, start vs end of the stability run</td>
+<td class="small">absolute</td>  <td class="r">within ±10%</td>
+  <td class="r"><b>+6.3%</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr><td class="groupcap" colspan="5">Reliability<span>8 pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">reliability.overload_survives</span> Reliability: overload_survives</td>
+<td class="small">absolute</td>  <td class="r">= pass</td>
+  <td class="r"><b>pass</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">reliability.overload_clean_errors</span> Reliability: overload_clean_errors</td>
+<td class="small">absolute</td>  <td class="r">= pass</td>
+  <td class="r"><b>pass</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">reliability.overload_recovery</span> Reliability: overload_recovery</td>
+<td class="small">absolute</td>  <td class="r">= pass</td>
+  <td class="r"><b>pass</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">reliability.cancel_stream_drain</span> Reliability: cancel_stream_drain</td>
+<td class="small">absolute</td>  <td class="r">= pass</td>
+  <td class="r"><b>pass</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">reliability.cancel_stream_serves</span> Reliability: cancel_stream_serves</td>
+<td class="small">absolute</td>  <td class="r">= pass</td>
+  <td class="r"><b>pass</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">reliability.abandon_drain</span> Reliability: abandon_drain</td>
+<td class="small">absolute</td>  <td class="r">= pass</td>
+  <td class="r"><b>pass</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">reliability.abandon_serves</span> Reliability: abandon_serves</td>
+<td class="small">absolute</td>  <td class="r">= pass</td>
+  <td class="r"><b>pass</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">reliability.restart_recovery</span> Reliability: restart_recovery</td>
+<td class="small">absolute</td>  <td class="r">= pass</td>
+  <td class="r"><b>pass</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+<tr><td class="groupcap" colspan="5">Requests and errors<span>1 pass</span></td></tr>
+<tr class="">
+  <td><span class="mono">errors.error_rate</span> No failed requests (all checks)</td>
+<td class="small">absolute</td>  <td class="r">= 0%</td>
+  <td class="r"><b>0.00%</b></td>
+  <td><span class="pill pass">pass</span></td></tr>
+</tbody></table></div>
+</section>
+
+<section class="rsec"><h2>2. What was tested <small>observed = read from the server &middot; declared = from the config</small></h2>
+<div class="tbl"><table><thead><tr><th>Field</th><th>Release</th><th>Check</th></tr></thead><tbody>
+<tr><td class="mono">engine</td>
+<td><div class="vline">vllm<span class="obs o">observed</span></div></td><td></td></tr>
+<tr><td class="mono">engine_version</td>
+<td><div class="vline">0.32.0<span class="obs o">observed</span></div></td><td></td></tr>
+<tr><td class="mono">served_model</td>
+<td><div class="vline">Qwen/Qwen2.5-72B-Instruct<span class="obs o">observed</span></div></td><td></td></tr>
+<tr><td class="mono">model_root</td>
+<td><div class="vline">495f39366efef23836d0cfae4fbe635880d2be31<span class="obs o">observed</span></div></td><td></td></tr>
+<tr><td class="mono">max_model_len</td>
+<td><div class="vline">8192<span class="obs o">observed</span></div></td><td></td></tr>
+<tr><td class="mono">server_header</td>
+<td><div class="vline">uvicorn<span class="obs o">observed</span></div></td><td></td></tr>
+<tr><td class="mono">hardware</td>
+<td><div class="vline">2x H200 141 GB (RunPod)<span class="obs d">declared</span></div></td><td></td></tr>
+</tbody></table></div>
+<p class="note">Reference: HF transformers 5.20.1, float32, Qwen/Qwen2.5-72B-Instruct revision <span class="mono">495f39366efe</span>, sha256 <span class="mono">ca20f25146f80080</span>.</p><h3>Execution: single</h3>
+<p class="note">3 performance repeats, 3 slots.
+</p>
+</section>
+
+<section class="rsec"><h2>3. Accuracy and functional behaviour <small>24 prompts vs the reference</small></h2>
+<div class="method"><span class="pill info">logprobs</span><span>The server returned next-token log-probabilities: every position of the reference's own continuation (1,486 positions in 24 prompts) is scored under the reference's context (teacher forcing), so one early difference does not cascade.</span></div><div class="tbl"><table><tbody>
+  <tr><td>Method</td><td><span class="pill info">logprobs</span> echo, tokens matched by id; prompts as tokens</td></tr>
+  <tr><td>Prompts / positions</td><td>24 / 1,486</td></tr>
+<tr><td>Top-1 agreement</td><td><b>99.02%</b> (6 disagreements, 3 at near ties under 0.1 nats); |logprob error| mean 0.0103, max 0.241</td></tr>
+<tr><td>Exact ties</td><td>17 positions where the server's top log-probability was shared by two or more tokens (17 of them include the reference token).
+    Ties are split: a tie of k tokens that includes the reference token counts 1/k. Ties counted as misses (strict): <b>98.45%</b>; ties counted as matches (generous): <b>99.60%</b>.</td></tr>  <tr><td>Greedy exact match</td><td><b>71.9%</b> mean; 14 of 24 prompts identical to the reference</td></tr>
+</tbody></table></div>
+
+<h3>Lowest-scoring prompts (release)</h3>
+<div class="tbl"><table><thead><tr><th>Prompt</th><th class="r">Top-1</th><th class="r">Greedy match</th><th class="r">First difference at</th><th>Reference vs output (start)</th></tr></thead><tbody>
+<tr><td><span class="mono">p00</span> Write a short poem about the sea.</td><td class="r">96.1%</td><td class="r">15.6%</td>
+<td class="r">10</td><td class="small"><div class="muted">ref: Upon the vast and endless blue,
+The sea stretches wide, a canvas true.
+Waves whisper secrets to the shore,
+In ebb and flow, forever more.
+
+Sunset paints the hor</div><div>out: Upon the vast and endless blue,
+The sea stretches, a canvas true,
+Waves whisper secrets to the shore,
+In ebb and flow, forever more.
+
+Sunset paints the horizon&#39;</div></td></tr><tr><td><span class="mono">p22</span> Write a haiku about autumn, then explain the syllable structure.</td><td class="r">96.1%</td><td class="r">53.1%</td>
+<td class="r">34</td><td class="small"><div class="muted">ref: Leaves whisper, falling,
+Crisp air holds secrets of smoke,
+Sunset paints gold paths.
+
+**Syllable Structure Explanation:**
+A haiku is a form of poetry that tradi</div><div>out: Leaves whisper, falling,
+Crisp air holds secrets of smoke,
+Sunset paints gold paths.
+
+**Syllable Structure Explanation:**
+A haiku is a traditional form of Japan</div></td></tr><tr><td><span class="mono">p17</span> Give a short history of the printing press.</td><td class="r">97.7%</td><td class="r">1.6%</td>
+<td class="r">1</td><td class="small"><div class="muted">ref: The history of the printing press is a significant chapter in the development of human communication and technology. Here’s a brief overview:
+
+### Early Printin</div><div>out: The printing press is one of the most significant inventions in human history, revolutionizing the way information is disseminated and preserved. Here’s a brief</div></td></tr><tr><td><span class="mono">p03</span> Give me a recipe for a vegetarian lasagna.</td><td class="r">97.7%</td><td class="r">18.8%</td>
+<td class="r">12</td><td class="small"><div class="muted">ref: Certainly! Here&#39;s a delicious vegetarian lasagna recipe that&#39;s sure to please. This recipe serves 6-8 people.
+
+### Ingredients:
+
+#### For the Tomato Sauce:
+- 2 </div><div>out: Certainly! Here&#39;s a delicious vegetarian lasagna recipe that&#39;s both comforting and packed with flavor. This recipe serves 6-8 people.
+
+### Ingredients:
+
+#### Fo</div></td></tr><tr><td><span class="mono">p06</span> A train leaves at 3 pm going 60 km/h; another at 4 pm going 90 km/h. When does the second catch up? Show the steps.</td><td class="r">97.7%</td><td class="r">42.2%</td>
+<td class="r">27</td><td class="small"><div class="muted">ref: To determine when the second train catches up to the first, we need to set up an equation based on the distances traveled by both trains.
+
+### Step 1: Define th</div><div>out: To determine when the second train catches up to the first, we need to set up an equation based on the distances traveled by both trains. Let&#39;s break it down st</div></td></tr></tbody></table></div><p class="note">Every prompt is in accuracy.csv.</p>
+<h3>Functional checks</h3>
+<div class="tbl"><table><thead><tr><th>Check</th><th>Result</th><th>Detail</th></tr></thead><tbody>
+<tr class=""><td>Greedy determinism <span class="mono muted small">greedy_determinism</span></td>
+<td><span class="pill pass">pass</span></td><td class="small">two identical requests gave the same 209-character output</td></tr><tr class=""><td>max_tokens honoured <span class="mono muted small">max_tokens</span></td>
+<td><span class="pill pass">pass</span></td><td class="small">finish_reason length, usage.completion_tokens 8</td></tr><tr class=""><td>Stop sequence honoured <span class="mono muted small">stop_sequence</span></td>
+<td><span class="pill pass">pass</span></td><td class="small">output ended before &#39;ets &#39; with finish_reason stop</td></tr><tr class=""><td>Streaming equals non-streaming <span class="mono muted small">stream_consistency</span></td>
+<td><span class="pill pass">pass</span></td><td class="small">identical text</td></tr><tr class=""><td>Usage counts present and consistent <span class="mono muted small">usage</span></td>
+<td><span class="pill pass">pass</span></td><td class="small">prompt 37, completion 16, total 53; streamed usage matches</td></tr><tr class=""><td>Chat template matches the reference&#39;s <span class="mono muted small">chat_template</span></td>
+<td><span class="pill pass">pass</span></td><td class="small">chat output equals completions on the templated ids; chat prompt_tokens 37 = 37</td></tr><tr class=""><td>Bad requests get a 4xx <span class="mono muted small">bad_requests</span></td>
+<td><span class="pill pass">pass</span></td><td class="small">malformed JSON: 400; unknown model: 404; negative max_tokens: 400; token id out of vocabulary: 400</td></tr><tr class=""><td>n=2 returns two choices <span class="mono muted small">n_choices</span></td>
+<td><span class="pill pass">pass</span></td><td class="small">two choices</td></tr><tr class=""><td>Same seed, same sampled output <span class="mono muted small">seed_reproducible</span></td>
+<td><span class="pill pass">pass</span></td><td class="small">identical sampled outputs</td></tr></tbody></table></div></section>
+
+<section class="rsec"><h2>Reliability <small>overload, cancelled and abandoned requests, restart</small></h2>
+<div class="tbl"><table><thead><tr><th>Check</th><th>Result</th><th>Detail</th></tr></thead><tbody>
+<tr class=""><td>Survives an overload burst <span class="mono muted small">overload_survives</span></td>
+<td><span class="pill pass">pass</span></td><td class="small">the server answers /v1/models after the burst</td></tr><tr class=""><td>Overload: requests complete or are refused cleanly (429 / 503) <span class="mono muted small">overload_clean_errors</span></td>
+<td><span class="pill pass">pass</span></td><td class="small">256 completed, 0 refused cleanly (429 / 503), 0 other errors</td></tr><tr class=""><td>Back to idle latency after the overload <span class="mono muted small">overload_recovery</span></td>
+<td><span class="pill pass">pass</span></td><td class="small">a short request took 337 ms idle and was back within 3x 0.34 s after the burst</td></tr><tr class=""><td>Cancelled streams stop running on the server <span class="mono muted small">cancel_stream_drain</span></td>
+<td><span class="pill pass">pass</span></td><td class="small">16 streams cut off; running requests back to 0 after 0.66 s</td></tr><tr class=""><td>Serves normally after cancelled streams <span class="mono muted small">cancel_stream_serves</span></td>
+<td><span class="pill pass">pass</span></td><td class="small">a short request completed in 336 ms</td></tr><tr class=""><td>Abandoned non-streaming requests stop running on the server <span class="mono muted small">abandon_drain</span></td>
+<td><span class="pill pass">pass</span></td><td class="small">16 requests cut off; running requests back to 0 after 0.04 s</td></tr><tr class=""><td>Serves normally after abandoned requests <span class="mono muted small">abandon_serves</span></td>
+<td><span class="pill pass">pass</span></td><td class="small">a short request completed in 336 ms</td></tr><tr class=""><td>Recovers from a restart with the same output <span class="mono muted small">restart_recovery</span></td>
+<td><span class="pill pass">pass</span></td><td class="small">back after 70.4 s with the same greedy output</td></tr></tbody></table></div></section>
+
+<section class="rsec"><h2>4. Structured output and tool calls <small>tasks tools-v1 (101) and json-v1 (50); greedy; the gates decide on the Wilson 95% interval</small></h2>
+<div class="tbl"><table><thead><tr><th>Check</th><th class="r">Result</th><th>Note</th></tr></thead><tbody>
+<tr><td>JSON, json schema <span class="muted small">gated</span></td>
+<td class="r"><b>100%</b> valid (50/50, [92.9%, 100.0%])</td>
+<td class="small">parse 100%, expected values 98%; wrong_value 1</td></tr><tr><td>JSON, json object</td>
+<td class="r"><b>100%</b> valid (50/50, [92.9%, 100.0%])</td>
+<td class="small">parse 100%, expected values 98%; wrong_value 1</td></tr><tr><td>JSON, instruction (instruction only)</td>
+<td class="r"><b>100%</b> valid (50/50, [92.9%, 100.0%])</td>
+<td class="small">parse 100%, expected values 98%; wrong_value 1</td></tr><tr><td>Tool calls, tool_choice auto <span class="muted small">gated</span></td>
+<td class="r"><b style="color:var(--bad)">99%</b> valid (92/93, [94.2%, 99.8%])</td>
+<td class="small">parallel 8/8 (not gated); no_tool_call 1</td></tr><tr><td>Tool calls, tool_choice named</td>
+<td class="r"><b>100%</b> valid (81/81, [95.5%, 100.0%])</td>
+<td class="small"></td></tr><tr><td>Tool calls, tool_choice named strict</td>
+<td class="r"><b style="color:var(--bad)">96%</b> valid (78/81, [89.7%, 98.7%])</td>
+<td class="small">wrong_value 3</td></tr></tbody></table></div>
+<h3>Tool calls by category <span class="muted small">valid / tasks per tool_choice mode; parallel is reported, not gated</span></h3>
+<div class="tbl"><table class="small"><thead><tr><th>Category</th><th class="r">Tasks</th><th class="r">auto</th><th class="r">named</th><th class="r">named strict</th><th>Errors (auto)</th></tr></thead><tbody>
+<tr><td>string enum</td><td class="r">9</td>
+<td class="r">9/9</td><td class="r">9/9</td><td class="r">9/9</td><td></td></tr><tr><td>integer number</td><td class="r">9</td>
+<td class="r">9/9</td><td class="r">9/9</td><td class="r">9/9</td><td></td></tr><tr><td>boolean</td><td class="r">8</td>
+<td class="r">8/8</td><td class="r">8/8</td><td class="r">8/8</td><td></td></tr><tr><td>nested object</td><td class="r">8</td>
+<td class="r">8/8</td><td class="r">8/8</td><td class="r">8/8</td><td></td></tr><tr><td>array</td><td class="r">8</td>
+<td class="r">8/8</td><td class="r">8/8</td><td class="r">8/8</td><td></td></tr><tr class="failrow"><td>optional args</td><td class="r">8</td>
+<td class="r">7/8</td><td class="r">8/8</td><td class="r">7/8</td><td>no_tool_call 1</td></tr><tr><td>required args</td><td class="r">9</td>
+<td class="r">9/9</td><td class="r">9/9</td><td class="r">9/9</td><td></td></tr><tr><td>tool selection</td><td class="r">10</td>
+<td class="r">10/10</td><td class="r">10/10</td><td class="r">10/10</td><td></td></tr><tr><td>parallel</td><td class="r">8</td>
+<td class="r">8/8</td><td class="r">&ndash;</td><td class="r">&ndash;</td><td></td></tr><tr><td>irrelevance</td><td class="r">8</td>
+<td class="r">8/8</td><td class="r">&ndash;</td><td class="r">&ndash;</td><td></td></tr><tr><td>multi turn</td><td class="r">8</td>
+<td class="r">8/8</td><td class="r">4/4</td><td class="r">4/4</td><td></td></tr><tr><td>long schema</td><td class="r">8</td>
+<td class="r">8/8</td><td class="r">8/8</td><td class="r">6/8</td><td></td></tr></tbody></table></div><h3>JSON by category <span class="muted small">schema-valid / tasks per mode</span></h3>
+<div class="tbl"><table class="small"><thead><tr><th>Category</th><th class="r">Tasks</th><th class="r">json schema</th><th class="r">json object</th><th class="r">instruction</th><th>Errors (json schema)</th></tr></thead><tbody>
+<tr><td>flat</td><td class="r">7</td>
+<td class="r">7/7</td><td class="r">7/7</td><td class="r">7/7</td><td></td></tr><tr><td>enum</td><td class="r">7</td>
+<td class="r">7/7</td><td class="r">7/7</td><td class="r">7/7</td><td></td></tr><tr><td>nested</td><td class="r">7</td>
+<td class="r">7/7</td><td class="r">7/7</td><td class="r">7/7</td><td></td></tr><tr><td>array</td><td class="r">8</td>
+<td class="r">8/8</td><td class="r">8/8</td><td class="r">8/8</td><td></td></tr><tr><td>nullable</td><td class="r">7</td>
+<td class="r">7/7</td><td class="r">7/7</td><td class="r">7/7</td><td></td></tr><tr><td>numbers</td><td class="r">7</td>
+<td class="r">7/7</td><td class="r">7/7</td><td class="r">7/7</td><td></td></tr><tr><td>long schema</td><td class="r">7</td>
+<td class="r">7/7</td><td class="r">7/7</td><td class="r">7/7</td><td>wrong_value 1</td></tr></tbody></table></div><h3>Tool-call failures by type <span class="muted small">auto; first tasks and argument paths</span></h3>
+<div class="tbl"><table class="small"><thead><tr><th>Type</th><th class="r">Count</th><th>Tasks</th><th>Paths</th></tr></thead><tbody>
+<tr><td class="mono">no_tool_call</td><td class="r">1</td><td>op.contact</td><td class="mono"></td></tr></tbody></table></div><h3>Evidence <span class="muted small">request / response samples of failed checks (truncated)</span></h3>
+<div class="evid"><b>Evidence &middot; json.json_schema &middot; candidate</b> <span class="muted">candidate:json.json_schema:0</span>
+<span class="bad">wrong_value: $.address.street: &#34;Keizersgracht&#34; does not contain &#39;keizersgracht 120&#39;</span>
+request:  {&#34;task&#34;: &#34;j.listing&#34;, &#34;mode&#34;: &#34;json_schema&#34;, &#34;content&#34;: &#34;Extract the listing as JSON: &#39;Bright 3-bedroom apartment, 2 bathrooms, 96 m2 on the 4th floor at Keizersgracht 120, Amsterdam. Built in 1931, balcony, no parking, pets allowed. Available from 2026-12-01 for 2450 EUR a month.&#39;&#34;, &#34;schema&#34;: {&#34;type&#34;: &#34;object&#34;, &#34;properties&#34;: {&#34;type&#34;: {&#34;type&#34;: &#34;string&#34;, &#34;enum&#34;: [&#34;apartment&#34;, &#34;house&#34;, &#34;studio&#34;]}, &#34;bedrooms&#34;: {&#34;type&#34;: &#34;integer&#34;}, &#34;bathrooms&#34;: {&#34;type&#34;: &#34;number&#34;}, &#34;area_m2&#34;: {&#34;type&#34;: &#34;number&#34;}, &#34;floor&#34;: {&#34;type&#34;: [&#34;integer&#34;, &#34;null&#34;]}, &#34;address&#34;: {&#34;type&#34;: &#34;object&#34;, &#34;properties&#34;: {&#34;street&#34;: {&#34;type&#34;: ... [716 more chars]
+response: {&#34;message&#34;: {&#34;role&#34;: &#34;assistant&#34;, &#34;content&#34;: &#34;{\n  \&#34;type\&#34;: \&#34;apartment\&#34;,\n  \&#34;bedrooms\&#34;: 3,\n  \&#34;bathrooms\&#34;: 2,\n  \&#34;area_m2\&#34;: 96,\n  \&#34;floor\&#34;: 4,\n  \&#34;address\&#34;: {\n    \&#34;street\&#34;: \&#34;Keizersgracht\&#34;,\n    \&#34;city\&#34;: \&#34;Amsterdam\&#34;\n  },\n  \&#34;year_built\&#34;: 1931,\n  \&#34;balcony\&#34;: true,\n  \&#34;parking\&#34;: false,\n  \&#34;pets_allowed\&#34;: true,\n  \&#34;available_from\&#34;: \&#34;2026-12-01\&#34;,\n  \&#34;rent\&#34;: {\n    \&#34;amount\&#34;: 2450,\n    \&#34;currency\&#34;: \&#34;EUR\&#34;,\n    \&#34;period\&#34;: \&#34;month\&#34;\n  }\n}&#34;}, &#34;finish_reason&#34;: &#34;stop&#34;, &#34;usage&#34;: {&#34;prompt_tokens&#34;: 115, &#34;total_tokens&#34;: 267, &#34;completion_tokens&#34;: 152, &#34;prompt_tokens_details&#34;: null, &#34;completion_tokens_details&#34;: null}}</div><div class="evid"><b>Evidence &middot; json.json_object &middot; candidate</b> <span class="muted">candidate:json.json_object:1</span>
+<span class="bad">wrong_value: $.autoscaling.target_cpu_percent: 0.7, expected 70</span>
+request:  {&#34;task&#34;: &#34;j.config&#34;, &#34;mode&#34;: &#34;json_object&#34;, &#34;content&#34;: &#34;Return the service config as JSON: &#39;Service billing-api, 3 replicas, 2 CPU and 4096 MB memory each, port 8080, health check path /healthz every 15 seconds, log level warn, autoscaling on between 3 and 10 replicas at 70% CPU.&#39; Reply with only the JSON object. It must match this JSON Schema: {\&#34;type\&#34;: \&#34;object\&#34;, \&#34;properties\&#34;: {\&#34;service\&#34;: {\&#34;type\&#34;: \&#34;string\&#34;}, \&#34;replicas\&#34;: {\&#34;type\&#34;: \&#34;integer\&#34;}, \&#34;resources\&#34;: {\&#34;type\&#34;: \&#34;object\&#34;, \&#34;properties\&#34;: {\&#34;cpu\&#34;: {\&#34;type\&#34;: \&#34;number\&#34;}, \&#34;memory_mb\&#34;: {\&#34;type\&#34;: \&#34;integer\&#34;}}, \&#34;requir... [1925 more chars]
+response: {&#34;message&#34;: {&#34;role&#34;: &#34;assistant&#34;, &#34;content&#34;: &#34;{\n  \&#34;service\&#34;: \&#34;billing-api\&#34;,\n  \&#34;replicas\&#34;: 3,\n  \&#34;resources\&#34;: {\n    \&#34;cpu\&#34;: 2,\n    \&#34;memory_mb\&#34;: 4096\n  },\n  \&#34;port\&#34;: 8080,\n  \&#34;health_check\&#34;: {\n    \&#34;path\&#34;: \&#34;/healthz\&#34;,\n    \&#34;interval_s\&#34;: 15\n  },\n  \&#34;log_level\&#34;: \&#34;warn\&#34;,\n  \&#34;autoscaling\&#34;: {\n    \&#34;enabled\&#34;: true,\n    \&#34;min_replicas\&#34;: 3,\n    \&#34;max_replicas\&#34;: 10,\n    \&#34;target_cpu_percent\&#34;: 0.7\n  }\n}&#34;}, &#34;finish_reason&#34;: &#34;stop&#34;, &#34;usage&#34;: {&#34;prompt_tokens&#34;: 390, &#34;total_tokens&#34;: 521, &#34;completion_tokens&#34;: 131, &#34;prompt_tokens_details&#34;: null, &#34;completion_tokens_details&#34;: null}}</div><div class="evid"><b>Evidence &middot; json.instruction &middot; candidate</b> <span class="muted">candidate:json.instruction:2</span>
+<span class="bad">wrong_value: $.autoscaling.target_cpu_percent: 0.7, expected 70</span>
+request:  {&#34;task&#34;: &#34;j.config&#34;, &#34;mode&#34;: &#34;instruction&#34;, &#34;content&#34;: &#34;Return the service config as JSON: &#39;Service billing-api, 3 replicas, 2 CPU and 4096 MB memory each, port 8080, health check path /healthz every 15 seconds, log level warn, autoscaling on between 3 and 10 replicas at 70% CPU.&#39; Reply with only the JSON object. It must match this JSON Schema: {\&#34;type\&#34;: \&#34;object\&#34;, \&#34;properties\&#34;: {\&#34;service\&#34;: {\&#34;type\&#34;: \&#34;string\&#34;}, \&#34;replicas\&#34;: {\&#34;type\&#34;: \&#34;integer\&#34;}, \&#34;resources\&#34;: {\&#34;type\&#34;: \&#34;object\&#34;, \&#34;properties\&#34;: {\&#34;cpu\&#34;: {\&#34;type\&#34;: \&#34;number\&#34;}, \&#34;memory_mb\&#34;: {\&#34;type\&#34;: \&#34;integer\&#34;}}, \&#34;requir... [1925 more chars]
+response: {&#34;message&#34;: {&#34;role&#34;: &#34;assistant&#34;, &#34;content&#34;: &#34;{\n  \&#34;service\&#34;: \&#34;billing-api\&#34;,\n  \&#34;replicas\&#34;: 3,\n  \&#34;resources\&#34;: {\n    \&#34;cpu\&#34;: 2,\n    \&#34;memory_mb\&#34;: 4096\n  },\n  \&#34;port\&#34;: 8080,\n  \&#34;health_check\&#34;: {\n    \&#34;path\&#34;: \&#34;/healthz\&#34;,\n    \&#34;interval_s\&#34;: 15\n  },\n  \&#34;log_level\&#34;: \&#34;warn\&#34;,\n  \&#34;autoscaling\&#34;: {\n    \&#34;enabled\&#34;: true,\n    \&#34;min_replicas\&#34;: 3,\n    \&#34;max_replicas\&#34;: 10,\n    \&#34;target_cpu_percent\&#34;: 0.7\n  }\n}&#34;}, &#34;finish_reason&#34;: &#34;stop&#34;, &#34;usage&#34;: {&#34;prompt_tokens&#34;: 390, &#34;total_tokens&#34;: 521, &#34;completion_tokens&#34;: 131, &#34;prompt_tokens_details&#34;: null, &#34;completion_tokens_details&#34;: null}}</div><div class="evid"><b>Evidence &middot; tools.auto &middot; candidate</b> <span class="muted">candidate:tools.auto:3</span>
+<span class="bad">no_tool_call: no tool_calls in the reply (content: Sure, I can help with that. Could you please provide me with more details such as his email, phone number, and address?)</span>
+request:  {&#34;task&#34;: &#34;op.contact&#34;, &#34;mode&#34;: &#34;auto&#34;, &#34;messages&#34;: [{&#34;role&#34;: &#34;user&#34;, &#34;content&#34;: &#34;Add a contact named Tom Becker.&#34;}], &#34;tool_choice&#34;: &#34;auto&#34;, &#34;tools&#34;: [&#34;create_contact&#34;], &#34;expected_tool_parameters&#34;: {&#34;create_contact&#34;: {&#34;type&#34;: &#34;object&#34;, &#34;properties&#34;: {&#34;first_name&#34;: {&#34;type&#34;: &#34;string&#34;}, &#34;last_name&#34;: {&#34;type&#34;: &#34;string&#34;}, &#34;email&#34;: {&#34;type&#34;: &#34;string&#34;, &#34;description&#34;: &#34;An email address.&#34;}, &#34;phone&#34;: {&#34;type&#34;: &#34;string&#34;}, &#34;address&#34;: {&#34;type&#34;: &#34;object&#34;, &#34;properties&#34;: {&#34;street&#34;: {&#34;type&#34;: &#34;string&#34;}, &#34;city&#34;: {&#34;type&#34;: &#34;string&#34;}, &#34;postal_code&#34;: {&#34;type&#34;: &#34;string&#34;}, &#34;country&#34;: {&#34;type&#34;: &#34;string&#34;}}, &#34;required&#34;: [&#34;city&#34;... [120 more chars]
+response: {&#34;message&#34;: {&#34;role&#34;: &#34;assistant&#34;, &#34;content&#34;: &#34;Sure, I can help with that. Could you please provide me with more details such as his email, phone number, and address?&#34;}, &#34;finish_reason&#34;: &#34;stop&#34;, &#34;usage&#34;: {&#34;prompt_tokens&#34;: 282, &#34;total_tokens&#34;: 310, &#34;completion_tokens&#34;: 28, &#34;prompt_tokens_details&#34;: null, &#34;completion_tokens_details&#34;: null}}</div><div class="evid"><b>Evidence &middot; tools.named_strict &middot; candidate</b> <span class="muted">candidate:tools.named_strict:4</span>
+<span class="bad">wrong_value: search_products $.in_stock_only: true was not asked for (invented)</span>
+request:  {&#34;task&#34;: &#34;op.search&#34;, &#34;mode&#34;: &#34;named_strict&#34;, &#34;messages&#34;: [{&#34;role&#34;: &#34;user&#34;, &#34;content&#34;: &#34;Search the catalog for running shoes.&#34;}], &#34;tool_choice&#34;: {&#34;type&#34;: &#34;function&#34;, &#34;function&#34;: {&#34;name&#34;: &#34;search_products&#34;}}, &#34;tools&#34;: [&#34;search_products&#34;], &#34;expected_tool_parameters&#34;: {&#34;search_products&#34;: {&#34;type&#34;: &#34;object&#34;, &#34;properties&#34;: {&#34;query&#34;: {&#34;type&#34;: &#34;string&#34;}, &#34;category&#34;: {&#34;type&#34;: &#34;string&#34;, &#34;enum&#34;: [&#34;electronics&#34;, &#34;clothing&#34;, &#34;home&#34;, &#34;sports&#34;, &#34;books&#34;]}, &#34;max_price&#34;: {&#34;type&#34;: &#34;number&#34;}, &#34;in_stock_only&#34;: {&#34;type&#34;: &#34;boolean&#34;, &#34;default&#34;: false}, &#34;sort&#34;: {&#34;type&#34;: &#34;string&#34;, &#34;enum&#34;: [&#34;relevance&#34;, &#34;price_asc&#34;, &#34;pri... [102 more chars]
+response: {&#34;message&#34;: {&#34;role&#34;: &#34;assistant&#34;, &#34;tool_calls&#34;: [{&#34;id&#34;: &#34;chatcmpl-tool-b4298ba6be5f81d4&#34;, &#34;type&#34;: &#34;function&#34;, &#34;function&#34;: {&#34;name&#34;: &#34;search_products&#34;, &#34;arguments&#34;: &#34;{\&#34;query\&#34;: \&#34;running shoes\&#34;, \&#34;category\&#34;: \&#34;sports\&#34;, \&#34;in_stock_only\&#34;: true, \&#34;sort\&#34;: \&#34;relevance\&#34;}&#34;}}]}, &#34;finish_reason&#34;: &#34;stop&#34;, &#34;usage&#34;: {&#34;prompt_tokens&#34;: 266, &#34;total_tokens&#34;: 307, &#34;completion_tokens&#34;: 41, &#34;prompt_tokens_details&#34;: null, &#34;completion_tokens_details&#34;: null}}</div><div class="evid"><b>Evidence &middot; tools.named_strict &middot; candidate</b> <span class="muted">candidate:tools.named_strict:5</span>
+<span class="bad">wrong_value: create_user_account $.timezone: missing, expected &#34;Asia/Kolkata&#34;</span>
+request:  {&#34;task&#34;: &#34;lo.user_contractor&#34;, &#34;mode&#34;: &#34;named_strict&#34;, &#34;messages&#34;: [{&#34;role&#34;: &#34;user&#34;, &#34;content&#34;: &#34;Set up a contractor account: Ravi Patel, username rpatel, ravi.patel@corp.example, support department, start 2026-12-01, remote, no laptop, time zone Asia/Kolkata, groups helpdesk and kb-editors.&#34;}], &#34;tool_choice&#34;: {&#34;type&#34;: &#34;function&#34;, &#34;function&#34;: {&#34;name&#34;: &#34;create_user_account&#34;}}, &#34;tools&#34;: [&#34;create_user_account&#34;, &#34;set_account_active&#34;], &#34;expected_tool_parameters&#34;: {&#34;create_user_account&#34;: {&#34;type&#34;: &#34;object&#34;, &#34;properties&#34;: {&#34;username&#34;: {&#34;type&#34;: &#34;string&#34;, &#34;description&#34;: &#34;Lower-case login name.&#34;}, &#34;email... [1192 more chars]
+response: {&#34;message&#34;: {&#34;role&#34;: &#34;assistant&#34;, &#34;tool_calls&#34;: [{&#34;id&#34;: &#34;chatcmpl-tool-a73127abcd28db37&#34;, &#34;type&#34;: &#34;function&#34;, &#34;function&#34;: {&#34;name&#34;: &#34;create_user_account&#34;, &#34;arguments&#34;: &#34;{\&#34;username\&#34;: \&#34;rpatel\&#34;, \&#34;email\&#34;: \&#34;ravi.patel@corp.example\&#34;, \&#34;full_name\&#34;: \&#34;Ravi Patel\&#34;, \&#34;role\&#34;: \&#34;contractor\&#34;, \&#34;department\&#34;: \&#34;support\&#34;, \&#34;start_date\&#34;: \&#34;2026-12-01\&#34;, \&#34;office\&#34;: \&#34;remote\&#34;, \&#34;laptop\&#34;: \&#34;none\&#34;, \&#34;groups\&#34;: [\&#34;helpdesk\&#34;, \&#34;kb-editors\&#34;], \&#34;is_contractor\&#34;: true, \&#34;send_welcome_email\&#34;: true}&#34;}}]}, &#34;finish_reason&#34;: &#34;stop&#34;, &#34;usage&#34;: {&#34;prompt_tokens&#34;: 667, &#34;total_tokens&#34;: 780, &#34;completion_tokens&#34;: 113, &#34;prompt_tokens_details&#34;: null, &#34;completion_tokens_details&#34;: null}}</div><div class="evid"><b>Evidence &middot; tools.named_strict &middot; candidate</b> <span class="muted">candidate:tools.named_strict:6</span>
+<span class="bad">wrong_value: create_job_posting $.languages: missing, expected [&#34;English&#34;, &#34;French&#34;]</span>
+request:  {&#34;task&#34;: &#34;lo.job_intern&#34;, &#34;mode&#34;: &#34;named_strict&#34;, &#34;messages&#34;: [{&#34;role&#34;: &#34;user&#34;, &#34;content&#34;: &#34;Post an onsite internship: Marketing Intern, Marketing department, Toronto, starting 2027-01-11, English and French required.&#34;}], &#34;tool_choice&#34;: {&#34;type&#34;: &#34;function&#34;, &#34;function&#34;: {&#34;name&#34;: &#34;create_job_posting&#34;}}, &#34;tools&#34;: [&#34;create_job_posting&#34;], &#34;expected_tool_parameters&#34;: {&#34;create_job_posting&#34;: {&#34;type&#34;: &#34;object&#34;, &#34;properties&#34;: {&#34;title&#34;: {&#34;type&#34;: &#34;string&#34;}, &#34;department&#34;: {&#34;type&#34;: &#34;string&#34;}, &#34;location&#34;: {&#34;type&#34;: &#34;string&#34;}, &#34;remote&#34;: {&#34;type&#34;: &#34;string&#34;, &#34;enum&#34;: [&#34;onsite&#34;, &#34;hybrid&#34;, &#34;remote&#34;]}, &#34;employment_ty... [754 more chars]
+response: {&#34;message&#34;: {&#34;role&#34;: &#34;assistant&#34;, &#34;tool_calls&#34;: [{&#34;id&#34;: &#34;chatcmpl-tool-8ffb50897ef82fb0&#34;, &#34;type&#34;: &#34;function&#34;, &#34;function&#34;: {&#34;name&#34;: &#34;create_job_posting&#34;, &#34;arguments&#34;: &#34;{\&#34;title\&#34;: \&#34;Marketing Intern\&#34;, \&#34;department\&#34;: \&#34;Marketing\&#34;, \&#34;location\&#34;: \&#34;Toronto\&#34;, \&#34;remote\&#34;: \&#34;onsite\&#34;, \&#34;employment_type\&#34;: \&#34;internship\&#34;, \&#34;start_date\&#34;: \&#34;2027-01-11\&#34;, \&#34;description\&#34;: \&#34;We are looking for a motivated Marketing Intern to join our team in Toronto. The ideal candidate will have a passion for marketing and a desire to learn and grow within the industry. This is an onsite position, and fluency in English and French is required. The internship will start on January 11, 2027. Please apply if you are excited about this opportunity and meet the requirements.\&#34;}&#34;}}]}, &#34;finish_reason&#34;: &#34;stop&#34;, &#34;usage&#34;: {&#34;prompt_tokens&#34;: 452, &#34;total_tokens&#34;: 604, &#34;completion_tokens&#34;: 152, &#34;prompt_tokens_details&#34;: null... [37 more chars]</div></section>
+
+<section class="rsec"><h2>5. Performance <small>short: 128 in / 128 out per request; 3 repeats per point</small></h2>
+<div class="charts"><div class="chart"><h3>Output tokens per second</h3><svg viewBox="0 0 460 220" role="img" aria-label="output tok/s by concurrency"><line x1="64" x2="446" y1="186.0" y2="186.0" stroke="var(--line)" stroke-width="1"/><text x="56" y="190.0" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">0</text><line x1="64" x2="446" y1="143.5" y2="143.5" stroke="var(--line)" stroke-width="1"/><text x="56" y="147.5" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">375</text><line x1="64" x2="446" y1="101.0" y2="101.0" stroke="var(--line)" stroke-width="1"/><text x="56" y="105.0" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">750</text><line x1="64" x2="446" y1="58.5" y2="58.5" stroke="var(--line)" stroke-width="1"/><text x="56" y="62.5" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">1,125</text><line x1="64" x2="446" y1="16.0" y2="16.0" stroke="var(--line)" stroke-width="1"/><text x="56" y="20.0" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">1,500</text><text x="64.0" y="206" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">1</text><text x="255.0" y="206" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">8</text><text x="446.0" y="206" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">32</text><text x="255.0" y="219" text-anchor="middle" font-size="10.5" fill="var(--muted)">concurrent requests</text><text x="12" y="101.0" text-anchor="middle" font-size="10.5" fill="var(--muted)" transform="rotate(-90 12 101.0)">output tok/s</text><polygon points="64.0,186.0 64.0,180.4 255.0,145.4 446.0,47.6 446.0,186.0" fill="var(--accent)" fill-opacity=".10"/><polyline points="64.0,180.4 255.0,145.4 446.0,47.6" fill="none" stroke="var(--accent)" stroke-width="2.5"/><line x1="64.0" x2="64.0" y1="180.4" y2="180.4" stroke="var(--accent)" stroke-width="1.5"/><line x1="60.0" x2="68.0" y1="180.4" y2="180.4" stroke="var(--accent)" stroke-width="1.5"/><line x1="60.0" x2="68.0" y1="180.4" y2="180.4" stroke="var(--accent)" stroke-width="1.5"/><circle cx="64.0" cy="180.4" r="3.5" fill="var(--accent)" stroke="var(--paper)" stroke-width="1.5"/><line x1="255.0" x2="255.0" y1="145.8" y2="145.1" stroke="var(--accent)" stroke-width="1.5"/><line x1="251.0" x2="259.0" y1="145.8" y2="145.8" stroke="var(--accent)" stroke-width="1.5"/><line x1="251.0" x2="259.0" y1="145.1" y2="145.1" stroke="var(--accent)" stroke-width="1.5"/><circle cx="255.0" cy="145.4" r="3.5" fill="var(--accent)" stroke="var(--paper)" stroke-width="1.5"/><line x1="446.0" x2="446.0" y1="48.5" y2="46.7" stroke="var(--accent)" stroke-width="1.5"/><line x1="442.0" x2="450.0" y1="48.5" y2="48.5" stroke="var(--accent)" stroke-width="1.5"/><line x1="442.0" x2="450.0" y1="46.7" y2="46.7" stroke="var(--accent)" stroke-width="1.5"/><circle cx="446.0" cy="47.6" r="3.5" fill="var(--accent)" stroke="var(--paper)" stroke-width="1.5"/></svg>
+  <div class="legend"><span><i></i>measured, 95% interval</span></div></div><div class="chart"><h3>Time to first token, slowest 1% (p99)</h3><svg viewBox="0 0 460 220" role="img" aria-label="TTFT p99 (ms) by concurrency"><line x1="64" x2="446" y1="186.0" y2="186.0" stroke="var(--line)" stroke-width="1"/><text x="56" y="190.0" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">0</text><line x1="64" x2="446" y1="143.5" y2="143.5" stroke="var(--line)" stroke-width="1"/><text x="56" y="147.5" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">200</text><line x1="64" x2="446" y1="101.0" y2="101.0" stroke="var(--line)" stroke-width="1"/><text x="56" y="105.0" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">400</text><line x1="64" x2="446" y1="58.5" y2="58.5" stroke="var(--line)" stroke-width="1"/><text x="56" y="62.5" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">600</text><line x1="64" x2="446" y1="16.0" y2="16.0" stroke="var(--line)" stroke-width="1"/><text x="56" y="20.0" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">800</text><text x="64.0" y="206" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">1</text><text x="255.0" y="206" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">8</text><text x="446.0" y="206" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">32</text><text x="255.0" y="219" text-anchor="middle" font-size="10.5" fill="var(--muted)">concurrent requests</text><text x="12" y="101.0" text-anchor="middle" font-size="10.5" fill="var(--muted)" transform="rotate(-90 12 101.0)">TTFT p99 (ms)</text><polyline points="64.0,176.6 255.0,143.2 446.0,48.4" fill="none" stroke="var(--accent)" stroke-width="2.5"/><line x1="64.0" x2="64.0" y1="179.0" y2="175.2" stroke="var(--accent)" stroke-width="1.5"/><line x1="60.0" x2="68.0" y1="179.0" y2="179.0" stroke="var(--accent)" stroke-width="1.5"/><line x1="60.0" x2="68.0" y1="175.2" y2="175.2" stroke="var(--accent)" stroke-width="1.5"/><circle cx="64.0" cy="176.6" r="3.5" fill="var(--accent)" stroke="var(--paper)" stroke-width="1.5"/><line x1="255.0" x2="255.0" y1="148.0" y2="141.3" stroke="var(--accent)" stroke-width="1.5"/><line x1="251.0" x2="259.0" y1="148.0" y2="148.0" stroke="var(--accent)" stroke-width="1.5"/><line x1="251.0" x2="259.0" y1="141.3" y2="141.3" stroke="var(--accent)" stroke-width="1.5"/><circle cx="255.0" cy="143.2" r="3.5" fill="var(--accent)" stroke="var(--paper)" stroke-width="1.5"/><line x1="446.0" x2="446.0" y1="57.0" y2="45.0" stroke="var(--accent)" stroke-width="1.5"/><line x1="442.0" x2="450.0" y1="57.0" y2="57.0" stroke="var(--accent)" stroke-width="1.5"/><line x1="442.0" x2="450.0" y1="45.0" y2="45.0" stroke="var(--accent)" stroke-width="1.5"/><circle cx="446.0" cy="48.4" r="3.5" fill="var(--accent)" stroke="var(--paper)" stroke-width="1.5"/></svg>
+  <div class="legend"><span><i></i>measured, 95% interval</span></div></div></div><h3>Release: vLLM 0.32.0 TP=2</h3>
+<div class="tbl"><table><thead><tr><th class="r">Load</th><th class="r">Achieved</th><th class="r">Requests</th><th class="r">Errors</th><th class="r">Output tok/s (95% CI)</th><th class="r">TTFT p50 / p99 ms</th><th class="r">TPOT p50 / p99 ms</th><th class="r">ITL p99 ms</th><th class="r">E2E p50 / p99 ms</th></tr></thead><tbody>
+<tr><td class="r">c=1</td>
+<td class="r">c 1.0</td>
+<td class="r">48</td><td class="r">0</td>
+<td class="r"><b>49.3</b> <span class="ci">49 &ndash; 49</span></td>
+<td class="r">36 / 44</td><td class="r">20.14 / 20.15</td>
+<td class="r">20.92</td><td class="r">2,594 / 2,602</td></tr><tr><td class="r">c=8</td>
+<td class="r">c 8.0</td>
+<td class="r">48</td><td class="r">0</td>
+<td class="r"><b>357.8</b> <span class="ci">355 &ndash; 361</span></td>
+<td class="r">182 / 202</td><td class="r">21.06 / 21.72</td>
+<td class="r">24.72</td><td class="r">2,855 / 2,880</td></tr><tr><td class="r">c=32</td>
+<td class="r">c 31.8</td>
+<td class="r">192</td><td class="r">0</td>
+<td class="r"><b>1,221.3</b> <span class="ci">1,213 &ndash; 1,229</span></td>
+<td class="r">596 / 647</td><td class="r">21.52 / 24.95</td>
+<td class="r">29.51</td><td class="r">3,340 / 3,402</td></tr></tbody></table></div><p class="note">TTFT: time to the first streamed token. TPOT: time per output token after the first, (E2E - TTFT) / (tokens - 1), per request. ITL: gaps between streamed chunks. Achieved concurrency: mean requests in flight. Chart whiskers: 95% interval over the repeats. A gate passes or fails only when its whole 95% interval is on one side of the limit; otherwise it is INCONCLUSIVE.</p>
+</section>
+
+<section class="rsec"><h2>6. Stability and memory <small>180 s soak at 16 concurrent requests</small></h2>
+<div class="tbl"><table><thead><tr><th>Metric</th><th class="r">Release</th></tr></thead><tbody>
+<tr><td>Requests completed</td><td class="r">800</td></tr>
+<tr><td>Errors</td><td class="r">0</td></tr>
+<tr><td>Output tok/s overall</td><td class="r">558.1</td></tr>
+<tr><td>Output tok/s, first 10%</td><td class="r">546.1</td></tr>
+<tr><td>Output tok/s, last 10%</td><td class="r">580.6</td></tr>
+<tr><td>Throughput drift, first vs last 10%</td><td class="r">+6.3%</td></tr>
+<tr><td>TTFT p99 first / last 10% (ms)</td><td class="r">1,028 / 963</td></tr>
+<tr><td>TTFT p99 drift</td><td class="r">-6.3%</td></tr>
+<tr><td>Memory source</td><td class="r">prometheus</td></tr>
+<tr><td>KV-cache usage, max</td><td class="r">2.1%</td></tr>
+<tr><td>KV-cache usage, mean during stability</td><td class="r">-</td></tr>
+<tr><td>Preemptions</td><td class="r">0</td></tr>
+<tr><td>API server RSS start / end (MiB)</td><td class="r">1,508 / 1,470</td></tr>
+<tr><td>RSS growth during stability (MiB)</td><td class="r">-</td></tr>
+</tbody></table></div>
+<p class="note">First and last 10% of the run after the ramp (3.7 s, one median request time) is excluded; tokens are counted when they stream.</p><p class="note">nvidia-smi on the validator's machine: GPU memory max 262,938 MiB during the soak (nvidia-smi on the validator&#39;s machine: every GPU (memory summed), shared by every server on it).</p></section>
+
+<section class="rsec"><h2>7. Not in this version and not checked in this run</h2>
+<div class="scope"><div><span class="n">V1</span><span>Automatic component-level root cause</span></div><div><span class="n">V1</span><span>Signed, independent attestation of results</span></div><div><span class="n">V1</span><span>Cross-customer inference intelligence</span></div><div><span class="n">V2</span><span>Automated workload routing and rollback</span></div></div><ul class="note" style="padding-left:18px"><li><b>long_context</b>: not requested (checks:)</li><li><b>gate long_context.needle_found</b>: the long_context check did not run</li><li><b>gate long_context.top1_agreement</b>: the long_context check did not run</li><li><b>gate relative.long_context.needle_found</b>: the long_context check did not run</li><li><b>gate relative.long_context.top1_agreement</b>: the long_context check did not run</li></ul><p class="note">Reserved in report.json for later versions: root_cause, attestation, fleet_intelligence, routing.</p></section>
+
+<section class="rsec"><h2>8. Reproduce</h2>
+<div class="repro">python -m fusezap validate --config results/qwen2.5-72b-instruct.json</div>
+<p class="note">Config qwen2.5-72b-instruct.json sha256 <span class="mono">2a273d9270119de5</span>; reference sha256 <span class="mono">ca20f25146f80080</span>; seed 0. Tool 0.1.0 at commit <span class="mono">4c66918</span>. Exit code 0. Validate runs entirely on your systems and sends nothing to FuseZap.</p>
+<p class="note">Client: Python 3.12.15 on Linux-6.8.0-147-generic-x86_64-with-glibc2.35 (validator host).</p>
+</section>
+
+<footer class="rfoot"><span>FuseZap Validate 0.1.0 &middot; 20261025T073306Z-37c4e6</span><span>Generated 2026-10-25T07:41:40Z from report.json &middot; files: report.json, performance.csv, requests.csv, accuracy.csv, checks.csv, junit.xml, report.pdf</span></footer>
+</article></main>
+</body>
+</html>
