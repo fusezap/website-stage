@@ -25,7 +25,7 @@
 <link rel="preload" href="../fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../fonts/source-serif-4-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../site.css?v=202611040814">
+<link rel="stylesheet" href="../site.css?v=202611040950">
 <script>document.documentElement.classList.add('js')</script>
 </head>
 <body class="page-blog page-read">
@@ -52,72 +52,14 @@
 </nav>
 
 <main id="main">
-<header class="hero phero phero-narrow" id="top"><svg class="hero-grid" aria-hidden="true" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice"><defs><pattern id="cells" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#fff" stroke-width=".5"/></pattern><radialGradient id="gridFade" cx="50%" cy="38%" r="60%"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="gridMask"><rect width="1200" height="700" fill="url(#gridFade)"/></mask></defs><g mask="url(#gridMask)" opacity=".05"><rect width="1200" height="700" fill="url(#cells)"/></g></svg><div class="hero-glow" aria-hidden="true"></div><div class="wrap hero-copy"><p class="eyebrow rise"><span class="eyebrow-dot" aria-hidden="true"></span>Blog</p><h1 class="rise d1">Notes from<br><span>the work.</span></h1><p class="lede rise d2">What we measured, what was slow, what we changed and what still isn’t done. Written by the FuseZap team.</p></div><div class="wrap phero-obj rise d4">
-<a class="app" href="2026-11-03-three-tests-out-of-1174.html">
-  <span class="app-bar"><span class="app-crumb"><b>Latest</b><i>/</i>For chip teams</span><time class="app-status" datetime="2026-11-03">3 November 2026</time></span>
-  <span class="feat">
-    <span class="feat-t">Three tests out of 1,174</span>
-    <span class="feat-x">Our first week on AWS Inferentia2, a chip we didn’t design: the simulator first, one backend, a 22-minute run with three failures, and a first model that was slow and right.</span>
-    <span class="feat-go">Read the post <i aria-hidden="true">→</i></span>
-  </span>
-</a>
-</div></header>
+<header class="hero phero phero-bare phero-narrow" id="top"><svg class="hero-grid" aria-hidden="true" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice"><defs><pattern id="cells" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#fff" stroke-width=".5"/></pattern><radialGradient id="gridFade" cx="50%" cy="38%" r="60%"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="gridMask"><rect width="1200" height="700" fill="url(#gridFade)"/></mask></defs><g mask="url(#gridMask)" opacity=".05"><rect width="1200" height="700" fill="url(#cells)"/></g></svg><div class="hero-glow" aria-hidden="true"></div><div class="wrap hero-copy"><p class="eyebrow rise"><span class="eyebrow-dot" aria-hidden="true"></span>Blog</p><h1 class="rise d1">Notes from<br><span>the work.</span></h1><p class="lede rise d2">What we measured, what was slow, what we changed and what still isn’t done. Written by the FuseZap team.</p></div></header>
 
-<section class="sec" id="posts">
+<section class="sec pboard-sec" id="posts">
   <div class="wrap">
-    <div class="sec-head"><p class="kicker reveal">All posts</p><h2 class="h2 reveal">Every post, newest first.</h2></div>
-    <ul class="posts">
-      <li class="reveal">
-        <a href="2026-11-03-three-tests-out-of-1174.html">
-          <time datetime="2026-11-03">3 November 2026</time>
-          <div>
-            <h2>Three tests out of 1,174</h2>
-            <p>Our first week on AWS Inferentia2, a chip we didn’t design: the simulator first, one backend, a 22-minute run with three failures, and a first model that was slow and right.</p>
-            <span class="go">Read the post →</span>
-          </div>
-        </a>
-      </li>
-      <li class="reveal">
-        <a href="2026-11-03-every-check-but-one.html">
-          <time datetime="2026-11-03">3 November 2026</time>
-          <div>
-            <h2>Every check but one</h2>
-            <p>A popular open 70B model passed Validate on accuracy and reliability, then got BLOCK: its tool calls sent numbers as text. Why one red gate was the right call, and why your next driver release is the same bet.</p>
-            <span class="go">Read the post →</span>
-          </div>
-        </a>
-      </li>
-      <li class="reveal">
-        <a href="2026-11-03-five-milliseconds-we-didnt-take.html">
-          <time datetime="2026-11-03">3 November 2026</time>
-          <div>
-            <h2>Five milliseconds we didn’t take</h2>
-            <p>A faster setting would have put our first token on Inferentia2 level with AWS’s library. It wasn’t bit for bit, so we shipped the exact one. And the day a cheaper schedule made four people wait longer.</p>
-            <span class="go">Read the post →</span>
-          </div>
-        </a>
-      </li>
-      <li class="reveal">
-        <a href="2026-11-02-why-a-chip-doesnt-need-1400-models.html">
-          <time datetime="2026-11-02">2 November 2026</time>
-          <div>
-            <h2>The mountain is smaller than it looks</h2>
-            <p>A cloud’s models page can feel like a verdict on your year. Underneath sit a handful of model families. We climbed the first one on a chip we didn’t design.</p>
-            <span class="go">Read the post →</span>
-          </div>
-        </a>
-      </li>
-      <li class="reveal">
-        <a href="2026-10-26-catching-up-with-vllm.html">
-          <time datetime="2026-10-26">26 October 2026</time>
-          <div>
-            <h2>Catching up with vLLM, then a chip that isn’t a GPU</h2>
-            <p>How FuseZap went from well behind vLLM to level on one NVIDIA GPU and within a few percent on 70B models across two, and what happened on our first run on a real AWS Inferentia2.</p>
-            <span class="go">Read the post →</span>
-          </div>
-        </a>
-      </li>
-    </ul>
+    <div class="sec-head sec-head-row"><div><p class="kicker reveal">The lab log</p><h2 class="h2 reveal">Every post, newest first.</h2></div><p class="sec-aside reveal">Each one is a dated entry from the work: pick one up and read it.</p></div>
+    <!-- One line per post, newest first; the first is the featured card. Title, date, hook,
+         reading time and the featured numbers come from the post's own file. -->
+    <ol class="pboard" reversed><li class="reveal pboard-feat"><a class="pcard pcard-feat pcard-pinned" href="2026-11-04-what-to-have-ready-before-your-chips-first-model.html" style="--tilt:-0.35deg" aria-labelledby="p06-t p06-d p06-r" aria-describedby="p06-h"><svg class="pcard-pin" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="6.5"/><path d="M12 1.5v7M12 15.5v7M1.5 12h7M15.5 12h7"/><circle class="pcard-pin-dot" cx="12" cy="12" r="1.6"/></svg><span class="pcard-meta"><span class="pcard-no">No. 06</span><time id="p06-d" datetime="2026-11-04">4 Nov 2026</time><span class="pcard-new">Latest</span><span class="pcard-tag">Bring-up</span></span><h3 class="pcard-t" id="p06-t">What to have ready before your chip’s first model</h3><p class="pcard-h" id="p06-h">The week before bring-up, the list in your head is long. The one we ask for is short. A toolchain that can do three things, one engineer who knows it, and the models your customers ask for.</p><span class="pcard-nums"><span><i>A toolchain</i><b>3 things</b><small>compile a kernel, launch it, manage device memory</small></span><span><i>People</i><b>1 engineer</b><small>who knows that toolchain</small></span><span><i>Models</i><b>Yours</b><small>the ones your customers ask for</small></span></span><span class="pcard-foot"><span id="p06-r">6 min read</span><span class="pcard-go" aria-hidden="true">Read <i>→</i></span></span></a></li><li class="reveal"><a class="pcard" href="2026-11-03-three-tests-out-of-1174.html" style="--tilt:0.6deg" aria-labelledby="p05-t p05-d p05-r" aria-describedby="p05-h"><span class="pcard-meta"><span class="pcard-no">No. 05</span><time id="p05-d" datetime="2026-11-03">3 Nov 2026</time><span class="pcard-tag">Bring-up</span></span><h3 class="pcard-t" id="p05-t">Three tests out of 1,174</h3><p class="pcard-h" id="p05-h">Our first week on AWS Inferentia2, a chip we didn’t design. The simulator first. One new backend. A 22-minute run with three failures. Then a first model that was slow, and right.</p><span class="pcard-foot"><span id="p05-r">5 min read</span><span class="pcard-go" aria-hidden="true">Read <i>→</i></span></span></a></li><li class="reveal"><a class="pcard" href="2026-11-03-every-check-but-one.html" style="--tilt:-0.5deg" aria-labelledby="p04-t p04-d p04-r" aria-describedby="p04-h"><span class="pcard-meta"><span class="pcard-no">No. 04</span><time id="p04-d" datetime="2026-11-03">3 Nov 2026</time><span class="pcard-tag">Validate</span></span><h3 class="pcard-t" id="p04-t">Every check but one</h3><p class="pcard-h" id="p04-h">In October, Validate passed a popular open 70B model on accuracy and reliability, then blocked it: its tool calls sent numbers as text. Why one red gate was the right call.</p><span class="pcard-foot"><span id="p04-r">5 min read</span><span class="pcard-go" aria-hidden="true">Read <i>→</i></span></span></a></li><li class="reveal"><a class="pcard" href="2026-11-03-five-milliseconds-we-didnt-take.html" style="--tilt:0.3deg" aria-labelledby="p03-t p03-d p03-r" aria-describedby="p03-h"><span class="pcard-meta"><span class="pcard-no">No. 03</span><time id="p03-d" datetime="2026-11-03">3 Nov 2026</time><span class="pcard-tag">Performance</span></span><h3 class="pcard-t" id="p03-t">Five milliseconds we didn’t take</h3><p class="pcard-h" id="p03-h">On Inferentia2 a faster setting would have put our first token level with AWS’s library. It wasn’t bit for bit, so we shipped the exact one. Right first, then fast, in real numbers.</p><span class="pcard-foot"><span id="p03-r">5 min read</span><span class="pcard-go" aria-hidden="true">Read <i>→</i></span></span></a></li><li class="reveal"><a class="pcard" href="2026-11-02-why-a-chip-doesnt-need-1400-models.html" style="--tilt:-0.6deg" aria-labelledby="p02-t p02-d p02-r" aria-describedby="p02-h"><span class="pcard-meta"><span class="pcard-no">No. 02</span><time id="p02-d" datetime="2026-11-02">2 Nov 2026</time><span class="pcard-tag">Models</span></span><h3 class="pcard-t" id="p02-t">The mountain is smaller than it looks</h3><p class="pcard-h" id="p02-h">A cloud’s models page can feel like a verdict on your chip. Underneath sit a handful of model families. We climbed the first one on a chip we didn’t design.</p><span class="pcard-foot"><span id="p02-r">6 min read</span><span class="pcard-go" aria-hidden="true">Read <i>→</i></span></span></a></li><li class="reveal"><a class="pcard" href="2026-10-26-catching-up-with-vllm.html" style="--tilt:0.45deg" aria-labelledby="p01-t p01-d p01-r" aria-describedby="p01-h"><span class="pcard-meta"><span class="pcard-no">No. 01</span><time id="p01-d" datetime="2026-10-26">26 Oct 2026</time><span class="pcard-tag">Performance</span></span><h3 class="pcard-t" id="p01-t">Catching up with vLLM, then a chip that isn’t a GPU</h3><p class="pcard-h" id="p01-h">How FuseZap went from well behind vLLM to level on one NVIDIA GPU in October 2026, what the NCCL surprise was on two GPUs, and our first run on a real AWS Inferentia2.</p><span class="pcard-foot"><span id="p01-r">6 min read</span><span class="pcard-go" aria-hidden="true">Read <i>→</i></span></span></a></li></ol>
   </div>
 </section>
 <section class="close" id="access" aria-labelledby="close-h">

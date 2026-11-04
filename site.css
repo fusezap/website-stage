@@ -1474,3 +1474,83 @@ a.card:hover .go { transform: translateX(3px); }
 .vl-ring { background: #147A44; box-shadow: 0 0 0 4px rgba(20,122,68,.16); }
 .vl-block .vl-ring { background: var(--bad); box-shadow: 0 0 0 4px rgba(200,55,47,.14); }
 .vl-review .vl-ring { background: var(--warn); box-shadow: 0 0 0 4px rgba(168,106,18,.14); }
+
+/* Blog index cards (v9-blogidx, 4 Nov)
+   blog/index.html: every post as an index card pinned to a drawing pboard, newest first.
+   The pboard is a faint engineering grid; each card is one link (post_board() in components.py).
+   Tilt (--tilt, at most ±0.6°) only on wide screens with motion allowed; hover and focus
+   lift the card and set it straight. No JavaScript. */
+.pboard-sec .sec-head { margin-bottom: var(--sp-7); }
+.pboard { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-6) var(--sp-5); padding: var(--sp-7); border: 1px solid var(--line); border-radius: 18px;
+  background-color: var(--sand);
+  background-image: radial-gradient(circle at 1px 1px, rgba(22,19,29,.14) 1px, transparent 1.4px);
+  background-size: 24px 24px; background-position: 11px 11px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.5); }
+.pboard > li { display: flex; min-width: 0; }
+.pboard-feat { grid-column: span 2; }
+
+.pcard { position: relative; display: flex; flex-direction: column; width: 100%; min-width: 0; padding: 26px 26px 20px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--plate); color: var(--ink);
+  box-shadow: 0 1px 0 rgba(255,255,255,.8) inset, 0 1px 2px rgba(40,26,20,.08), 0 18px 32px -26px rgba(40,26,20,.45);
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease); }
+.pcard:focus-visible { outline: 2px solid var(--violet); outline-offset: 4px; border-radius: 6px; }
+.pcard:hover, .pcard:focus-visible { border-color: rgba(108,59,255,.45);
+  box-shadow: 0 1px 0 rgba(255,255,255,.8) inset, 0 0 0 4px rgba(108,59,255,.06), 0 28px 44px -28px rgba(40,26,20,.5); }
+
+/* the lab-log stamp: entry number, date, tag */
+.pcard-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding-bottom: 14px; border-bottom: 1px dashed var(--line-2); font-family: var(--mono); font-size: var(--fs-mono-sm); letter-spacing: .04em; color: var(--ink-dim); }
+.pcard-no { color: var(--ink-mute); }
+.pcard-meta time { color: var(--ink-mute); }
+.pcard-new { color: var(--violet); }
+.pcard-new::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 7px; border-radius: 50%; background: var(--violet); box-shadow: 0 0 0 3px rgba(108,59,255,.14); vertical-align: 1px; }
+.pcard-tag { margin-left: auto; padding: 3px 7px; border: 1px solid var(--line-2); border-radius: 4px; line-height: 1.2; color: var(--ink-mute); text-transform: uppercase; letter-spacing: .06em; }
+
+.pcard-t { margin-top: 18px; font-family: var(--serif); font-size: var(--fs-h3); line-height: 1.25; font-weight: 400; letter-spacing: -0.01em; color: var(--ink); text-wrap: balance; transition: color .2s; }
+.pcard-h { margin-top: 10px; font-size: var(--fs-ui); line-height: 1.55; color: var(--ink-mute); }
+.pcard-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 20px; font-family: var(--mono); font-size: var(--fs-mono-sm); letter-spacing: .04em; color: var(--ink-dim); }
+.pcard-h + .pcard-foot, .pcard-nums + .pcard-foot { margin-top: auto; }
+.pcard > .pcard-h { margin-bottom: 22px; }
+.pcard-go { font-family: var(--sans); font-size: var(--fs-small); font-weight: 500; letter-spacing: 0; color: var(--violet); }
+.pcard-go i { display: inline-block; font-style: normal; transition: transform .2s var(--ease); }
+.pcard:hover .pcard-t, .pcard:focus-visible .pcard-t { color: var(--violet-deep); }
+.pcard:hover .pcard-go i, .pcard:focus-visible .pcard-go i { transform: translateX(3px); }
+
+/* the registration-mark pin */
+.pcard-pin { position: absolute; top: -12px; left: 50%; width: 24px; height: 24px; margin-left: -12px; fill: none; stroke: var(--violet); stroke-width: 1; }
+.pcard-pin circle:first-of-type { fill: var(--plate); }
+.pcard-pin-dot { fill: var(--violet); stroke: none; }
+
+/* the featured card: the newest post, wider, with its own three numbers */
+.pcard-feat { padding: 26px 36px 20px; }
+.pcard-feat .pcard-t { margin-top: 22px; font-size: var(--fs-h2); line-height: 1.12; letter-spacing: -0.02em; }
+.pcard-feat .pcard-h { margin-top: 14px; max-width: 60ch; font-family: var(--serif); font-size: var(--fs-story); line-height: 1.5; color: var(--ink-2); }
+.pcard-feat > .pcard-h { margin-bottom: 0; }
+.pcard-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 26px 0 4px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.pcard-nums > span { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 14px 16px 14px 0; }
+.pcard-nums > span + span { padding-left: 16px; border-left: 1px solid var(--line); }
+.pcard-nums i { font-style: normal; font-family: var(--mono); font-size: var(--fs-mono-sm); letter-spacing: .03em; color: var(--ink-dim); }
+.pcard-nums b { font-family: var(--mono); font-size: var(--fs-h3-sm); font-weight: 500; letter-spacing: -0.01em; color: var(--ink); }
+.pcard-nums small { font-size: var(--fs-micro); color: var(--ink-mute); line-height: 1.4; }
+
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .pcard { transform: rotate(var(--tilt, 0deg)); }
+  .pcard:hover, .pcard:focus-visible { transform: translateY(-4px) rotate(0deg); }
+}
+@media (max-width: 1080px) {
+  .pboard { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: var(--sp-6); }
+}
+@media (max-width: 640px) {
+  .pboard { grid-template-columns: minmax(0, 1fr); gap: var(--sp-5); padding: var(--sp-5) var(--sp-3); border-radius: 14px; margin-inline: -4px; }
+  .pboard-feat { grid-column: auto; }
+  .pcard, .pcard-feat { padding: 22px 18px 16px; }
+  .pcard-feat .pcard-t { font-size: var(--fs-h2-sm); }
+  .pcard-nums { grid-template-columns: minmax(0, 1fr); }
+  .pcard-nums > span, .pcard-nums > span + span { padding: 10px 0; border-left: 0; }
+  .pcard-nums > span + span { border-top: 1px solid var(--line); }
+}
+/* end Blog index cards (v9-blogidx) */
+
+/* Blog post 6 (4 Nov): the bring-up checklist inside a post. Sans like other .checks,
+   tighter rows, and the post's li + li gap removed (the rules already separate items). */
+.post .post-checks { font-family: var(--sans); line-height: 1.5; }
+.post .post-checks li { margin-top: 0; padding: 14px 0 16px; }
+.post .post-checks li:last-child { border-bottom: 1px solid var(--line-2); }
