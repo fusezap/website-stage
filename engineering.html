@@ -24,7 +24,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/source-serif-4-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="site.css?v=202611022143">
+<link rel="preload" href="fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="site.css?v=202611040814">
 <script>document.documentElement.classList.add('js')</script>
 </head>
 <body class="page-eng page-read">
@@ -34,7 +35,7 @@
   <div class="wrap nav-in">
     <a class="brand" href="index.html" aria-label="FuseZap home">
       <img class="brand-mark" src="favicon.svg" alt="" width="24" height="24">
-      <img class="brand-word" src="wordmark-light.svg" alt="FuseZap" width="88" height="20">
+      <img class="brand-word" src="wordmark-light.svg" alt="FuseZap" width="88" height="20" fetchpriority="high">
     </a>
     <div class="nav-links">
       <a href="chips.html">Chips</a><a href="validate.html">Validate</a><a href="core.html">Core &amp; Serve</a><a href="matrix.html">Matrix</a><a href="blog/index.html">Blog</a><a href="engineering.html" aria-current="page">Engineering</a><a href="about.html">About</a>
@@ -96,7 +97,7 @@
 
   <h2 id="what">What FuseZap is</h2>
   <p>In plain terms first. FuseZap Core is our compiler and engine, and FuseZap Serve is the server on top of it. Both are ordinary software: they run as a process on the operating system and your chip’s driver, like any other server. They aren’t firmware and they aren’t part of the OS.</p>
-  <p>FuseZap Core is a compiler and engine for LLM inference. A model is expressed in about 28 primitive operations. The compiler schedules and fuses them into kernels, generates source for the target, and tunes launch parameters with a beam search. The serving layer runs on top of whatever the compiler produces.</p>
+  <p>FuseZap Core is a compiler and engine for LLM inference. A model is expressed in 28 primitive operations. The compiler schedules and fuses them into kernels, generates source for the target, and tunes launch parameters with a beam search. The serving layer runs on top of whatever the compiler produces.</p>
   <p>Porting to a new chip means writing one backend. A backend has four parts:</p>
   <ul>
     <li><b>Renderer:</b> turns our kernel IR into source in your kernel language (today a C dialect such as C, Metal or CUDA, or a Python tile language such as Inferentia’s NKI; LLVM- or MLIR-level entry points are possible but not built yet).</li>
@@ -108,7 +109,7 @@
   <ol class="layers">
     <li class="ly"><span>Your customers’ apps</span><em>Unchanged</em></li>
     <li class="ly ly-fz"><span>FuseZap Serve <small>The OpenAI API your customers already call</small></span><em>FuseZap</em></li>
-    <li class="ly ly-fz"><span>FuseZap Core <small>About 28 basic operations</small></span><em>FuseZap</em></li>
+    <li class="ly ly-fz"><span>FuseZap Core <small>28 basic operations</small></span><em>FuseZap</em></li>
     <li class="ly ly-be">
       <div class="ly-be-h"><span>One backend for your chip</span><em>Built with your team</em></div>
       <div class="ly-parts"><span><i>01</i>Renderer</span><span><i>02</i>Compiler hook</span><span><i>03</i>Runtime</span><span><i>04</i>Allocator</span></div>
@@ -130,7 +131,7 @@
 
   <h2 id="vllm">Why not a vLLM plugin?</h2>
   <p>It’s a fair question, and for some teams a plugin is the right answer. vLLM describes itself as running any model on any hardware, and its hardware support is real, but in practice each chip it supports builds on its maker’s own PyTorch or JAX backend and hand-tuned kernels. vLLM’s hardware plugin interface gives you its scheduler, batching and API. What it doesn’t give you is the kernels. Your team still writes and tunes kernels for the operations each model uses, and every time a model introduces a new attention variant, activation or quantization format, that work starts again. You also follow vLLM’s internals, which change often.</p>
-  <p>FuseZap works one level lower. Models are built from about 28 primitive operations, and the compiler fuses and generates kernels for your chip from those, tuning them with a beam search. A new model is mostly a new combination of the same primitives, so it should need little or no new kernel work. Your tuned matmul and attention kernels still plug in where they’re faster.</p>
+  <p>FuseZap works one level lower. Models are built from 28 primitive operations, and the compiler fuses and generates kernels for your chip from those, tuning them with a beam search. A new model is mostly a new combination of the same primitives, so it should need little or no new kernel work. Your tuned matmul and attention kernels still plug in where they’re faster.</p>
   <p>That is a claim we intend to prove, not just make. On our first non-GPU accelerator (AWS Inferentia2, now serving a 7B model on the real chip) we’re recording how much backend code, time and money the first model takes, and then the second. We’ll publish both numbers here.</p>
 
   <h2 id="contract">Hardware capability contract (v0)</h2>
@@ -185,6 +186,7 @@
       <tr><td>32 at once</td><td>4,411</td><td>4,531</td><td>97%</td></tr>
     </tbody>
   </table></div>
+  <p class="measured"><b>How measured</b><span>One NVIDIA H100 80GB (SXM), both engines back to back on the same machine</span><span>FuseZap development build; vLLM 0.32.0</span><span>Qwen2.5-7B-Instruct, bf16 · 128 tokens in, 128 out, greedy · 1, 8 and 32 requests at once · 3 repetitions · measured by FuseZap Validate</span><span>26 October 2026</span></p>
   <p>Where we stand: on one GPU, FuseZap is level with vLLM on this workload, a little faster at 1 and 8 requests and a little slower at 32. Time to the first token is the same. Accuracy on the same runs: FuseZap 99.60% top-1 agreement with a float32 reference, vLLM 99.33%. With the weights on disk, FuseZap was ready to serve 24 seconds after starting and vLLM after 82 seconds. Not re-measured since 20 October: FP8, energy per token and longer prompts (see the history below).</p>
 
   <h2 id="h200">FuseZap vs vLLM on two NVIDIA H200s (October 2026)</h2>
@@ -199,6 +201,7 @@
       <tr><td>Time to first token, 1 request</td><td>44.8</td><td>34.0</td><td>76%</td></tr>
     </tbody>
   </table></div>
+  <p class="measured"><b>How measured</b><span>2× NVIDIA H200 141GB, tensor parallel 2 (two separately rented machines of the same type)</span><span>FuseZap development build (<code>--tp 2</code>); vLLM 0.32.0 (<code>--tensor-parallel-size 2</code>); 8,192-token context</span><span>Llama-3.3-70B-Instruct, bf16 · 128 in, 128 out, greedy · 1, 8 and 32 at once · 3 repetitions · FuseZap Validate</span><span>vLLM 25 October, FuseZap 26 October 2026</span></p>
   <p>Qwen2.5-72B-Instruct, same setup and workload (vLLM on 25 October, FuseZap on 26 October):</p>
   <div class="scroll-box" role="region" tabindex="0"><table class="nums">
     <thead><tr><th>Median, ms</th><th>FuseZap</th><th>vLLM</th><th>vLLM / FuseZap</th></tr></thead>
@@ -209,6 +212,7 @@
       <tr><td>Time to first token, 1 request</td><td>65.9</td><td>36.0</td><td>55%</td></tr>
     </tbody>
   </table></div>
+  <p class="measured"><b>How measured</b><span>2× NVIDIA H200 141GB, tensor parallel 2 (two separately rented machines of the same type)</span><span>FuseZap development build (<code>--tp 2</code>); vLLM 0.32.0 (<code>--tensor-parallel-size 2</code>); 8,192-token context</span><span>Qwen2.5-72B-Instruct, bf16 · 128 in, 128 out, greedy · 1, 8 and 32 at once · 3 repetitions · FuseZap Validate</span><span>vLLM 25 October, FuseZap 26 October 2026</span><span><a class="ev" href="reports/fusezap-validate-qwen2.5-72b-vllm.html">The vLLM run’s Validate report →</a></span></p>
   <div class="scroll-box" role="region" tabindex="0"><table class="nums">
     <thead><tr><th>Llama-3.3-70B, output tokens/s</th><th>FuseZap</th><th>vLLM</th><th>FuseZap / vLLM</th></tr></thead>
     <tbody>
@@ -217,6 +221,7 @@
       <tr><td>32 at once</td><td>1,219.9</td><td>1,242.6</td><td>98%</td></tr>
     </tbody>
   </table></div>
+  <p class="measured"><b>How measured</b><span>2× NVIDIA H200 141GB, tensor parallel 2 (two separately rented machines of the same type)</span><span>FuseZap development build (<code>--tp 2</code>); vLLM 0.32.0 (<code>--tensor-parallel-size 2</code>); 8,192-token context</span><span>Llama-3.3-70B-Instruct, bf16 · 128 in, 128 out, greedy · 1, 8 and 32 at once · 3 repetitions · FuseZap Validate</span><span>vLLM 25 October, FuseZap 26 October 2026</span></p>
   <p>Where we stand: per output token, FuseZap is within 4% of vLLM on both models. vLLM is quicker to the first token, by about 11 ms on Llama and 30 ms on Qwen, and that is what we’re working on next. Accuracy, top-1 agreement with a float32 reference: Llama 99.93% (vLLM 99.61%), Qwen 99.33% (vLLM 99.02%). With the weights already on disk, FuseZap was ready to serve 64 seconds (Llama) and 46 seconds (Qwen) after starting, vLLM after 126 and 191 seconds. Each Llama load used at most 6.6 GB of host memory per GPU.</p>
   <p>Getting here took two fixes worth knowing about if you build a multi-chip backend. Small all-reduces inside CUDA graphs were slow through NCCL, so a one-kernel all-reduce, fused with the normalisation that follows it, now handles them. And weight loading no longer keeps a host copy of every weight after uploading it (that was about 60 GB per GPU on this model), so host memory stays bounded.</p>
 
@@ -233,6 +238,7 @@
       <tr><td>Whole kernel test run, including the reference tiers</td><td>256 of 256</td><td>—</td></tr>
     </tbody>
   </table></div>
+  <p class="measured"><b>How measured</b><span>One AWS inf2.xlarge (one Inferentia2, two NeuronCores, 32 GB); the simulator column is AWS’s simulator</span><span>Neuron SDK 2.33, nki 0.6.0, neuronx-cc 2.27, nrtpy 2.35</span><span>FuseZap’s operation and kernel test suites</span><span>26 October 2026</span></p>
   <p>The 3 failures are float32 exp2 (two tests) and tanh (one test). The chip computes these with built-in approximations that are a little less precise than our tests allow. We’re fixing them.</p>
   <p>We also checked numerics on their own, on 262,144 inputs per case against a float64 reference. Reciprocal matched the simulator bit for bit. Sin, row and column sums and float32 matrix multiply stayed within about 6×10⁻⁷ relative error. Exp and exp2 were about 1×10⁻⁵ (the simulator: 1×10⁻⁷ and 4×10⁻⁶), sqrt 3.5×10⁻⁶, a softmax 5.4×10⁻⁶ and grouped-query causal attention 2.6×10⁻⁶. Integer add, max and compare were exact. log2 is wrong for some inputs. It passes the operation tests, but this wider check caught it. That’s a bug, and we’re fixing it. A max across the partition axis with NaN and infinity inputs also differed from the simulator on 2 NaN values; we’re looking into it.</p>
   <div class="scroll-box" role="region" tabindex="0"><table class="nums">
@@ -248,6 +254,7 @@
       <tr><td>Copy 1 MiB to / from the chip</td><td colspan="2">0.78 ms / 1.81 ms</td></tr>
     </tbody>
   </table></div>
+  <p class="measured"><b>How measured</b><span>One AWS inf2.xlarge (one Inferentia2, two NeuronCores, 32 GB)</span><span>Neuron SDK 2.33, nki 0.6.0, neuronx-cc 2.27, nrtpy 2.35</span><span>one kernel on 128 floats and on 1 MiB · medians</span><span>26 October 2026</span></p>
   <p>The last launch row is why the device works the way it does. Our first run, earlier the same day, used nki.jit, which compiles and loads the kernel again on every call: about 1.3 seconds each, whatever the size. Compiling once and keeping the kernel loaded brought a launch down to about 160–170 microseconds. Most of that is still on the host side, and a model runs many kernels per token, so launch overhead is the first thing we’ll work on for speed.</p>
   <p>What wasn’t done after the 26 October run:</p>
   <ul>
@@ -273,6 +280,7 @@
       <tr><td>Time to first token, including first-time kernel compiles</td><td>41.6 s</td></tr>
     </tbody>
   </table></div>
+  <p class="measured"><b>How measured</b><span>One AWS inf2.xlarge (one Inferentia2)</span><span>Neuron SDK 2.33; FuseZap Core and Serve, served through Serve’s engine directly</span><span>Qwen2.5-0.5B-Instruct · greedy, our 24 reference prompts against a float32 reference · 1 request</span><span>27 October 2026</span></p>
   <p>Each launch costs about 0.66 ms here, so launches are most of the time per token. Cutting their number is the next step. The float32 exp2 and tanh failures and the log2 bug from 26 October are fixed: exp, exp2 and log2 now match the simulator bit for bit, and the operation suite ran on the chip with no failures.</p>
   <p>What wasn’t done after the 27 October run:</p>
   <ul>
@@ -294,6 +302,7 @@
       <tr><td>Top-1 agreement with a float32 reference</td><td>99.87%</td><td>99.87%</td><td>—</td></tr>
     </tbody>
   </table></div>
+  <p class="measured"><b>How measured</b><span>One AWS inf2.8xlarge (one Inferentia2, both NeuronCores), the same instance type for both</span><span>Neuron SDK 2.33; <code>fusezap serve --tp 2</code>; baseline AWS NxD Inference 0.10, through its own generate call</span><span>Qwen2.5-7B-Instruct, bf16 · 128 in, 128 out, greedy · 1 and 4 requests at once · FuseZap measured by FuseZap Validate</span><span>FuseZap 29 October and 1 November, NxD Inference 28 October 2026</span></p>
   <p>Between the two runs we rewrote the kernels that process the prompt. They give exactly the same results as the old ones, bit for bit, and the first token now comes in 55.4 ms instead of 90.6. AWS’s library is still slightly quicker there, by about 5 ms. Per token FuseZap is about 4% faster than AWS’s library, and with four requests at once it writes about 22% more tokens per second. A 512-token prompt now gets its first token in 199 ms, because it runs in one 512-token round instead of four 128-token ones (227 ms). Both runs ended in PROMOTE in Validate, with no failed requests.</p>
   <p>What isn’t done on Inferentia2 yet:</p>
   <ul>
@@ -321,6 +330,7 @@
       <tr><td>Energy per output token</td><td>0.27 J</td><td>0.17 J</td></tr>
     </tbody>
   </table></div>
+  <p class="measured"><b>How measured</b><span>One NVIDIA H100 80GB, both engines back to back on the same machine</span><span>FuseZap development build (before the speed work); vLLM 0.32.0 at its defaults</span><span>Qwen2.5-7B-Instruct · 512 tokens in, 128 out, greedy · 1 and 32 users · 3 repetitions after a warm-up, unique prompts</span><span>20 October 2026</span></p>
   <p>Where we stood on 20 October: vLLM was faster, especially once many users were generating at the same time, and FuseZap used about 1.6 times the energy per token. Across other prompt mixes FuseZap ranged from 44% to 73% of vLLM. Accuracy cost on WikiText-2 for the 7B model: INT8 +0.1% perplexity, FP8 +0.9%.</p>
 
   <h2 id="m5">Measured results (Apple M5 Max, October 2026)</h2>
@@ -332,6 +342,7 @@
       <tr><td>Prefill, 512 tokens</td><td>4,821 tok/s</td><td>5,323 tok/s</td></tr>
     </tbody>
   </table></div>
+  <p class="measured"><b>How measured</b><span>Apple M5 Max</span><span>decode at batch 1 after a 128-token prompt; prefill of 512 tokens</span><span>October 2026</span></p>
   <div class="scroll-box" role="region" tabindex="0"><table class="nums">
     <thead><tr><th>Continuous batching (FP32, 128 in / 128 out)</th><th>Batch 1</th><th>Batch 8</th><th>Batch 32</th></tr></thead>
     <tbody>
@@ -339,6 +350,7 @@
       <tr><td>Aggregate tok/s, prefill included</td><td>51</td><td>384</td><td>1,141</td></tr>
     </tbody>
   </table></div>
+  <p class="measured"><b>How measured</b><span>Apple M5 Max</span><span>FP32 · 128 in, 128 out · batch 1, 8 and 32</span><span>October 2026</span></p>
   <div class="scroll-box" role="region" tabindex="0"><table>
     <thead><tr><th>Weights (WikiText-2, ctx 1024)</th><th>Scheme</th><th>Perplexity</th><th>vs FP16</th></tr></thead>
     <tbody>
@@ -348,6 +360,7 @@
       <tr><td>INT4</td><td>group 128, round-to-nearest</td><td>15.71</td><td>+19.0%</td></tr>
     </tbody>
   </table></div>
+  <p class="measured"><b>How measured</b><span>Apple M5 Max</span><span>WikiText-2 perplexity, context 1024, weight-only quantization</span><span>October 2026</span></p>
   <p>Naive INT4 is not usable on a 0.5B model. For 4-bit we import AWQ and GPTQ checkpoints (including act-order GPTQ), whose dequantization matches the reference implementations bit for bit. Quantization is weight-only today; activations stay in FP16.</p>
 
   <h2 id="production">Production readiness</h2>
@@ -382,7 +395,7 @@
   <p>If you build an AI chip and want to see the code, the test logs or the benchmark method, write to <a href="mailto:tgpromod@techyodl.ai">tgpromod@techyodl.ai</a>.</p>
   <div class="cta-row read-cta">
     <a class="btn btn-accent" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20chip%20assessment.%0A%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0ATarget%20models%3A%20%0ATimeline%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Request a chip assessment</a>
-    <a class="btn btn-ghost" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20release%20check&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20release%20check.%0A%0AModel%20server%20%28vLLM%2C%20SGLang%2C%20our%20own%20or%20other%29%3A%20%0AModels%3A%20%0AHardware%3A%20%0AThe%20release%20we%27re%20about%20to%20ship%2C%20and%20when%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Book a release check</a>
+    <a class="btn btn-ghost" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20release%20check&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20release%20check.%0A%0AServing%20engine%20and%20version%3A%20%0AModel%28s%29%3A%20%0AHardware%3A%20%0AHow%20often%20we%20release%3A%20%0AWhat%20broke%20last%20time%3A%20%0ACI%20system%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Book a release check</a>
   </div>
     </article>
   </div>
@@ -392,21 +405,8 @@
   <div class="wrap close-in">
     <h2 class="h-close reveal" id="close-h">Let’s see what runs<br><span>on <em class="it">your chip</em> today.</span></h2>
     <p class="close-lede reveal">FuseZap is for chip makers, and for the platform teams who serve models on their hardware. If you just want to run a model on your own laptop, use Ollama. It’s great at that.</p>
-    <div class="cta-row cta-row-center reveal">
-      <a class="btn btn-accent btn-lg" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20chip%20assessment.%0A%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0ATarget%20models%3A%20%0ATimeline%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Request a chip assessment</a>
-      <a class="btn btn-ghost-dark btn-lg" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20release%20check&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20release%20check.%0A%0AModel%20server%20%28vLLM%2C%20SGLang%2C%20our%20own%20or%20other%29%3A%20%0AModels%3A%20%0AHardware%3A%20%0AThe%20release%20we%27re%20about%20to%20ship%2C%20and%20when%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Book a release check</a>
-      <a class="btn btn-ghost-dark btn-lg" href="reports/fusezap-validate-qwen2.5-72b-vllm.html">See a sample report</a>
-    </div>
-    <div class="include reveal">
-      <p class="include-h">What to include</p>
-      <ol>
-        <li>Your stage: simulator, first silicon or shipping</li>
-        <li>Your kernel toolchain (C, LLVM, MLIR or other)</li>
-        <li>The models your customers ask for</li>
-        <li>Your timeline</li>
-        <li>Whether you need an NDA first</li>
-      </ol>
-    </div>
+    <div class="cta-row cta-row-center reveal"><a class="btn btn-accent btn-lg" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20chip%20assessment.%0A%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0ATarget%20models%3A%20%0ATimeline%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Request a chip assessment</a><a class="btn btn-ghost-dark btn-lg" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20release%20check&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20release%20check.%0A%0AServing%20engine%20and%20version%3A%20%0AModel%28s%29%3A%20%0AHardware%3A%20%0AHow%20often%20we%20release%3A%20%0AWhat%20broke%20last%20time%3A%20%0ACI%20system%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Book a release check</a><a class="btn btn-ghost-dark btn-lg" href="reports/fusezap-validate-qwen2.5-72b-vllm.html">See a sample report</a></div>
+    <div class="offers offers-2 reveal"><div class="offer"><div class="offer-h"><span>For chip teams</span><a class="tl tl-dark" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20chip%20assessment.%0A%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0ATarget%20models%3A%20%0ATimeline%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Request a chip assessment →</a></div><div class="offer-row"><p class="include-h">What you get</p><p class="offer-get"><b>Week 0: the op-coverage report.</b> What runs on your toolchain or simulator today, and what it would take for the rest. Free.</p></div><div class="offer-row"><p class="include-h">What to include</p><ol><li>Your stage: simulator, first silicon or shipping</li><li>Your kernel toolchain (C, LLVM, MLIR or other)</li><li>The models your customers ask for</li><li>Your timeline</li><li>Whether you need an NDA first</li></ol></div></div><div class="offer"><div class="offer-h"><span>For teams that ship model servers</span><a class="tl tl-dark" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20release%20check&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20release%20check.%0A%0AServing%20engine%20and%20version%3A%20%0AModel%28s%29%3A%20%0AHardware%3A%20%0AHow%20often%20we%20release%3A%20%0AWhat%20broke%20last%20time%3A%20%0ACI%20system%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Book a release check →</a></div><div class="offer-row"><p class="include-h">What you get</p><p class="offer-get"><b>One word: PROMOTE, BLOCK or REVIEW.</b> With the evidence behind it: an HTML and PDF summary, the raw JSON, CSVs, a JUnit file and an exit code for your CI.</p></div><div class="offer-row"><p class="include-h">What to include</p><ol><li>Your serving engine and its version</li><li>The model or models</li><li>Your hardware</li><li>How often you release</li><li>What broke last time</li><li>Your CI system</li><li>Whether you need an NDA first</li></ol></div></div></div>
     <div class="letter reveal">
       <div><b>One email a month.</b><span>What shipped, what we measured, and what’s still open. In plain words.</span></div>
       <a class="tl tl-dark" href="mailto:tgpromod@techyodl.ai?subject=Subscribe%3A%20FuseZap%20monthly&amp;body=Please%20add%20me%20to%20the%20FuseZap%20monthly%20update.%0A">Subscribe by email →</a>
@@ -420,7 +420,7 @@
     <div class="foot-top">
       <div class="foot-brand">
         <a class="brand" href="index.html" aria-label="FuseZap home"><img src="favicon.svg" alt="" width="20" height="20"><img src="wordmark-light.svg" alt="FuseZap" width="70" height="16"></a>
-        <p>Open software for new chips, and a check before every release. A Techyodl product.</p>
+        <p>FuseZap Core helps you get models running. FuseZap Validate helps you keep them working.</p>
       </div>
       <nav class="foot-map" aria-label="Sitemap">
         <div><p class="foot-h">Product</p><ul><li><a href="chips.html">Bring-Up Program</a></li><li><a href="validate.html">Validate</a></li><li><a href="core.html">Core &amp; Serve</a></li><li><a href="matrix.html">Matrix</a></li></ul></div><div><p class="foot-h">Evidence</p><ul><li><a href="status.html">Status</a></li><li><a href="releases.html">Releases</a></li><li><a href="method.html">Method</a></li><li><a href="engineering.html">Engineering</a></li><li><a href="reports/fusezap-validate-qwen2.5-72b-vllm.html">Sample report</a></li></ul></div><div><p class="foot-h">Company</p><ul><li><a href="about.html">About</a></li><li><a href="blog/index.html">Blog</a></li><li><a href="faq.html">FAQ</a></li><li><a href="mailto:tgpromod@techyodl.ai">Contact</a></li></ul></div><div><p class="foot-h">Legal</p><ul><li><a href="privacy.html">Privacy</a></li><li><a href="terms.html">Terms</a></li></ul></div>
@@ -432,6 +432,8 @@
 
 <script>
 (() => {
+  // Escape closes the phone menu and puts focus back on its button
+  addEventListener('keydown', e => { const m = document.querySelector('.nav-more[open]'); if (e.key === 'Escape' && m) { m.open = false; m.querySelector('summary').focus(); } });
   document.querySelectorAll('.gate-bar').forEach(b => b.querySelectorAll('i').forEach((e, i) => e.style.setProperty('--i', i)));
   const els = document.querySelectorAll('.reveal');
   if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) {

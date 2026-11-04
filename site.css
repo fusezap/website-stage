@@ -209,6 +209,7 @@ ul, ol { list-style: none; }
 .hero h1 { margin: 24px auto 0; max-width: 900px; font-size: var(--fs-h1); line-height: 1.08; font-weight: 600; letter-spacing: -0.022em; color: #fff; text-wrap: balance; }
 .hero h1 span { white-space: nowrap; color: var(--d-mute); background: linear-gradient(180deg, #ABA9B9, #6E6C7C); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 .lede { margin: 20px auto 0; max-width: 600px; font-size: var(--fs-lede); line-height: 1.55; color: var(--d-mute); letter-spacing: -0.01em; text-wrap: pretty; }
+.hero-sum { margin: var(--sp-4) auto 0; max-width: 600px; font-size: var(--fs-body); line-height: 1.55; font-weight: 500; color: var(--d-text); letter-spacing: -0.01em; text-wrap: balance; }
 .hero-actions { margin-top: var(--sp-6); display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
 /* inner pages: the same hero, a step smaller */
 .phero { padding-top: 80px; }
@@ -579,7 +580,7 @@ a.app:hover .feat-go i { transform: translateX(3px); }
 .ops-row { display: grid; grid-template-columns: 220px 1fr; gap: 24px; align-items: center; margin-top: 28px; padding: 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--plate); }
 .ops-row p { font-size: var(--fs-small); line-height: 1.55; color: var(--ink-mute); margin: 0; }
 .fig-ops { width: 100%; color: var(--ink); }
-.plate > .fig-ops { max-width: 300px; margin: 8px auto; opacity: .9; }
+.plate > .fig-ops { max-width: 520px; margin: 8px auto; }
 .term-fig .cap, .night .cap { color: var(--d-dim); }
 .term-fig .cap b, .night .cap b { color: var(--d-text); }
 /* a figure that is a list or a card of facts (validate's files, matrix's cell) */
@@ -658,6 +659,35 @@ a.app:hover .feat-go i { transform: translateX(3px); }
 .cmp-bar b { font-family: var(--mono); font-weight: 500; font-size: var(--fs-micro); color: #fff; }
 .cmp-bar i { grid-column: 1 / -1; position: relative; height: 6px; border-radius: 3px; background: rgba(255,255,255,.07); }
 .cmp-bar i::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: var(--p); border-radius: 3px; background: linear-gradient(90deg, var(--violet), var(--lume)); }
+/* Expandable verdict card (.xcard): a <details> app window. The summary is the verdict; opening it shows
+   an illustration. Works without JavaScript. validate.html #example. */
+.xcard > summary { display: block; list-style: none; cursor: pointer; }
+.xcard > summary::-webkit-details-marker { display: none; }
+.xcard > summary > span { display: block; }
+.xcard > summary > .app-bar { display: flex; }
+.xcard > summary > .cmp-bars { display: grid; }
+.xcard > summary > .cmp-row { display: flex; border-top: 1px solid var(--d-line); border-bottom: 0; }
+.xcard-main { padding: 22px 18px 4px; }
+.xcard-k { display: block; font-family: var(--mono); font-size: var(--fs-mono-sm); letter-spacing: .06em; text-transform: uppercase; color: var(--d-dim); }
+.xcard-main .vd-word { margin-top: 12px; }
+.xcard-why { display: block; margin-top: 8px; font-size: var(--fs-micro); color: var(--d-mute); }
+.vd-word.vd-block { color: var(--bad-d); }
+.vd-block .vd-ring { background: var(--bad-d); box-shadow: 0 0 0 4px rgba(240,133,125,.14), 0 0 18px rgba(240,133,125,.45); }
+.vd-block .vd-ring::after { border-color: var(--bad-d); }
+.xcard > summary > .xcard-more { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-top: 1px solid var(--d-line); font-size: var(--fs-micro); font-weight: 500; color: var(--lume); }
+.xcard-more::after { content: ""; flex: none; width: 12px; height: 12px; background: linear-gradient(var(--lume), var(--lume)) center / 12px 1.5px no-repeat, linear-gradient(var(--lume), var(--lume)) center / 1.5px 12px no-repeat; transition: transform .25s var(--ease); }
+.xcard[open] .xcard-more::after { transform: rotate(45deg); }
+.xcard-close, .xcard[open] .xcard-open { display: none; }
+.xcard[open] .xcard-close { display: inline; }
+.xcard > summary:hover .xcard-more { color: #C6B6FF; }
+.xcard-body { padding: 18px 18px 20px; border-top: 1px solid var(--d-line); background: rgba(255,255,255,.015); }
+.xcard-note { display: inline-block; padding: 4px 8px; border: 1px dashed var(--d-line-2); border-radius: 6px; font-family: var(--mono); font-size: var(--fs-mono-sm); letter-spacing: .04em; color: var(--d-mute); }
+.xcard-code { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 14px; }
+.xcard-code > div { min-width: 0; padding: 12px 14px; border: 1px solid var(--d-line); border-radius: 10px; background: rgba(0,0,0,.25); }
+.xcard-code pre { margin: 8px 0 0; font: 400 var(--fs-micro)/1.6 var(--mono); color: #BDBACB; white-space: pre-wrap; overflow-wrap: anywhere; }
+.xcard-code mark { color: var(--bad-d); background: rgba(240,133,125,.12); box-shadow: inset 0 0 0 1px rgba(240,133,125,.35); border-radius: 3px; padding: 0 2px; }
+.xcard-find { margin-top: 14px; font-family: var(--mono); font-size: var(--fs-micro); line-height: 1.6; color: var(--d-text); }
+.xcard-find span { display: block; margin-bottom: 4px; font-size: var(--fs-mono-sm); letter-spacing: .06em; text-transform: uppercase; color: var(--d-dim); }
 .night video { display: block; width: 100%; aspect-ratio: 16 / 9; border-radius: 14px; background: #000; border: 1px solid rgba(255,255,255,.1); box-shadow: 0 0 0 1px rgba(0,0,0,.6), 0 50px 90px -40px rgba(0,0,0,.8), 0 30px 80px -50px var(--glow); }
 
 /* ===== §13 Dated timeline: timeline_dated(...) (dark surface) ===== */
@@ -752,6 +782,15 @@ a.app:hover .feat-go i { transform: translateX(3px); }
 .tbl-wrap { overflow: hidden; }
 .scroll-box { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: var(--sp-6) 0 var(--sp-2); background: linear-gradient(90deg, var(--plate) 30%, rgba(252,250,246,0)) 0 0 / 40px 100% no-repeat local, linear-gradient(270deg, var(--plate) 30%, rgba(252,250,246,0)) 100% 0 / 40px 100% no-repeat local, radial-gradient(farthest-side at 0 50%, rgba(22,19,29,.14), transparent) 0 0 / 12px 100% no-repeat scroll, radial-gradient(farthest-side at 100% 50%, rgba(22,19,29,.14), transparent) 100% 0 / 12px 100% no-repeat scroll, var(--plate); }
 .scroll-box + .scroll-box { margin-top: var(--sp-4); }
+/* "How measured" line under a results table (components.measured): only the fields we know */
+.measured { margin: var(--sp-3) 0 var(--sp-5); font-size: var(--fs-small); line-height: 1.55; color: var(--ink-mute); }
+.prose .measured, .post .measured { font-family: var(--sans); font-size: var(--fs-small); line-height: 1.55; margin: var(--sp-3) 0 var(--sp-5); }
+.measured b { margin-right: 8px; font-family: var(--mono); font-size: var(--fs-mono-sm); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-dim); }
+.measured span + span::before { content: "\00a0·\00a0"; margin: 0 4px 0 0; color: var(--ink-dim); }
+.measured .ev { white-space: nowrap; }
+.prose .measured b, .post .measured b { color: var(--ink-dim); font-weight: 500; }
+.night .measured, .app .measured, .term-fig .measured { color: var(--d-mute); }
+.night .measured b, .term-fig .measured b, .night .measured span + span::before, .term-fig .measured span + span::before { color: var(--d-dim); }
 .tbl, .scroll-box table { width: 100%; border-collapse: collapse; font-size: var(--fs-ui); line-height: 1.5; }
 .scroll-box table { min-width: 560px; font-size: var(--fs-small); }
 .tbl th, .scroll-box th { text-align: left; font-family: var(--mono); font-size: var(--fs-mono-sm); font-weight: 400; letter-spacing: .04em; color: var(--ink-dim); padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--paper); white-space: nowrap; vertical-align: bottom; }
@@ -910,6 +949,35 @@ a.card:hover .go { transform: translateX(3px); }
 .ph-label { position: absolute; top: -9px; left: 20px; padding: 0 8px; background: var(--paper); font-family: var(--mono); font-size: var(--fs-mono-sm); letter-spacing: .08em; color: var(--violet); }
 .note-ph p { font-family: var(--serif); font-style: italic; font-size: var(--fs-story-lg); line-height: 1.5; color: var(--ink-2); font-weight: 400; }
 .note-ph small { display: block; margin-top: 14px; font-size: var(--fs-micro); color: var(--ink-dim); }
+.note { margin: 28px 0 28px; }
+.note p { font-family: var(--serif); font-size: var(--fs-story); line-height: 1.6; color: var(--ink-2); }
+.note p + p { margin-top: 14px; }
+.note .note-end { font-family: var(--sans); font-weight: 600; color: var(--ink); letter-spacing: -0.015em; }
+/* About: round portraits on the people cards, and the note as a letter (4 Nov) */
+.person { grid-template-columns: 112px 1fr; gap: 28px; }
+.person-ph { position: relative; display: block; width: 112px; height: 112px; border-radius: 50%; }
+.person-ph img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: 50% 22%; display: block; box-shadow: 0 0 0 4px var(--paper), 0 14px 30px -14px rgba(22,19,29,.45); }
+.person-ph::before { content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 1px dashed rgba(108,59,255,.45); }
+.person-ph::after { content: ""; position: absolute; width: 10px; height: 10px; border-radius: 50%; background: var(--violet); box-shadow: 0 0 0 3px var(--paper); right: 2px; top: 6px; }
+.person-ph-mono span { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; background: var(--ink-0); color: var(--lume); font-family: var(--mono); font-size: var(--fs-h4); letter-spacing: .06em; box-shadow: 0 0 0 4px var(--paper); }
+.fnote { max-width: 720px; }
+.fnote .note p:first-child::first-letter { float: left; font-family: var(--serif); font-size: 64px; line-height: .9; padding: 6px 10px 0 0; color: var(--violet); }
+.fnote .sig b::before { content: "— "; }
+@media (max-width: 640px) {
+  .person { grid-template-columns: 1fr; }
+  .person-ph { width: 96px; height: 96px; margin: 8px 0 4px 8px; }
+}
+.fquote { padding: var(--sec-pad) 0; border-top: 1px solid var(--line); }
+.fq { margin: 0 auto; max-width: 820px; }
+.fq blockquote { margin: 0; }
+.fq blockquote p { font-family: var(--serif); font-size: clamp(22px, 2.6vw, 30px); line-height: 1.35; letter-spacing: -0.012em; color: var(--ink); }
+.fq figcaption { display: flex; gap: 16px; align-items: center; margin-top: 28px; }
+.fq-ph { flex: none; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; box-shadow: 0 0 0 4px rgba(108,59,255,.1); }
+.fq-ph img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; display: block; }
+.fq-who { display: flex; flex-direction: column; gap: 2px; }
+.fq-who b { font-weight: 600; }
+.fq-who > span { font-size: var(--fs-ui); color: var(--ink-mute); }
+.fq-who .tl { margin-top: 6px; display: inline-flex; align-items: center; min-height: 40px; }
 .sig { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; padding-top: 20px; border-top: 1px solid var(--line); }
 .sig b { font-family: var(--serif); font-size: var(--fs-h3); font-weight: 400; font-style: italic; letter-spacing: -0.01em; }
 .sig span { font-size: var(--fs-ui); color: var(--ink-mute); }
@@ -1010,11 +1078,22 @@ a.card:hover .go { transform: translateX(3px); }
 .h-close .it { color: var(--lume); font-size: 1.05em; letter-spacing: -0.022em; }
 .close-lede { margin: 22px auto 0; max-width: 600px; font-size: var(--fs-h4); color: var(--d-mute); }
 .cta-row-center { justify-content: center; margin-top: 40px; }
-.include { margin: 80px auto 0; max-width: 820px; text-align: left; border-top: 1px solid var(--d-line); padding-top: 28px; display: grid; grid-template-columns: 180px 1fr; gap: 24px; }
+/* What you get / What to include, one block per primary CTA (components.close_offers, data.OFFERS) */
+.offers { margin: var(--sp-9) auto 0; max-width: 820px; text-align: left; display: grid; gap: var(--sp-7); }
+.offers-2 { max-width: 1040px; grid-template-columns: 1fr 1fr; }
+.offer { display: grid; gap: var(--sp-5); align-content: start; border-top: 1px solid var(--d-line); padding-top: 24px; }
+.offer-h { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 16px; }
+.offer-h span { font-family: var(--mono); font-size: var(--fs-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--d-mute); }
+.offer-h .tl { font-size: var(--fs-ui); }
+.offer-row { display: grid; grid-template-columns: 180px 1fr; gap: var(--sp-5); }
+.offers-2 .offer-row { grid-template-columns: 1fr; gap: var(--sp-3); }
 .include-h { font-family: var(--mono); font-size: var(--fs-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--d-dim); padding-top: 2px; }
-.include ol { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 32px; font-size: var(--fs-ui); color: var(--d-mute); counter-reset: i; }
-.include li { position: relative; padding-left: 30px; counter-increment: i; }
-.include li::before { content: counter(i, decimal-leading-zero); position: absolute; left: 0; top: 3px; font-family: var(--mono); font-size: var(--fs-mono-sm); color: var(--lume); }
+.offer-get { font-size: var(--fs-ui); line-height: 1.6; color: var(--d-mute); }
+.offer-get b { color: var(--d-text); font-weight: 600; }
+.offer ol { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 32px; font-size: var(--fs-ui); color: var(--d-mute); counter-reset: i; }
+.offers-2 .offer ol { grid-template-columns: 1fr; gap: 8px; }
+.offer li { position: relative; padding-left: 30px; counter-increment: i; }
+.offer li::before { content: counter(i, decimal-leading-zero); position: absolute; left: 0; top: 3px; font-family: var(--mono); font-size: var(--fs-mono-sm); color: var(--lume); }
 .letter { margin: 56px auto 0; max-width: 820px; display: flex; justify-content: space-between; align-items: center; gap: 24px; text-align: left; padding: 22px 24px; border: 1px solid var(--d-line); border-radius: 12px; background: rgba(255,255,255,.02); }
 .letter b { display: block; color: #fff; font-weight: 600; font-size: var(--fs-body); }
 .letter span { display: block; margin-top: 2px; font-size: var(--fs-small); color: var(--d-mute); }
@@ -1068,6 +1147,7 @@ a.card:hover .go { transform: translateX(3px); }
   .cards { --n: 2; }
 }
 @media (max-width: 900px) {
+  .offers-2 { grid-template-columns: 1fr; max-width: 820px; }
   :root { --gut: 24px; }
   .pro-grid, .m-grid, .two, .two-even, .sec-head-row, .keep, .founder-grid, .rule-grid, .people { grid-template-columns: 1fr; gap: var(--sp-7); }
   .m-flip > :first-child { order: 0; }
@@ -1211,7 +1291,7 @@ a.card:hover .go { transform: translateX(3px); }
   .m-k { flex: 1; }
   .plate { padding: 18px; border-radius: 14px; }
   .ops-row { grid-template-columns: 1fr; padding: 16px; }
-  .fig-ops { max-width: 240px; }
+  .fig-ops { max-width: none; }
   .ly { padding: 10px 14px; }
   .ly-parts { grid-template-columns: 1fr 1fr; }
   .parts-dl div, .fig-list li { grid-template-columns: 1fr; gap: 4px; }
@@ -1293,16 +1373,18 @@ a.card:hover .go { transform: translateX(3px); }
   .posts time { padding-top: 0; }
   .close { padding: 104px 0 72px; }
   .close-wafer { width: 360px; height: 360px; right: -160px; top: 20px; }
-  .include { grid-template-columns: 1fr; gap: 14px; margin-top: 56px; }
-  .include ol { grid-template-columns: 1fr; }
+  .offers { margin-top: var(--sp-7); }
+  .offer-row { grid-template-columns: 1fr; gap: var(--sp-3); }
+  .offer ol { grid-template-columns: 1fr; gap: 8px; }
   .letter { flex-direction: column; align-items: flex-start; }
   .foot-map { grid-template-columns: 1fr 1fr; }
 }
 
-/* Blog 2 Nov: phone version of the families figure (the drawing's labels get too small below 640px) */
+/* Blog: phone versions of blog drawings whose labels get too small below 640px. The drawing hides and
+   the .fam-list beside it shows (families, 2 Nov; .fig-phone-swap drawings, 3 Nov) */
 .fam-list { display: none; }
 @media (max-width: 640px) {
-  .fig-families { display: none; }
+  .fig-families, .fig-phone-swap { display: none; }
   .fam-list { display: grid; gap: 8px; list-style: none; margin: 0; padding: 0; }
   .fam-list li { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 12px 14px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--paper, #FBF8F2); }
   .fam-list .fam-name { font-weight: 600; font-size: var(--fs-body); }
@@ -1314,3 +1396,81 @@ a.card:hover .go { transform: translateX(3px); }
   .fam-list .fam-not { opacity: .7; }
   .fam-list .fam-not .fam-st { color: var(--ink-mute); }
 }
+
+/* QA fixes (v9-qa) ===========================================================
+   Launch-readiness QA, 3 Nov 2026 (see the QA report next to PAGE-ANATOMY.md).
+   Everything here overrides earlier rules by coming last; no earlier rule was edited.
+   If a token below is later changed in §01, keep whichever value has more contrast,
+   then drop the override here. */
+
+/* 1. Contrast (WCAG 1.4.3). Small mono labels, dates, captions and table headers use the
+   "dim" tokens, which measured 3.1 to 3.4:1. Body-size text needs 4.5:1.
+   --ink-dim #8C8592 -> #6F6976: 4.56 on cream, 4.96 on paper, 5.09 on plate.
+   --d-dim  #64626F -> #82808E: 5.17 on ink-0, 4.80 on the app window (#141121). */
+:root { --ink-dim: #6F6976; --d-dim: #82808E; }
+/* Verdict chips on light: the chip text sat on its own 8% tint (3.5 to 4.4:1). Same hues,
+   darker, text only; dots, bars and dark-surface chips keep --ok / --warn / --bad. */
+.v-promote { color: #137140; }
+.v-review { color: #8A560D; }
+.v-block { color: #B22F28; }
+.vl-foot .vl-open { color: var(--violet-deep); }   /* violet on sand was 4.49:1 */
+.term .c, .nf-pre .c { color: var(--d-dim); }        /* code comments were #6A6878, 3.7:1 */
+.fam-list .fam-not { opacity: 1; }                   /* .7 opacity took its labels to 3.2:1 */
+.fam-list .fam-not .fam-name { color: var(--ink-mute); }
+
+/* 2. Reduced motion: smooth scrolling is motion too (anchor jumps, Tab focus scrolling). */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* 3. Phone menu: the sheet is position: fixed, so on a short screen (a phone held sideways,
+   390px tall) its last links and the CTA were below the screen and unreachable. */
+.nav-sheet { max-height: calc(100vh - 60px); max-height: calc(100dvh - 60px); overflow-y: auto; overscroll-behavior: contain; }
+
+/* 4. Matrix map (matrix.html hero) between 641 and 1080px: chip names were cut to
+   "Inferen…" and model names to "Qwen2.5-0.5B-Inst…". Use the phone treatment earlier:
+   short model names (no "-Instruct") up to 1080px, vertical chip names up to 900px. */
+@media (max-width: 1080px) {
+  .mm-sfx { display: none; }
+}
+@media (max-width: 900px) {
+  .mm-h .mm-m { visibility: hidden; }
+  .mm-ch { writing-mode: vertical-rl; transform: rotate(180deg); text-align: left; height: 72px; overflow: visible; justify-self: center; }
+}
+
+/* 5. Tap targets on touch layouts (<= 1080px, where the phone menu shows): at least 40px
+   tall. Footer links were 17px, the nav CTA 34px, the logo 24px, standalone text links
+   19 to 24px. Standalone links get a taller hit area with no change to the layout
+   (padding, cancelled by a negative margin). Links inside sentences are left alone. */
+@media (max-width: 1080px) {
+  .brand { min-height: 40px; }
+  .btn-sm { height: 40px; }
+  .foot-map ul { gap: 0; margin-top: 6px; }
+  .foot-map a { display: inline-flex; align-items: center; min-height: 40px; min-width: 40px; }
+  .fine > a.tl, .does-link a, .back a, .letter a, .pane-h a, .mx-you a,
+  .vd-link, .board-cell a, .backends .you a, .mfc-m a, .person a.tl, .pane > a,
+  td > a:only-child { display: inline-block; padding-block: 11px; margin-block: -11px; }
+  .eyebrow a { display: inline-block; padding: 11px 6px; margin: -11px -6px; }
+  /* rows of links that wrap: no row gap, so two rows' hit areas don't overlap (+6px a row) */
+  .links, .ex-more { row-gap: 0; }
+  .links a, .ex-more a { display: inline-block; padding-block: 8px; }
+  .read-toc a, .qindex li a { padding-block: 11px; }
+  .qindex-h { padding-block: 10px; margin-block: -10px; }
+  .read-toc summary { min-height: 40px; align-items: center; }
+}
+/* end QA fixes (v9-qa) */
+
+/* QA fixes (merge 3 Nov): tap targets for components added in rev 9.2 after the QA pass
+   (closing-band offer links, 'How measured' evidence links, FAQ search) */
+@media (max-width: 1080px) {
+  .offer-h a.tl, a.ev { display: inline-flex; align-items: center; min-height: 40px; }
+}
+.qa-search input { min-height: 44px; }
+
+/* Verdict green, a touch deeper on light surfaces (4 Nov): squares were --ok at 80% opacity.
+   Dark-surface greens (--ok-d) are unchanged. */
+.verdict .gate-bar i:not(.f):not(.s), .rep-groups em i:not(.f):not(.s) { background: #147A44; opacity: 1; }
+.vl-word:not(.vl-block):not(.vl-review) { color: #137140; }
+.vl-ring { background: #147A44; box-shadow: 0 0 0 4px rgba(20,122,68,.16); }
+.vl-block .vl-ring { background: var(--bad); box-shadow: 0 0 0 4px rgba(200,55,47,.14); }
+.vl-review .vl-ring { background: var(--warn); box-shadow: 0 0 0 4px rgba(168,106,18,.14); }

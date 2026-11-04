@@ -24,7 +24,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/source-serif-4-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="site.css?v=202611022143">
+<link rel="preload" href="fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="site.css?v=202611040814">
 <script>document.documentElement.classList.add('js')</script>
 </head>
 <body class="page-status">
@@ -34,7 +35,7 @@
   <div class="wrap nav-in">
     <a class="brand" href="index.html" aria-label="FuseZap home">
       <img class="brand-mark" src="favicon.svg" alt="" width="24" height="24">
-      <img class="brand-word" src="wordmark-light.svg" alt="FuseZap" width="88" height="20">
+      <img class="brand-word" src="wordmark-light.svg" alt="FuseZap" width="88" height="20" fetchpriority="high">
     </a>
     <div class="nav-links">
       <a href="chips.html">Chips</a><a href="validate.html">Validate</a><a href="core.html">Core &amp; Serve</a><a href="matrix.html">Matrix</a><a href="blog/index.html">Blog</a><a href="engineering.html">Engineering</a><a href="about.html">About</a>
@@ -62,6 +63,7 @@
   <div class="wrap">
     <div class="sec-head sec-head-row"><div><p class="kicker reveal">Targets and actuals</p><h2 class="h2 reveal">The whole list. Nothing tucked away.</h2></div><p class="sec-aside reveal">Each row puts the target next to the number we actually got.</p></div>
     <div class="reveal"><div class="scroll-box st-box" role="region" tabindex="0" aria-label="Targets and actuals"><table class="st-tbl"><thead><tr><th scope="col">Area</th><th scope="col">Target</th><th scope="col">Actual</th><th scope="col">Where it stands</th></tr></thead><tbody><tr><td>Inferentia2, first token (Qwen2.5-7B, both cores, one request)</td><td>AWS NxD Inference: 50.6 ms</td><td>55.4 ms (1 Nov)</td><td><span class="st st-gap">Not yet</span> About 5 ms behind</td></tr><tr><td>Inferentia2, time per token (same setup)</td><td>AWS NxD Inference: 40.6 ms</td><td>38.8 ms (1 Nov)</td><td><span class="st st-on">There</span> About 4% faster</td></tr><tr><td>2× H200, first token, Llama-3.3-70B (one request)</td><td>vLLM 0.32: 34.0 ms</td><td>44.8 ms (26 Oct)</td><td><span class="st st-gap">Not yet</span> Behind</td></tr><tr><td>2× H200, first token, Qwen2.5-72B (one request)</td><td>vLLM 0.32: 36.0 ms</td><td>65.9 ms (26 Oct)</td><td><span class="st st-gap">Not yet</span> Behind</td></tr><tr><td>2× H200, time per token (both 70B-class models)</td><td>Level with vLLM 0.32</td><td>Within 4% (26 Oct)</td><td><span class="st st-on">There</span> About level</td></tr><tr><td>One H100, time per token (Qwen2.5-7B)</td><td>vLLM 0.32: 5.85 ms</td><td>5.57 ms (26 Oct)</td><td><span class="st st-on">There</span> Level</td></tr><tr><td>Trainium1, output tokens/s with 4 users (Qwen2.5-0.5B, fp32)</td><td>AWS vLLM + vllm-neuron: 238.4</td><td>198.6 (27 Oct)</td><td><span class="st st-gap">Not yet</span> Behind</td></tr><tr><td>One H100, Qwen2.5-32B, output tokens/s (one request)</td><td>vLLM 0.32: 40.1</td><td>31.4 (21 Oct, before the speed work)</td><td><span class="st st-open">Open</span> Not re-measured</td></tr><tr><td>FP8 speed and longer prompts</td><td>Re-measured against vLLM</td><td>Last measured 20 Oct, before the speed work</td><td><span class="st st-open">Open</span> Not re-measured</td></tr><tr><td>A second, structurally different model on Inferentia2</td><td>Served, and the backend work it took published</td><td>—</td><td><span class="st st-open">Open</span> Next</td></tr><tr><td>Models tested end to end</td><td>The families customers ask for</td><td>Qwen2.5 and Llama 3.3</td><td><span class="st st-open">Open</span> Text models only so far: no image models (diffusion) yet, and no mixture-of-experts or sliding-window attention</td></tr><tr><td>FuseZap Validate licensing</td><td>Signed licence files that work offline</td><td>In progress</td><td><span class="st st-open">Open</span> Until then we run Validate with you</td></tr><tr><td>Validate on other servers</td><td>Any OpenAI-compatible server</td><td>Run on vLLM and on FuseZap so far</td><td><span class="st st-open">Open</span> More as we go</td></tr><tr><td>FuseZap Core &amp; Serve open-source release</td><td>Public, Apache-2.0</td><td>Code not public yet</td><td><span class="st st-open">Open</span> Coming</td></tr><tr><td>Op-coverage check you run yourself</td><td>Published</td><td>Not published</td><td><span class="st st-open">Open</span> Coming</td></tr><tr><td>First public release</td><td>A dated release with notes</td><td>Not out yet</td><td><span class="st st-open">Open</span> See <a href="releases.html">releases</a></td></tr><tr><td>Production fleet features</td><td>Rollouts, rollback, recovery from device failures, multi-tenant isolation</td><td>Not built</td><td><span class="st st-open">Open</span> With our first design partners</td></tr></tbody></table></div></div>
+    <p class="measured"><b>How measured</b><span>the hardware named in each row</span><span>baselines vLLM 0.32 and AWS NxD Inference, as each row says</span><span>one request unless the row says otherwise</span><span>the date in each row; page updated 2 November 2026</span><span><a class="ev" href="engineering.html">The engineering notes →</a></span></p>
     <div class="two-even two blk-sm">
       <p class="track-note reveal">The H200 runs were on two separately rented machines a day apart, so read a few percent either way as noise. The H100 and Inferentia2 comparisons ran on the same kind of machine.</p>
       <p class="fine reveal">Sources and methods for every row are in <a class="tl" href="engineering.html">the engineering notes →</a> Other known limits, such as no prefix caching and no pipeline parallelism, are listed <a class="tl" href="engineering.html#production">there too →</a></p>
@@ -75,7 +77,8 @@
     <p>We rewrote the kernels that process the prompt, and the first token went from 91 milliseconds to 55, with the same answers, bit for bit. The last few milliseconds are the first thing on the list.</p>
   </div>
   <div class="does reveal"><p class="does-k">What FuseZap does</p><h3>What we’re doing about it.</h3><p>First token on Inferentia2 level with AWS’s library is at the top of “Next”. We’ll write again when it’s level.</p></div>
-  </div><figure class="term-fig reveal" aria-labelledby="ft-cap">
+  </div><div>
+  <figure class="term-fig reveal" aria-labelledby="ft-cap">
     <div class="app">
       <div class="app-bar"><span class="app-crumb"><b>inf2.8xlarge</b><i>/</i>Qwen2.5-7B-Instruct</span><span class="app-status">first token · one request</span></div>
       <div class="readout" style="--n:2">
@@ -88,7 +91,9 @@
       </div>
     </div>
     <figcaption class="cap" id="ft-cap"><b>Fig. 1</b><span>Lower is better. From the Inferentia2 notes, 29 October and 1 November 2026.</span></figcaption>
-  </figure></div></div></section>
+  </figure>
+  <p class="measured"><b>How measured</b><span>AWS inf2.8xlarge, one Inferentia2, both NeuronCores</span><span>Neuron SDK 2.33; baseline AWS NxD Inference 0.10</span><span>Qwen2.5-7B-Instruct, bf16 · 128 in, 128 out, greedy · one request</span><span>29 October and 1 November 2026; NxD Inference 28 October</span><span><a class="ev" href="engineering.html#inferentia2-oct29">The Inferentia2 notes →</a></span></p>
+  </div></div></div></section>
 
 <section class="sec sec-paper" id="next">
   <div class="wrap">
@@ -105,21 +110,8 @@
   <div class="wrap close-in">
     <h2 class="h-close reveal" id="close-h">Your chip could be<br><span><em class="it">the next row</em> here.</span></h2>
     <p class="close-lede reveal">We’d rather show you a gap than hide one. If what you need is on the “next” list, or not on it at all, tell us. It moves things.</p>
-    <div class="cta-row cta-row-center reveal">
-      <a class="btn btn-accent btn-lg" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20chip%20assessment.%0A%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0ATarget%20models%3A%20%0ATimeline%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Request a chip assessment</a>
-      <a class="btn btn-ghost-dark btn-lg" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20release%20check&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20release%20check.%0A%0AModel%20server%20%28vLLM%2C%20SGLang%2C%20our%20own%20or%20other%29%3A%20%0AModels%3A%20%0AHardware%3A%20%0AThe%20release%20we%27re%20about%20to%20ship%2C%20and%20when%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Book a release check</a>
-      <a class="btn btn-ghost-dark btn-lg" href="reports/fusezap-validate-qwen2.5-72b-vllm.html">See a sample report</a>
-    </div>
-    <div class="include reveal">
-      <p class="include-h">What to include</p>
-      <ol>
-        <li>Your stage: simulator, first silicon or shipping</li>
-        <li>Your kernel toolchain (C, LLVM, MLIR or other)</li>
-        <li>The models your customers ask for</li>
-        <li>Your timeline</li>
-        <li>Whether you need an NDA first</li>
-      </ol>
-    </div>
+    <div class="cta-row cta-row-center reveal"><a class="btn btn-accent btn-lg" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20chip%20assessment.%0A%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0ATarget%20models%3A%20%0ATimeline%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Request a chip assessment</a><a class="btn btn-ghost-dark btn-lg" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20release%20check&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20release%20check.%0A%0AServing%20engine%20and%20version%3A%20%0AModel%28s%29%3A%20%0AHardware%3A%20%0AHow%20often%20we%20release%3A%20%0AWhat%20broke%20last%20time%3A%20%0ACI%20system%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Book a release check</a><a class="btn btn-ghost-dark btn-lg" href="reports/fusezap-validate-qwen2.5-72b-vllm.html">See a sample report</a></div>
+    <div class="offers offers-2 reveal"><div class="offer"><div class="offer-h"><span>For chip teams</span><a class="tl tl-dark" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20chip%20assessment.%0A%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0ATarget%20models%3A%20%0ATimeline%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Request a chip assessment →</a></div><div class="offer-row"><p class="include-h">What you get</p><p class="offer-get"><b>Week 0: the op-coverage report.</b> What runs on your toolchain or simulator today, and what it would take for the rest. Free.</p></div><div class="offer-row"><p class="include-h">What to include</p><ol><li>Your stage: simulator, first silicon or shipping</li><li>Your kernel toolchain (C, LLVM, MLIR or other)</li><li>The models your customers ask for</li><li>Your timeline</li><li>Whether you need an NDA first</li></ol></div></div><div class="offer"><div class="offer-h"><span>For teams that ship model servers</span><a class="tl tl-dark" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20release%20check&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20release%20check.%0A%0AServing%20engine%20and%20version%3A%20%0AModel%28s%29%3A%20%0AHardware%3A%20%0AHow%20often%20we%20release%3A%20%0AWhat%20broke%20last%20time%3A%20%0ACI%20system%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Book a release check →</a></div><div class="offer-row"><p class="include-h">What you get</p><p class="offer-get"><b>One word: PROMOTE, BLOCK or REVIEW.</b> With the evidence behind it: an HTML and PDF summary, the raw JSON, CSVs, a JUnit file and an exit code for your CI.</p></div><div class="offer-row"><p class="include-h">What to include</p><ol><li>Your serving engine and its version</li><li>The model or models</li><li>Your hardware</li><li>How often you release</li><li>What broke last time</li><li>Your CI system</li><li>Whether you need an NDA first</li></ol></div></div></div>
     <div class="letter reveal">
       <div><b>One email a month.</b><span>What shipped, what we measured, and what’s still open. In plain words.</span></div>
       <a class="tl tl-dark" href="mailto:tgpromod@techyodl.ai?subject=Subscribe%3A%20FuseZap%20monthly&amp;body=Please%20add%20me%20to%20the%20FuseZap%20monthly%20update.%0A">Subscribe by email →</a>
@@ -133,7 +125,7 @@
     <div class="foot-top">
       <div class="foot-brand">
         <a class="brand" href="index.html" aria-label="FuseZap home"><img src="favicon.svg" alt="" width="20" height="20"><img src="wordmark-light.svg" alt="FuseZap" width="70" height="16"></a>
-        <p>Open software for new chips, and a check before every release. A Techyodl product.</p>
+        <p>FuseZap Core helps you get models running. FuseZap Validate helps you keep them working.</p>
       </div>
       <nav class="foot-map" aria-label="Sitemap">
         <div><p class="foot-h">Product</p><ul><li><a href="chips.html">Bring-Up Program</a></li><li><a href="validate.html">Validate</a></li><li><a href="core.html">Core &amp; Serve</a></li><li><a href="matrix.html">Matrix</a></li></ul></div><div><p class="foot-h">Evidence</p><ul><li><a href="status.html">Status</a></li><li><a href="releases.html">Releases</a></li><li><a href="method.html">Method</a></li><li><a href="engineering.html">Engineering</a></li><li><a href="reports/fusezap-validate-qwen2.5-72b-vllm.html">Sample report</a></li></ul></div><div><p class="foot-h">Company</p><ul><li><a href="about.html">About</a></li><li><a href="blog/index.html">Blog</a></li><li><a href="faq.html">FAQ</a></li><li><a href="mailto:tgpromod@techyodl.ai">Contact</a></li></ul></div><div><p class="foot-h">Legal</p><ul><li><a href="privacy.html">Privacy</a></li><li><a href="terms.html">Terms</a></li></ul></div>
@@ -145,6 +137,8 @@
 
 <script>
 (() => {
+  // Escape closes the phone menu and puts focus back on its button
+  addEventListener('keydown', e => { const m = document.querySelector('.nav-more[open]'); if (e.key === 'Escape' && m) { m.open = false; m.querySelector('summary').focus(); } });
   document.querySelectorAll('.gate-bar').forEach(b => b.querySelectorAll('i').forEach((e, i) => e.style.setProperty('--i', i)));
   const els = document.querySelectorAll('.reveal');
   if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) {

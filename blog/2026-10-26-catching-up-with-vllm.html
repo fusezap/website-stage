@@ -24,7 +24,8 @@
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="preload" href="../fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../fonts/source-serif-4-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../site.css?v=202611022143">
+<link rel="preload" href="../fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../site.css?v=202611040814">
 <script>document.documentElement.classList.add('js')</script>
 </head>
 <body class="page-post page-read">
@@ -34,7 +35,7 @@
   <div class="wrap nav-in">
     <a class="brand" href="../index.html" aria-label="FuseZap home">
       <img class="brand-mark" src="../favicon.svg" alt="" width="24" height="24">
-      <img class="brand-word" src="../wordmark-light.svg" alt="FuseZap" width="88" height="20">
+      <img class="brand-word" src="../wordmark-light.svg" alt="FuseZap" width="88" height="20" fetchpriority="high">
     </a>
     <div class="nav-links">
       <a href="../chips.html">Chips</a><a href="../validate.html">Validate</a><a href="../core.html">Core &amp; Serve</a><a href="../matrix.html">Matrix</a><a href="../blog/index.html" aria-current="page">Blog</a><a href="../engineering.html">Engineering</a><a href="../about.html">About</a>
@@ -88,6 +89,7 @@
       <tr><td>First token, one person</td><td>12.4</td><td>12.3</td><td>100%</td></tr>
     </tbody>
   </table></div>
+  <p class="measured"><b>How measured</b><span>One NVIDIA H100 80GB (SXM), back to back on the same machine</span><span>FuseZap development build; vLLM 0.32.0</span><span>128 tokens in, 128 out, greedy · 1, 8 and 32 at once · 3 repetitions · FuseZap Validate</span><span>26 October 2026</span><span><a class="ev" href="../engineering.html#h100">Every setting →</a></span></p>
   <p>Speed only counts if the answers are still right. On this model FuseZap picks the same next token as a full-precision reference 99.6% of the time. vLLM, on the same test, does 99.3%.</p>
 
   <h2 id="nccl">70B across two GPUs, and the NCCL surprise</h2>
@@ -103,6 +105,7 @@
       <tr><td>First token, one person</td><td>44.8 · 65.9</td><td>34.0 · 36.0</td><td>76% · 55%</td></tr>
     </tbody>
   </table></div>
+  <p class="measured"><b>How measured</b><span>2× NVIDIA H200, tensor parallel 2, two separate machines</span><span>FuseZap development build; vLLM 0.32.0</span><span>128 tokens in, 128 out, greedy · 1, 8 and 32 at once · 3 repetitions · FuseZap Validate</span><span>vLLM 25 October, FuseZap 26 October 2026</span><span><a class="ev" href="../engineering.html#h200">Every setting →</a></span></p>
   <p>vLLM is still quicker to the first token on two GPUs: 45–66 ms for us against about 34–36 ms. That’s what we’re working on now.</p>
   <p>The answers held up. On Llama-3.3-70B, FuseZap picks the same next token as the full-precision reference 99.93% of the time (vLLM: 99.61%). Serving Qwen2.5-72B, it gets the same results as vLLM on all 151 tool-call and JSON tasks.</p>
 
@@ -157,7 +160,7 @@
     <p class="kicker">Run it on your chip, or check your next release</p>
     <div class="cta-row">
       <a class="btn btn-accent" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20chip%20assessment.%0A%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0ATarget%20models%3A%20%0ATimeline%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Request a chip assessment</a>
-      <a class="btn btn-ghost" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20release%20check&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20release%20check.%0A%0AModel%20server%20%28vLLM%2C%20SGLang%2C%20our%20own%20or%20other%29%3A%20%0AModels%3A%20%0AHardware%3A%20%0AThe%20release%20we%27re%20about%20to%20ship%2C%20and%20when%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Book a release check</a>
+      <a class="btn btn-ghost" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20release%20check&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20release%20check.%0A%0AServing%20engine%20and%20version%3A%20%0AModel%28s%29%3A%20%0AHardware%3A%20%0AHow%20often%20we%20release%3A%20%0AWhat%20broke%20last%20time%3A%20%0ACI%20system%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Book a release check</a>
       <a class="btn btn-ghost" href="../reports/fusezap-validate-qwen2.5-72b-vllm.html">See a sample report</a>
     </div>
     <p class="back"><a class="tl" href="index.html">← All posts</a></p>
@@ -170,21 +173,8 @@
   <div class="wrap close-in">
     <h2 class="h-close reveal" id="close-h">Let’s see what runs<br><span>on <em class="it">your chip</em> today.</span></h2>
     <p class="close-lede reveal">FuseZap is for chip makers, and for the platform teams who serve models on their hardware. If you just want to run a model on your own laptop, use Ollama. It’s great at that.</p>
-    <div class="cta-row cta-row-center reveal">
-      <a class="btn btn-accent btn-lg" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20chip%20assessment.%0A%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0ATarget%20models%3A%20%0ATimeline%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Request a chip assessment</a>
-      <a class="btn btn-ghost-dark btn-lg" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20release%20check&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20release%20check.%0A%0AModel%20server%20%28vLLM%2C%20SGLang%2C%20our%20own%20or%20other%29%3A%20%0AModels%3A%20%0AHardware%3A%20%0AThe%20release%20we%27re%20about%20to%20ship%2C%20and%20when%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Book a release check</a>
-      <a class="btn btn-ghost-dark btn-lg" href="../reports/fusezap-validate-qwen2.5-72b-vllm.html">See a sample report</a>
-    </div>
-    <div class="include reveal">
-      <p class="include-h">What to include</p>
-      <ol>
-        <li>Your stage: simulator, first silicon or shipping</li>
-        <li>Your kernel toolchain (C, LLVM, MLIR or other)</li>
-        <li>The models your customers ask for</li>
-        <li>Your timeline</li>
-        <li>Whether you need an NDA first</li>
-      </ol>
-    </div>
+    <div class="cta-row cta-row-center reveal"><a class="btn btn-accent btn-lg" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20chip%20assessment.%0A%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0ATarget%20models%3A%20%0ATimeline%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Request a chip assessment</a><a class="btn btn-ghost-dark btn-lg" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20release%20check&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20release%20check.%0A%0AServing%20engine%20and%20version%3A%20%0AModel%28s%29%3A%20%0AHardware%3A%20%0AHow%20often%20we%20release%3A%20%0AWhat%20broke%20last%20time%3A%20%0ACI%20system%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Book a release check</a><a class="btn btn-ghost-dark btn-lg" href="../reports/fusezap-validate-qwen2.5-72b-vllm.html">See a sample report</a></div>
+    <div class="offers offers-2 reveal"><div class="offer"><div class="offer-h"><span>For chip teams</span><a class="tl tl-dark" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20chip%20assessment.%0A%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0ATarget%20models%3A%20%0ATimeline%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Request a chip assessment →</a></div><div class="offer-row"><p class="include-h">What you get</p><p class="offer-get"><b>Week 0: the op-coverage report.</b> What runs on your toolchain or simulator today, and what it would take for the rest. Free.</p></div><div class="offer-row"><p class="include-h">What to include</p><ol><li>Your stage: simulator, first silicon or shipping</li><li>Your kernel toolchain (C, LLVM, MLIR or other)</li><li>The models your customers ask for</li><li>Your timeline</li><li>Whether you need an NDA first</li></ol></div></div><div class="offer"><div class="offer-h"><span>For teams that ship model servers</span><a class="tl tl-dark" href="mailto:tgpromod@techyodl.ai?subject=FuseZap%20release%20check&amp;body=Hi%20Promod%2C%0A%0AWe%27d%20like%20a%20FuseZap%20release%20check.%0A%0AServing%20engine%20and%20version%3A%20%0AModel%28s%29%3A%20%0AHardware%3A%20%0AHow%20often%20we%20release%3A%20%0AWhat%20broke%20last%20time%3A%20%0ACI%20system%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A">Book a release check →</a></div><div class="offer-row"><p class="include-h">What you get</p><p class="offer-get"><b>One word: PROMOTE, BLOCK or REVIEW.</b> With the evidence behind it: an HTML and PDF summary, the raw JSON, CSVs, a JUnit file and an exit code for your CI.</p></div><div class="offer-row"><p class="include-h">What to include</p><ol><li>Your serving engine and its version</li><li>The model or models</li><li>Your hardware</li><li>How often you release</li><li>What broke last time</li><li>Your CI system</li><li>Whether you need an NDA first</li></ol></div></div></div>
     <div class="letter reveal">
       <div><b>One email a month.</b><span>What shipped, what we measured, and what’s still open. In plain words.</span></div>
       <a class="tl tl-dark" href="mailto:tgpromod@techyodl.ai?subject=Subscribe%3A%20FuseZap%20monthly&amp;body=Please%20add%20me%20to%20the%20FuseZap%20monthly%20update.%0A">Subscribe by email →</a>
@@ -198,7 +188,7 @@
     <div class="foot-top">
       <div class="foot-brand">
         <a class="brand" href="../index.html" aria-label="FuseZap home"><img src="../favicon.svg" alt="" width="20" height="20"><img src="../wordmark-light.svg" alt="FuseZap" width="70" height="16"></a>
-        <p>Open software for new chips, and a check before every release. A Techyodl product.</p>
+        <p>FuseZap Core helps you get models running. FuseZap Validate helps you keep them working.</p>
       </div>
       <nav class="foot-map" aria-label="Sitemap">
         <div><p class="foot-h">Product</p><ul><li><a href="../chips.html">Bring-Up Program</a></li><li><a href="../validate.html">Validate</a></li><li><a href="../core.html">Core &amp; Serve</a></li><li><a href="../matrix.html">Matrix</a></li></ul></div><div><p class="foot-h">Evidence</p><ul><li><a href="../status.html">Status</a></li><li><a href="../releases.html">Releases</a></li><li><a href="../method.html">Method</a></li><li><a href="../engineering.html">Engineering</a></li><li><a href="../reports/fusezap-validate-qwen2.5-72b-vllm.html">Sample report</a></li></ul></div><div><p class="foot-h">Company</p><ul><li><a href="../about.html">About</a></li><li><a href="../blog/index.html">Blog</a></li><li><a href="../faq.html">FAQ</a></li><li><a href="mailto:tgpromod@techyodl.ai">Contact</a></li></ul></div><div><p class="foot-h">Legal</p><ul><li><a href="../privacy.html">Privacy</a></li><li><a href="../terms.html">Terms</a></li></ul></div>
@@ -210,6 +200,8 @@
 
 <script>
 (() => {
+  // Escape closes the phone menu and puts focus back on its button
+  addEventListener('keydown', e => { const m = document.querySelector('.nav-more[open]'); if (e.key === 'Escape' && m) { m.open = false; m.querySelector('summary').focus(); } });
   document.querySelectorAll('.gate-bar').forEach(b => b.querySelectorAll('i').forEach((e, i) => e.style.setProperty('--i', i)));
   const els = document.querySelectorAll('.reveal');
   if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) {
