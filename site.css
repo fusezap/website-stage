@@ -1570,3 +1570,37 @@ a.card:hover .go { transform: translateX(3px); }
       preload, as before; on a phone, a face whose text is in the first screen at once (the roman,
       on the blog index), the rest right after the first paint. Without JavaScript, a <noscript>
       copy of the rules in templates/base.html applies. Same files, same faces, same look. */
+
+/* Home prologue (4 Nov, Promod chose "all"): our bring-up log + the 28-op strip under the copy,
+   and the four moments drawn as a path. Real dated numbers only (BLOG-VOICE.md). */
+.glog { margin: 36px 0 0; max-width: 27rem; border: 1px solid var(--line-2); border-radius: 10px; background: var(--plate); font-family: var(--mono); font-size: var(--fs-mono); box-shadow: 0 18px 40px -30px rgba(22,19,29,.4); }
+.glog-h { display: flex; justify-content: space-between; gap: 12px; padding: 12px 18px; border-bottom: 1px dashed var(--line-2); text-transform: uppercase; letter-spacing: .1em; font-size: var(--fs-mono-sm); color: var(--ink-mute); }
+.glog-h span:first-child { color: var(--violet); }
+.glog-l { padding: 8px 18px; }
+.glog-l li { display: grid; grid-template-columns: 6.5em auto 1fr auto; align-items: baseline; gap: 10px; padding: 8px 0; color: var(--ink-2); }
+.glog-l li + li { border-top: 1px solid var(--line); }
+.glog-l b { font-weight: 500; color: var(--ink); }
+.glog-l i { border-bottom: 1px dotted var(--line-2); transform: translateY(-4px); }
+.glog-l em { font-style: normal; color: var(--ink-mute); }
+.glog-l em.glog-ok { color: #137140; font-weight: 500; letter-spacing: .06em; }
+.glog-f { padding: 12px 18px; border-top: 1px dashed var(--line-2); font-family: var(--sans); font-size: var(--fs-small); color: var(--ink-mute); display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.gops { margin: 22px 0 0; max-width: 27rem; }
+.gops-g { display: grid; grid-template-columns: repeat(28, 1fr); gap: 3px; }
+.gops-g i { height: 14px; border-radius: 2px; box-shadow: inset 0 0 0 1px var(--line-2); animation: gops-on .4s var(--ease) forwards; animation-delay: calc(var(--k) * 90ms + .6s); }
+@keyframes gops-on { to { background: var(--violet); box-shadow: none; } }
+.gops figcaption { margin-top: 10px; font-size: var(--fs-small); color: var(--ink-mute); line-height: 1.55; }
+.gops figcaption b { font-family: var(--mono); color: var(--violet); font-weight: 500; margin-right: 6px; }
+@media (prefers-reduced-motion: reduce) { .gops-g i { animation: none; background: var(--violet); box-shadow: none; } }
+@media (max-width: 640px) { .glog-l li { grid-template-columns: 5.5em 1fr auto; } .glog-l i { display: none; } .glog, .gops { max-width: none; } }
+.toc.tjour { border-top: 0; position: relative; }
+.toc.tjour::before { content: ""; position: absolute; left: 14px; right: 12.5%; top: 36px; border-top: 1px dashed rgba(108,59,255,.45); }
+.toc.tjour li + li { border-left: 0; }
+.toc.tjour a { position: relative; padding: 22px 24px 26px 0; }
+.toc.tjour .toc-n { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--paper); box-shadow: inset 0 0 0 1px rgba(108,59,255,.5); font-size: var(--fs-mono-sm); position: relative; z-index: 1; }
+.toc.tjour a:hover { background: none; }
+.toc.tjour a:hover .toc-n { background: var(--violet); color: #fff; }
+@media (max-width: 860px) { .toc.tjour::before { display: none; } }
+
+/* Review 4 Nov: the verdict's scope sits next to the verdict */
+.vl-scope { margin-top: 8px; max-width: 34em; font-size: var(--fs-small); line-height: 1.5; color: var(--ink-mute); }
+.vl-scope b { color: var(--ink); font-weight: 600; }
