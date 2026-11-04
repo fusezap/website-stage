@@ -48,8 +48,7 @@
 /* ===== §01 Tokens ===== */
 /* Self-hosted fonts (privacy.html says fonts are served from our own domain). Licences in fonts/OFL-*.txt. */
 @font-face { font-family: "Inter"; src: url(fonts/inter-latin.woff2) format("woff2"); font-weight: 300 700; font-style: normal; font-display: swap; }
-@font-face { font-family: "Source Serif 4"; src: url(fonts/source-serif-4-latin.woff2) format("woff2"); font-weight: 300 700; font-style: normal; font-display: swap; }
-@font-face { font-family: "Source Serif 4"; src: url(fonts/source-serif-4-italic-latin.woff2) format("woff2"); font-weight: 300 700; font-style: italic; font-display: swap; }
+/* Source Serif 4 (roman and italic): its @font-face rules are in _build/partials/scripts.html, see "Performance" at the end */
 @font-face { font-family: "JetBrains Mono"; src: url(fonts/jetbrains-mono-latin.woff2) format("woff2"); font-weight: 100 800; font-display: swap; }
 
 :root {
@@ -91,7 +90,7 @@
   --warn-d: #E2B260;
 
   --sans: 'Inter', -apple-system, 'Segoe UI', sans-serif;
-  --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --serif: 'FZ Serif', Georgia, 'Times New Roman', serif;
   --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
   --wrap: 1200px;
   --gut: 32px;
@@ -1554,3 +1553,20 @@ a.card:hover .go { transform: translateX(3px); }
 .post .post-checks { font-family: var(--sans); line-height: 1.5; }
 .post .post-checks li { margin-top: 0; padding: 14px 0 16px; }
 .post .post-checks li:last-child { border-bottom: 1px solid var(--line-2); }
+
+/* Performance (v9-perf, 4 Nov)
+   1. The hero headline is the page's Largest Contentful Paint. It used to fade in from opacity 0,
+      and Chrome doesn't count an invisible element, so the LCP fell to the nav wordmark image,
+      which waits behind the fonts. Now the headline is visible at first paint and keeps its
+      10px rise; the eyebrow, lede and hero object still fade in. Reduced motion: unchanged. */
+@media (prefers-reduced-motion: no-preference) {
+  .js h1.rise { opacity: 1; }
+}
+
+/* 2. Source Serif 4 (story text and italic accents, 123 KB) is rarely in a phone's first screen,
+      but any @font-face a page uses is fetched during its first layout, sharing the network with
+      the hero's Inter and JetBrains Mono. So its two faces (the @font-face rules that were at the
+      top of this file) are added by _build/partials/scripts.html: wider than 640px at once, with a
+      preload, as before; on a phone, a face whose text is in the first screen at once (the roman,
+      on the blog index), the rest right after the first paint. Without JavaScript, a <noscript>
+      copy of the rules in templates/base.html applies. Same files, same faces, same look. */
