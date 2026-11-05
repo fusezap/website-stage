@@ -252,6 +252,57 @@
    "evidence": [
     "docs/status/i81-flux2-klein-metal/README.md"
    ]
+  },
+  {
+   "model": "FLUX.2-klein-4B",
+   "status": "Preview",
+   "verified": "2026-11-04",
+   "verdict": null,
+   "baseline": "diffusers bf16 on the same GPU",
+   "verified_text": null,
+   "evidence": [
+    "docs/status/i95-flux2-klein-cuda/README.md"
+   ],
+   "gate": "G6: closer to the float32 CPU image than diffusers bf16 on all 8 prompts at 1024×1024; OpenAI images client end to end",
+   "chip": "nvidia-h100",
+   "metric": "3.2 s per 1024×1024 image (diffusers: 0.48 s)",
+   "chip_note": "bf16, image model",
+   "note": "About 7× slower than diffusers; images closer to the full-precision ones (32.7 dB against 24.7 dB)",
+   "config": "bf16 transformer, float32 text encoder and VAE, fusezap serve-image flux2-klein --device CUDA"
+  },
+  {
+   "model": "FLUX.2-klein-4B",
+   "status": "Preview",
+   "verified": "2026-11-04",
+   "verdict": null,
+   "baseline": "diffusers bf16 on the same GPU",
+   "verified_text": null,
+   "evidence": [
+    "docs/status/i95-flux2-klein-cuda/README.md"
+   ],
+   "gate": "G6: closer to the float32 CPU image than diffusers bf16 on all 8 prompts at 1024×1024; OpenAI images client end to end",
+   "chip": "nvidia-h200",
+   "metric": "3.6 s per 1024×1024 image (diffusers: 0.45 s)",
+   "chip_note": "bf16, image model, one GPU (not two)",
+   "note": "Run on one H200. About 8× slower than diffusers; the same images as on the H100 (32.7 dB against 24.7 dB)",
+   "config": "bf16 transformer, float32 text encoder and VAE, fusezap serve-image flux2-klein --device CUDA"
+  },
+  {
+   "model": "FLUX.2-klein-4B",
+   "status": "Preview",
+   "verified": "2026-11-04",
+   "verdict": null,
+   "baseline": "diffusers bf16 on the same GPU",
+   "verified_text": null,
+   "evidence": [
+    "docs/status/i95-flux2-klein-cuda/README.md"
+   ],
+   "gate": "G6: closer to the float32 CPU image than diffusers bf16 on all 8 prompts at 1024×1024",
+   "chip": "nvidia-rtx4090",
+   "metric": "3.1 s per 1024×1024 image (diffusers: 1.4 s)",
+   "chip_note": "bf16, image model, bf16 VAE",
+   "note": "About 2.3× slower than diffusers; images closer to the full-precision ones (34.0 dB against 24.5 dB). The float32 VAE doesn’t fit in 24 GB, so this run used the bf16 VAE",
+   "config": "bf16 transformer and VAE, float32 text encoder loaded and released first (24 GB)"
   }
  ],
  "planned": [
