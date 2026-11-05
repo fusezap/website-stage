@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Sample op-coverage report — FuseZap</title>
+<meta name="description" content="A sample week-0 op-coverage report, from a real run of our op-coverage tool: what runs, by op group, every problem by name, what the rest would take.">
+<link rel="canonical" href="https://fusezap.ai/reports/sample-op-coverage.html">
+<meta name="theme-color" content="#08080B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FuseZap">
+<meta property="og:title" content="What a chip team gets after week 0">
+<meta property="og:description" content="A sample week-0 op-coverage report, from a real run of our op-coverage tool: what runs, by op group, every problem by name, what the rest would take.">
+<meta property="og:url" content="https://fusezap.ai/reports/sample-op-coverage.html">
+<meta property="og:image" content="https://fusezap.ai/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="What a chip team gets after week 0">
+<meta name="twitter:description" content="A sample week-0 op-coverage report, from a real run of our op-coverage tool: what runs, by op group, every problem by name, what the rest would take.">
+<meta name="twitter:image" content="https://fusezap.ai/og.png">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preload" href="../fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/fz-serif-latin.woff2" as="font" type="font/woff2" crossorigin media="(min-width: 641px)">
+<link rel="preload" href="../fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../site.css?v=202611041624">
+<script>document.documentElement.classList.add('js')</script>
+<noscript><style>
+@font-face { font-family: "FZ Serif"; src: url(../fonts/fz-serif-latin.woff2) format("woff2"); font-weight: 300 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "FZ Serif"; src: url(../fonts/fz-serif-italic-latin.woff2) format("woff2"); font-weight: 300 700; font-style: italic; font-display: swap; }
+</style></noscript>
+</head>
+<body class="page-sample-oc">
+<!-- Generated page: edit its source in the site generator, not this file. -->
+<a class="skip" href="#main">Skip to content</a>
+<nav class="nav" aria-label="Main">
+  <div class="wrap nav-in">
+    <a class="brand" href="../index.html" aria-label="FuseZap home">
+      <img class="brand-mark" src="../favicon.svg" alt="" width="24" height="24">
+      <img class="brand-word" src="../wordmark-light.svg" alt="FuseZap" width="88" height="20" fetchpriority="high">
+    </a>
+    <div class="nav-links">
+      <a href="../chips.html">Chips</a><a href="../validate.html">Validate</a><a href="../core.html">Core &amp; Serve</a><a href="../matrix.html">Matrix</a><a href="../blog/index.html">Blog</a><a href="../engineering.html">Engineering</a><a href="../about.html">About</a>
+    </div>
+    <a class="btn btn-light btn-sm nav-cta" href="mailto:assessment@fusezap.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20FuseZap%20team%2C%0A%0AWe%27re%20bringing%20up%20a%20new%20chip%20and%20would%20like%20a%20free%20week-0%20assessment.%20A%20little%20about%20us%20and%20where%20we%20are%20is%20below%2C%20so%20you%20know%20who%20you%27re%20talking%20to.%20Happy%20to%20go%20deeper%20on%20a%20call.%0A%0AAbout%20us%0AName%20and%20role%3A%20%0ACompany%20and%20website%3A%20%0ATeam%20size%20working%20on%20software%20for%20the%20chip%3A%20%0A%0AAbout%20the%20chip%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AWhat%20it%27s%20built%20for%2C%20in%20a%20sentence%20%28e.g.%20inference%20at%20the%20edge%2C%20datacenter%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0AData%20types%20it%20supports%20well%20%28e.g.%20bf16%2C%20fp8%2C%20int8%29%3A%20%0A%0AWhat%20we%27re%20after%0AModels%20our%20customers%20ask%20for%20first%3A%20%0AWhat%20would%20make%20the%20next%203%20months%20a%20success%3A%20%0ATimeline%20%28e.g.%20silicon%20back%2C%20first%20customer%29%3A%20%0A%0APractical%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0ATime%20zone%2C%20and%20the%20best%20way%20to%20reach%20us%3A%20%0AHow%20you%20heard%20about%20FuseZap%3A%20%0A%0AAnything%20else%20you%27d%20like%20us%20to%20know%3A%20%0A">Request a chip assessment</a>
+    <details class="nav-more">
+      <summary aria-label="Menu"><span></span><span></span></summary>
+      <div class="nav-sheet">
+        <a href="../chips.html">Chips</a><a href="../validate.html">Validate</a><a href="../core.html">Core &amp; Serve</a><a href="../matrix.html">Matrix</a><a href="../blog/index.html">Blog</a><a href="../engineering.html">Engineering</a><a href="../about.html">About</a>
+        <a class="btn btn-light" href="mailto:assessment@fusezap.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20FuseZap%20team%2C%0A%0AWe%27re%20bringing%20up%20a%20new%20chip%20and%20would%20like%20a%20free%20week-0%20assessment.%20A%20little%20about%20us%20and%20where%20we%20are%20is%20below%2C%20so%20you%20know%20who%20you%27re%20talking%20to.%20Happy%20to%20go%20deeper%20on%20a%20call.%0A%0AAbout%20us%0AName%20and%20role%3A%20%0ACompany%20and%20website%3A%20%0ATeam%20size%20working%20on%20software%20for%20the%20chip%3A%20%0A%0AAbout%20the%20chip%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AWhat%20it%27s%20built%20for%2C%20in%20a%20sentence%20%28e.g.%20inference%20at%20the%20edge%2C%20datacenter%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0AData%20types%20it%20supports%20well%20%28e.g.%20bf16%2C%20fp8%2C%20int8%29%3A%20%0A%0AWhat%20we%27re%20after%0AModels%20our%20customers%20ask%20for%20first%3A%20%0AWhat%20would%20make%20the%20next%203%20months%20a%20success%3A%20%0ATimeline%20%28e.g.%20silicon%20back%2C%20first%20customer%29%3A%20%0A%0APractical%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0ATime%20zone%2C%20and%20the%20best%20way%20to%20reach%20us%3A%20%0AHow%20you%20heard%20about%20FuseZap%3A%20%0A%0AAnything%20else%20you%27d%20like%20us%20to%20know%3A%20%0A">Request a chip assessment</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<main id="main">
+<header class="hero phero" id="top"><svg class="hero-grid" aria-hidden="true" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice"><defs><pattern id="cells" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#fff" stroke-width=".5"/></pattern><radialGradient id="gridFade" cx="50%" cy="38%" r="60%"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="gridMask"><rect width="1200" height="700" fill="url(#gridFade)"/></mask></defs><g mask="url(#gridMask)" opacity=".05"><rect width="1200" height="700" fill="url(#cells)"/></g></svg><div class="hero-glow" aria-hidden="true"></div><div class="wrap hero-copy"><p class="eyebrow rise"><span class="eyebrow-dot" aria-hidden="true"></span>Sample · Week-0 op-coverage report</p><h1 class="rise d1">Where you stand,<br><span>op by op.</span></h1><p class="lede rise d2">This is what a chip team receives after week 0. It’s a sample: a real run of our op-coverage tool on our own Inferentia2 kernels, not on a customer’s chip. Every number about the run is read from the tool’s own report.</p><div class="hero-actions rise d3"><a class="btn btn-accent" href="mailto:assessment@fusezap.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20FuseZap%20team%2C%0A%0AWe%27re%20bringing%20up%20a%20new%20chip%20and%20would%20like%20a%20free%20week-0%20assessment.%20A%20little%20about%20us%20and%20where%20we%20are%20is%20below%2C%20so%20you%20know%20who%20you%27re%20talking%20to.%20Happy%20to%20go%20deeper%20on%20a%20call.%0A%0AAbout%20us%0AName%20and%20role%3A%20%0ACompany%20and%20website%3A%20%0ATeam%20size%20working%20on%20software%20for%20the%20chip%3A%20%0A%0AAbout%20the%20chip%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AWhat%20it%27s%20built%20for%2C%20in%20a%20sentence%20%28e.g.%20inference%20at%20the%20edge%2C%20datacenter%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0AData%20types%20it%20supports%20well%20%28e.g.%20bf16%2C%20fp8%2C%20int8%29%3A%20%0A%0AWhat%20we%27re%20after%0AModels%20our%20customers%20ask%20for%20first%3A%20%0AWhat%20would%20make%20the%20next%203%20months%20a%20success%3A%20%0ATimeline%20%28e.g.%20silicon%20back%2C%20first%20customer%29%3A%20%0A%0APractical%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0ATime%20zone%2C%20and%20the%20best%20way%20to%20reach%20us%3A%20%0AHow%20you%20heard%20about%20FuseZap%3A%20%0A%0AAnything%20else%20you%27d%20like%20us%20to%20know%3A%20%0A">Request a chip assessment</a><a class="btn btn-ghost-dark" href="../reports/fusezap-opcheck-nkishim-sample.html">Open the tool’s own report</a></div></div><div class="wrap phero-obj rise d4">
+  <div class="app" role="group" aria-label="Sample op-coverage report summary: fz-opcheck on NKISHIM, 2 Nov 2026">
+  <div class="app-bar"><span class="app-crumb"><b>fz-opcheck 0.1.0-prototype</b><i>/</i>NKISHIM</span><span class="app-status">sample · full run · 2 Nov 2026</span></div>
+  <div class="readout" style="--n:3">
+    <div><span>Primitive ops</span><b>26 of 28</b><small>pass · 2 not supported · 0 fail</small></div>
+    <div><span>Composite checks</span><b>6 of 6</b><small>matmul, attention, rmsnorm, rope, softmax, sampling</small></div>
+    <div><span>Model families</span><b class="ok">3 of 3</b><small>covered families reachable</small></div>
+  </div>
+  <div class="readout" style="--n:3">
+    <div><span>Cases</span><b>520</b><small>in 5.4 s · f32, bf16 + i32</small></div>
+    <div><span>Pass / fail / unsupported</span><b>503 / 0 / 1</b><small>0 errors · 16 skipped</small></div>
+    <div><span>Reachable</span><b class="oc-fam">Llama · Qwen2 · Mistral</b><small>the gate before an end-to-end model test</small></div>
+  </div>
+</div>
+<p class="phero-obj-cap">fz-opcheck on NKISHIM, 2 November 2026: the kernels of our Inferentia2 backend, run by a numpy stand-in for the chip, on a Mac.</p></div></header>
+
+<section class="prologue" id="which" aria-labelledby="which-h"><div class="wrap"><div class="pro-grid"><div class="pro-copy"><p class="kicker reveal">Which run this is</p><h2 class="h2 reveal" id="which-h">A sample, with <em class='it'>nothing</em> filled in.</h2><div class="story story-lg reveal"><p>Your report will be about your toolchain or your simulator. We can’t show you anyone else’s. So this one is ours.</p><p>On 2 November we ran fz-opcheck, our op-coverage tool, on NKISHIM: the kernels we wrote for AWS Inferentia2, run by a numpy stand-in for the chip, so the test needs no hardware. Further down, our first full run on the real chip, on 26 October, shows what failures look like.</p></div><p class="pro-end reveal">Where the sample has no data, this page says so. Nothing is made up to fill a gap.</p></div>
+  <figure class="pro-fig reveal"><svg class="fig-ops" viewBox="-1 -1 500 190" role="img" aria-label="The 28 basic operations, by name: 16 elementwise, 2 reductions, 6 that move data and 4 that load it"><rect style="fill:var(--violet);stroke:var(--violet)" x="0.5" y="0.5" width="65" height="33" rx="4" fill-opacity=".09" stroke-opacity=".45" stroke-width=".8"/><text x="33.0" y="20.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">NEG</text><rect style="fill:var(--violet);stroke:var(--violet)" x="72.5" y="0.5" width="65" height="33" rx="4" fill-opacity=".09" stroke-opacity=".45" stroke-width=".8"/><text x="105.0" y="20.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">EXP2</text><rect style="fill:var(--violet);stroke:var(--violet)" x="144.5" y="0.5" width="65" height="33" rx="4" fill-opacity=".09" stroke-opacity=".45" stroke-width=".8"/><text x="177.0" y="20.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">LOG2</text><rect style="fill:var(--violet);stroke:var(--violet)" x="216.5" y="0.5" width="65" height="33" rx="4" fill-opacity=".09" stroke-opacity=".45" stroke-width=".8"/><text x="249.0" y="20.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">SIN</text><rect style="fill:var(--violet);stroke:var(--violet)" x="288.5" y="0.5" width="65" height="33" rx="4" fill-opacity=".09" stroke-opacity=".45" stroke-width=".8"/><text x="321.0" y="20.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">SQRT</text><rect style="fill:var(--violet);stroke:var(--violet)" x="360.5" y="0.5" width="65" height="33" rx="4" fill-opacity=".09" stroke-opacity=".45" stroke-width=".8"/><text x="393.0" y="20.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">RECIP</text><rect style="fill:var(--violet);stroke:var(--violet)" x="432.5" y="0.5" width="65" height="33" rx="4" fill-opacity=".09" stroke-opacity=".45" stroke-width=".8"/><text x="465.0" y="20.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">CAST</text><rect style="fill:var(--violet);stroke:var(--violet)" x="0.5" y="40.5" width="65" height="33" rx="4" fill-opacity=".09" stroke-opacity=".45" stroke-width=".8"/><text x="33.0" y="60.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">BITCAST</text><rect style="fill:var(--violet);stroke:var(--violet)" x="72.5" y="40.5" width="65" height="33" rx="4" fill-opacity=".09" stroke-opacity=".45" stroke-width=".8"/><text x="105.0" y="60.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">ADD</text><rect style="fill:var(--violet);stroke:var(--violet)" x="144.5" y="40.5" width="65" height="33" rx="4" fill-opacity=".09" stroke-opacity=".45" stroke-width=".8"/><text x="177.0" y="60.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">MUL</text><rect style="fill:var(--violet);stroke:var(--violet)" x="216.5" y="40.5" width="65" height="33" rx="4" fill-opacity=".09" stroke-opacity=".45" stroke-width=".8"/><text x="249.0" y="60.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">MAX</text><rect style="fill:var(--violet);stroke:var(--violet)" x="288.5" y="40.5" width="65" height="33" rx="4" fill-opacity=".09" stroke-opacity=".45" stroke-width=".8"/><text x="321.0" y="60.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">CMPLT</text><rect style="fill:var(--violet);stroke:var(--violet)" x="360.5" y="40.5" width="65" height="33" rx="4" fill-opacity=".09" stroke-opacity=".45" stroke-width=".8"/><text x="393.0" y="60.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">CMPEQ</text><rect style="fill:var(--violet);stroke:var(--violet)" x="432.5" y="40.5" width="65" height="33" rx="4" fill-opacity=".09" stroke-opacity=".45" stroke-width=".8"/><text x="465.0" y="60.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">IDIV</text><rect style="fill:var(--violet);stroke:var(--violet)" x="0.5" y="80.5" width="65" height="33" rx="4" fill-opacity=".09" stroke-opacity=".45" stroke-width=".8"/><text x="33.0" y="100.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">MOD</text><rect style="fill:var(--violet);stroke:var(--violet)" x="72.5" y="80.5" width="65" height="33" rx="4" fill-opacity=".09" stroke-opacity=".45" stroke-width=".8"/><text x="105.0" y="100.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">WHERE</text><rect x="144.5" y="80.5" width="65" height="33" rx="4" style="fill:var(--violet)"/><text style="fill:var(--plate);font: 500 9.5px var(--mono); letter-spacing: .04em" x="177.0" y="100.5" text-anchor="middle">SUM</text><rect x="216.5" y="80.5" width="65" height="33" rx="4" style="fill:var(--violet)"/><text style="fill:var(--plate);font: 500 9.5px var(--mono); letter-spacing: .04em" x="249.0" y="100.5" text-anchor="middle">MAX</text><rect x="288.5" y="80.5" width="65" height="33" rx="4" fill="none" stroke="currentColor" stroke-width=".8"/><text x="321.0" y="100.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">RESHAPE</text><rect x="360.5" y="80.5" width="65" height="33" rx="4" fill="none" stroke="currentColor" stroke-width=".8"/><text x="393.0" y="100.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">PERMUTE</text><rect x="432.5" y="80.5" width="65" height="33" rx="4" fill="none" stroke="currentColor" stroke-width=".8"/><text x="465.0" y="100.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">EXPAND</text><rect x="0.5" y="120.5" width="65" height="33" rx="4" fill="none" stroke="currentColor" stroke-width=".8"/><text x="33.0" y="140.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">PAD</text><rect x="72.5" y="120.5" width="65" height="33" rx="4" fill="none" stroke="currentColor" stroke-width=".8"/><text x="105.0" y="140.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">SHRINK</text><rect x="144.5" y="120.5" width="65" height="33" rx="4" fill="none" stroke="currentColor" stroke-width=".8"/><text x="177.0" y="140.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">FLIP</text><rect x="216.5" y="120.5" width="65" height="33" rx="4" fill="none" stroke="currentColor" stroke-width=".8" stroke-dasharray="3 2.5"/><text x="249.0" y="140.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">CONST</text><rect x="288.5" y="120.5" width="65" height="33" rx="4" fill="none" stroke="currentColor" stroke-width=".8" stroke-dasharray="3 2.5"/><text x="321.0" y="140.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">EMPTY</text><rect x="360.5" y="120.5" width="65" height="33" rx="4" fill="none" stroke="currentColor" stroke-width=".8" stroke-dasharray="3 2.5"/><text x="393.0" y="140.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">COPY</text><rect x="432.5" y="120.5" width="65" height="33" rx="4" fill="none" stroke="currentColor" stroke-width=".8" stroke-dasharray="3 2.5"/><text x="465.0" y="140.5" text-anchor="middle" fill="currentColor" style="font: 500 9.5px var(--mono); letter-spacing: .04em">CONTIG.</text><rect style="fill:var(--violet);stroke:var(--violet)" x="0" y="168" width="10" height="10" rx="2" fill-opacity=".09" stroke-opacity=".45" stroke-width=".8"/><text x="16" y="177" fill="currentColor" opacity=".7" style="font: 400 9px var(--mono); letter-spacing: .1em">ELEMENTWISE 16</text><rect x="124.8" y="168" width="10" height="10" rx="2" style="fill:var(--violet)"/><text x="140.8" y="177" fill="currentColor" opacity=".7" style="font: 400 9px var(--mono); letter-spacing: .1em">REDUCE 2</text><rect x="212.39999999999998" y="168" width="10" height="10" rx="2" fill="none" stroke="currentColor" stroke-width=".8"/><text x="228.39999999999998" y="177" fill="currentColor" opacity=".7" style="font: 400 9px var(--mono); letter-spacing: .1em">MOVEMENT 6</text><rect x="312.4" y="168" width="10" height="10" rx="2" fill="none" stroke="currentColor" stroke-width=".8" stroke-dasharray="2 1.5"/><text x="328.4" y="177" fill="currentColor" opacity=".7" style="font: 400 9px var(--mono); letter-spacing: .1em">LOAD 4</text></svg><figcaption class="cap"><b>Fig. 1</b><span>28 primitive operations. Every model FuseZap runs is broken down into them.</span></figcaption></figure>
+</div><ol class="toc reveal" style="--n:5" aria-label="On this page"><li><a href="#summary"><span class="toc-n">01</span><span class="toc-t">What runs today, by op group</span><span class="toc-p">Coverage</span></a></li><li><a href="#named"><span class="toc-n">02</span><span class="toc-t">Every problem, by name</span><span class="toc-p">Failures</span></a></li><li><a href="#chip"><span class="toc-n">03</span><span class="toc-t">Three tests out of 1,174</span><span class="toc-p">On the chip</span></a></li><li><a href="#rest"><span class="toc-n">04</span><span class="toc-t">What the rest would take</span><span class="toc-p">The rest</span></a></li><li><a href="#estimate"><span class="toc-n">05</span><span class="toc-t">Then, an honest estimate</span><span class="toc-p">Illustrative</span></a></li></ol></div></section>
+
+<section class="sec sec-paper" id="summary">
+  <div class="wrap">
+    <div class="sec-head sec-head-row"><div><p class="kicker reveal">01 · Coverage</p><h2 class="h2 reveal">What runs today, by op group.</h2></div><p class="sec-aside reveal">An op runs when every one of its cases passes. A case is compared with a PyTorch or float64 reference. One bad case makes the op bad.</p></div>
+    <div class="scroll-box oc-box reveal" role="region" tabindex="0" aria-label="Op coverage by group"><table class="tbl oc-tbl"><thead><tr><th scope="col">Group</th><th scope="col" class="num">Ops</th><th scope="col" class="num">Runs</th><th scope="col" class="num">Fails</th><th scope="col" class="num">Not supported</th><th scope="col" class="num">Cases passed</th><th scope="col" class="num">Skipped</th></tr></thead><tbody><tr><td>Unary<small>neg, exp2, log2, sin, sqrt, recip, cast, bitcast</small></td><td class="num">8</td><td class="num"><b class="oc-pass">8</b></td><td class="num"><span class="dim">0</span></td><td class="num"><span class="dim">0</span></td><td class="num">51 / 51</td><td class="num"><span class=dim>0</span></td></tr><tr><td>Binary<small>add, mul, max, cmplt, cmpeq, idiv, mod</small></td><td class="num">7</td><td class="num"><b class="oc-pass">5</b></td><td class="num"><span class="dim">0</span></td><td class="num"><b class="oc-uns">2</b></td><td class="num">86 / 88</td><td class="num"><span class=dim>0</span></td></tr><tr><td>Ternary<small>where</small></td><td class="num">1</td><td class="num"><b class="oc-pass">1</b></td><td class="num"><span class="dim">0</span></td><td class="num"><span class="dim">0</span></td><td class="num">1 / 1</td><td class="num"><span class=dim>0</span></td></tr><tr><td>Reduce<small>sum, max</small></td><td class="num">2</td><td class="num"><b class="oc-pass">2</b></td><td class="num"><span class="dim">0</span></td><td class="num"><span class="dim">0</span></td><td class="num">212 / 228</td><td class="num">16</td></tr><tr><td>Movement<small>reshape, permute, expand, pad, shrink, flip</small></td><td class="num">6</td><td class="num"><b class="oc-pass">6</b></td><td class="num"><span class="dim">0</span></td><td class="num"><span class="dim">0</span></td><td class="num">35 / 35</td><td class="num"><span class=dim>0</span></td></tr><tr><td>Load<small>const, empty, copy, contiguous</small></td><td class="num">4</td><td class="num"><b class="oc-pass">4</b></td><td class="num"><span class="dim">0</span></td><td class="num"><span class="dim">0</span></td><td class="num">26 / 26</td><td class="num"><span class=dim>0</span></td></tr><tr class=oc-comp><td>Composite checks<small>matmul, attention, rmsnorm, rope, softmax, sampling</small></td><td class="num">6</td><td class="num"><b class="oc-pass">6</b></td><td class="num"><span class="dim">0</span></td><td class="num"><span class="dim">0</span></td><td class="num">93 / 93</td><td class="num"><span class=dim>0</span></td></tr></tbody></table></div>
+    <p class="fine reveal">Cases are counted per op. A case that checks two ops counts under both (integer divide and modulo share one), so the column adds up to a little more than the run’s 520 cases. The 16 skipped cases are reduce shapes where the axis doesn’t apply.</p>
+
+    <h3 class="oc-h reveal" id="models">Which models it reaches</h3>
+    <p class="oc-p reveal">A family is reachable when everything its forward pass uses passed. That’s the gate before an end-to-end model test, not a replacement for one.</p>
+    <div class="scroll-box reveal" role="region" tabindex="0" aria-label="Model families"><table class="tbl oc-tbl"><thead><tr><th scope="col">Family</th><th scope="col">Status</th><th scope="col">Needs, or what’s missing</th></tr></thead><tbody><tr><td>Llama<small>Llama-3.2-1B/3B, Llama-3.1-8B, Llama-3.3-70B</small></td><td><span class="st st-on">reachable</span><small>bf16: 13 ops inferred from f32/i32 cases</small></td><td>21 of 28 ops + matmul, attention, rmsnorm, rope, softmax</td></tr><tr><td>Qwen2 / Qwen2.5<small>Qwen2.5-0.5B, Qwen2.5-7B, Qwen2.5-72B</small></td><td><span class="st st-on">reachable</span><small>bf16: 13 ops inferred from f32/i32 cases</small></td><td>21 of 28 ops + matmul, attention, rmsnorm, rope, softmax</td></tr><tr><td>Mistral<small>Mistral-7B-Instruct-v0.3</small></td><td><span class="st st-on">reachable</span><small>bf16: 13 ops inferred from f32/i32 cases</small></td><td>21 of 28 ops + matmul, attention, rmsnorm, rope, softmax</td></tr><tr><td>Mixtral / Qwen-MoE<small></small></td><td><span class="st st-open">not covered yet</span></td><td>mixture of experts: top-k routing and expert gather/scatter</td></tr><tr><td>Gemma 2 / 3<small></small></td><td><span class="st st-open">not covered yet</span></td><td>GeLU-tanh MLP, logit soft-capping, sliding-window layers</td></tr><tr><td>Phi-3 / Phi-4<small></small></td><td><span class="st st-open">not covered yet</span></td><td>fused qkv / gate-up layout, LongRoPE</td></tr><tr><td>DeepSeek-V3<small></small></td><td><span class="st st-open">not covered yet</span></td><td>multi-head latent attention and MoE</td></tr><tr><td>Vision-language, Mamba / SSM<small></small></td><td><span class="st st-open">not covered yet</span></td><td>vision encoders, selective-scan kernels</td></tr></tbody></table></div>
+    <p class="measured"><b>How measured</b><span>A Mac, Apple silicon, Python 3.12.13. No chip: NKISHIM runs the kernels in numpy</span><span>fz-opcheck 0.1.0-prototype · FuseZap commit 27e3f04</span><span>full run: 520 cases, float32 and bfloat16, plus int32 cases</span><span>2 November 2026</span><span><a class="ev" href="../reports/fusezap-opcheck-nkishim-sample.html">The tool’s own report →</a></span></p>
+  </div>
+</section>
+
+<section class="moment" id="named" aria-labelledby="named-h"><div class="wrap"><div class="m-head reveal"><span class="m-n">02</span><span class="m-k">Every problem, by name</span><span class="m-rule"></span><span class="m-p">Failures</span></div><div class="m-grid"><div class="m-text"><h2 class="m-title reveal" id="named-h">A failure should have<br>a <em class='it'>name</em>.</h2>
+  <div class="story reveal">
+    <p>A score tells you how far you are. A name tells you what to do on Monday.</p>
+    <p>In this run, nothing failed. Two ops weren’t supported: integer divide and modulo. Inferentia2’s compiler refuses them, and the report quotes the backend word for word.</p>
+  </div>
+  <div class="does reveal"><p class="does-k">What FuseZap does</p><h3>What it means here.</h3><p>The models we serve today don’t need them. In Llama, Qwen and Mistral, the RoPE tables and the embedding lookup run on the host. That’s why all three families stay reachable on a chip without integer divide.</p></div>
+  </div><figure class="plate reveal" aria-labelledby="named-cap">
+    <p class="fig-list-h">Not a pass, in this run</p>
+    <ul class="checks checks-1 checks-flush oc-named"><li><b>IDIV <span class="st st-gap">unsupported</span></b><span>i32 · <code>test_ops::test_int_floordiv_mod</code> · NKIUnsupported: “BinaryOps.IDIV: neuronx-cc 2.27 rejects divide/fmod/mod on inf2 for every engine”</span></li><li><b>MOD <span class="st st-gap">unsupported</span></b><span>i32 · <code>test_ops::test_int_floordiv_mod</code> · NKIUnsupported: “BinaryOps.IDIV: neuronx-cc 2.27 rejects divide/fmod/mod on inf2 for every engine”</span></li></ul>
+    <figcaption class="cap" id="named-cap"><b>Fig. 2</b><span>As the report lists them: the op, the column, the case and the backend’s own message.</span></figcaption>
+  </figure></div></div></section>
+
+<section class="moment night" id="chip" aria-labelledby="chip-h"><div class="night-glow" aria-hidden="true"></div><div class="wrap"><div class="m-head reveal"><span class="m-n">03</span><span class="m-k">On the real chip</span><span class="m-rule"></span><span class="m-p">26 Oct 2026</span></div><div class="m-grid"><div class="m-text"><h2 class="m-title reveal" id="chip-h">Three tests<br>out of <em class='it'>1,174</em>.</h2>
+  <div class="story reveal">
+    <p>A clean sample doesn’t show you what a failure looks like. Our first full run on a real Inferentia2 does. On 26 October, 1,171 of 1,174 operation tests passed on the chip. Three didn’t.</p>
+    <p>That run came before fz-opcheck. Same tests, run straight from the suite, so it reads as raw test output.</p>
+  </div>
+  <div class="does reveal"><p class="does-k">What FuseZap does</p><h3>What they meant.</h3><p><b>exp2 and tanh.</b> The chip’s built-in approximations are a little less precise than our tests allow. Not a crash. A tolerance, missed by a little. We replaced them with exact versions.</p><p><b>log2.</b> It passed the suite. A wider check found it wrong for some inputs. That’s a bug, not a tolerance.</p><p>By the next day, exp, exp2 and log2 matched the simulator bit for bit, and the suite ran on the chip with no failures.</p></div>
+  </div><figure class="term-fig reveal" aria-labelledby="chip-cap">
+    <div class="term">
+      <div class="term-bar"><span class="app-crumb"><b>inf2.xlarge</b><i>/</i>the operation test suite</span><span>26 Oct 2026</span></div>
+<pre><span class="c"># the operation suite on the chip: the three failures</span>
+FAILED test_unary[NEURON-shape3-exp2-float32]
+FAILED test_unary[NEURON-shape3-tanh-float32]
+FAILED test_unary_noncontig[NEURON-exp2]
+
+<span class="c"># each one</span>
+AssertionError: Not equal to tolerance rtol=1e-05, atol=1e-06</pre>
+    </div>
+    <figcaption class="cap" id="chip-cap"><b>Fig. 3</b><span>The FAILED lines and the assertion, from the run’s log. Test paths shortened.</span></figcaption>
+  </figure></div>
+  <div class="scroll-box reveal" role="region" tabindex="0" aria-label="The three failures, 26 Oct"><table class="tbl oc-tbl"><thead><tr><th scope="col">Test, float32</th><th scope="col">Op</th><th scope="col" class="num">Elements off</th><th scope="col" class="num">Worst relative error</th></tr></thead><tbody><tr><td><code>test_unary[shape3-exp2-float32]</code></td><td>exp2</td><td class="num">1 of 5</td><td class="num">1.13×10<sup>−5</sup></td></tr><tr><td><code>test_unary_noncontig[exp2]</code></td><td>exp2</td><td class="num">1 of 24</td><td class="num">1.07×10<sup>−5</sup></td></tr><tr><td><code>test_unary[shape3-tanh-float32]</code></td><td>tanh</td><td class="num">1 of 5</td><td class="num">1.97×10<sup>−5</sup></td></tr><tr><td>Wider check: 262,144 inputs against float64</td><td>log2</td><td class="num">some inputs; it had passed the suite</td><td class="num">2.1×10<sup>19</sup> (simulator: 1.0×10<sup>−7</sup>)</td></tr></tbody></table></div>
+  <p class="measured"><b>How measured</b><span>One AWS inf2.xlarge (one Inferentia2)</span><span>Neuron SDK 2.33</span><span>FuseZap’s operation suite on the chip · float32 tolerance rtol 10<sup>−5</sup>, atol 10<sup>−6</sup> · log2 checked separately on 262,144 inputs against float64</span><span>26 October 2026; fixed 27 October</span><span><a class="ev" href="../engineering.html#inferentia2">The Inferentia2 notes →</a></span></p>
+</div></section>
+
+<section class="sec sec-paper" id="rest">
+  <div class="wrap">
+    <div class="sec-head sec-head-row"><div><p class="kicker reveal">04 · The rest</p><h2 class="h2 reveal">What it would take for the rest.</h2></div><p class="sec-aside reveal">From this run’s own gaps. Yours will be about your chip.</p></div>
+    <div class="cards" style="--n:3">
+      <div class="card reveal"><p class="card-k">Not supported</p><h3>Integer divide and modulo</h3><p>Only needed by models that index on the device. On a chip without them, the backend would have to emulate them from ops the chip has. That isn’t built yet.</p></div>
+      <div class="card reveal"><p class="card-k">Inferred</p><h3>bfloat16 cases</h3><p>For each covered family, 13 of the ops it needs have no bfloat16 case in the suite, so the report reads their float32 or int32 result instead, and says so. Thin bfloat16 coverage is a known limit of the prototype.</p></div>
+      <div class="card reveal"><p class="card-k">Not covered yet</p><h3>Other model families</h3><p>Mixture of experts, Gemma, Phi, DeepSeek-V3, vision-language models and Mamba aren’t checked yet. The models table above says what each one adds.</p></div>
+    </div>
+    <p class="fine reveal">The report doesn’t check the serving engine’s paged-KV kernels or on-device argmax; those are custom kernels in the backend. It has no speed figure: its timings are per case and include compiling. <a class="tl" href="../chips.html#opcheck">How the tool works →</a></p>
+  </div>
+</section>
+
+<section class="sec" id="estimate">
+  <div class="wrap">
+    <div class="sec-head sec-head-row"><div><p class="kicker reveal">05 · Your estimate</p><h2 class="h2 reveal">Then, an honest estimate.</h2></div><p class="sec-aside reveal">After the report, we write an estimate for your first model. It’s written for your chip, so we don’t publish a made-up one. This part is a placeholder.</p></div>
+    <div class="card card-dashed oc-est reveal">
+      <p class="card-k">Illustrative · not a real estimate</p>
+      <h3>Your first model</h3>
+      <dl>
+        <div><dt>First model</dt><dd><span class="oc-ph">the model your customers ask for first</span></dd></div>
+        <div><dt>What has to change</dt><dd><span class="oc-ph">the ops and kernels this report names</span></dd></div>
+        <div><dt>Who does what</dt><dd><span class="oc-ph">your engineer and ours, by part of the backend</span></dd></div>
+        <div><dt>Time to a first correct model</dt><dd><span class="oc-ph">written for your chip</span></dd></div>
+        <div><dt>Risks we see</dt><dd><span class="oc-ph">named, from this report</span></dd></div>
+      </dl>
+      <p class="oc-est-f">We aim for weeks to a first model, not quarters. The estimate says how many, for your chip, and why.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-paper" id="files">
+  <div class="wrap">
+    <div class="sec-head sec-head-row"><div><p class="kicker reveal">The files</p><h2 class="h2 reveal">What this sample lacks, and the files.</h2></div><p class="sec-aside reveal">The tool writes one HTML page, with no scripts and no tracking, and one JSON file with every case. Both are here, unchanged.</p></div>
+    <div class="dl-row reveal"><span class="dl-k">This run’s files</span><ul><li><a href="../reports/fusezap-opcheck-nkishim-sample.html" download><b>HTML</b></a></li><li><a href="../reports/fusezap-opcheck-nkishim-sample.json" download><b>JSON</b></a></li></ul></div>
+    <ul class="checks checks-2">
+      <li class="reveal"><b>A real chip</b><span>NKISHIM runs the kernels in numpy, on a Mac. A real chip’s precision only shows up on the chip, as it did on 26 October.</span></li>
+      <li class="reveal"><b>Your compiler’s version</b><span>Not recorded. The prototype names FuseZap’s commit and the host, not the toolchain behind the backend.</span></li>
+      <li class="reveal"><b>Worst error against the tolerance</b><span>Empty here, because nothing failed. For a failing case, the report records how far over the tolerance it went.</span></li>
+      <li class="reveal"><b>Speed</b><span>Not measured. Timings are wall-clock per case and include compiling.</span></li>
+    </ul>
+    <div class="cta-row reveal">
+      <a class="btn btn-accent" href="mailto:assessment@fusezap.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20FuseZap%20team%2C%0A%0AWe%27re%20bringing%20up%20a%20new%20chip%20and%20would%20like%20a%20free%20week-0%20assessment.%20A%20little%20about%20us%20and%20where%20we%20are%20is%20below%2C%20so%20you%20know%20who%20you%27re%20talking%20to.%20Happy%20to%20go%20deeper%20on%20a%20call.%0A%0AAbout%20us%0AName%20and%20role%3A%20%0ACompany%20and%20website%3A%20%0ATeam%20size%20working%20on%20software%20for%20the%20chip%3A%20%0A%0AAbout%20the%20chip%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AWhat%20it%27s%20built%20for%2C%20in%20a%20sentence%20%28e.g.%20inference%20at%20the%20edge%2C%20datacenter%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0AData%20types%20it%20supports%20well%20%28e.g.%20bf16%2C%20fp8%2C%20int8%29%3A%20%0A%0AWhat%20we%27re%20after%0AModels%20our%20customers%20ask%20for%20first%3A%20%0AWhat%20would%20make%20the%20next%203%20months%20a%20success%3A%20%0ATimeline%20%28e.g.%20silicon%20back%2C%20first%20customer%29%3A%20%0A%0APractical%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0ATime%20zone%2C%20and%20the%20best%20way%20to%20reach%20us%3A%20%0AHow%20you%20heard%20about%20FuseZap%3A%20%0A%0AAnything%20else%20you%27d%20like%20us%20to%20know%3A%20%0A">Request a chip assessment</a>
+      <a class="btn btn-ghost" href="../chips.html#opcheck">Back to the Bring-Up Program</a>
+    </div>
+  </div>
+</section>
+<section class="close" id="access" aria-labelledby="close-h">
+  <svg class="close-wafer" aria-hidden="true" viewBox="0 0 400 400"><defs><clipPath id="waf"><circle cx="200" cy="200" r="190"/></clipPath></defs><circle cx="200" cy="200" r="190" fill="none" stroke="#fff" stroke-width="1"/><g clip-path="url(#waf)" stroke="#fff" stroke-width=".6" fill="none"><path d="M0 40H400M0 80H400M0 120H400M0 160H400M0 200H400M0 240H400M0 280H400M0 320H400M0 360H400M40 0V400M80 0V400M120 0V400M160 0V400M200 0V400M240 0V400M280 0V400M320 0V400M360 0V400"/></g><rect x="200" y="160" width="40" height="40" class="close-die"/></svg>
+  <div class="wrap close-in">
+    <h2 class="h-close reveal" id="close-h">Let’s see what runs<br><span>on <em class="it">your chip</em> today.</span></h2>
+    <p class="close-lede reveal">Week 0 is a test run, not a pitch. Your report will look like this one, about your toolchain or simulator. The assessment is free.</p>
+    <div class="cta-row cta-row-center reveal"><a class="btn btn-accent btn-lg" href="mailto:assessment@fusezap.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20FuseZap%20team%2C%0A%0AWe%27re%20bringing%20up%20a%20new%20chip%20and%20would%20like%20a%20free%20week-0%20assessment.%20A%20little%20about%20us%20and%20where%20we%20are%20is%20below%2C%20so%20you%20know%20who%20you%27re%20talking%20to.%20Happy%20to%20go%20deeper%20on%20a%20call.%0A%0AAbout%20us%0AName%20and%20role%3A%20%0ACompany%20and%20website%3A%20%0ATeam%20size%20working%20on%20software%20for%20the%20chip%3A%20%0A%0AAbout%20the%20chip%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AWhat%20it%27s%20built%20for%2C%20in%20a%20sentence%20%28e.g.%20inference%20at%20the%20edge%2C%20datacenter%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0AData%20types%20it%20supports%20well%20%28e.g.%20bf16%2C%20fp8%2C%20int8%29%3A%20%0A%0AWhat%20we%27re%20after%0AModels%20our%20customers%20ask%20for%20first%3A%20%0AWhat%20would%20make%20the%20next%203%20months%20a%20success%3A%20%0ATimeline%20%28e.g.%20silicon%20back%2C%20first%20customer%29%3A%20%0A%0APractical%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0ATime%20zone%2C%20and%20the%20best%20way%20to%20reach%20us%3A%20%0AHow%20you%20heard%20about%20FuseZap%3A%20%0A%0AAnything%20else%20you%27d%20like%20us%20to%20know%3A%20%0A">Request a chip assessment</a><a class="btn btn-ghost-dark btn-lg" href="mailto:release@fusezap.ai?subject=FuseZap%20release%20check&amp;body=Hi%20FuseZap%20team%2C%0A%0AWe%20ship%20a%20model%20server%20and%20would%20like%20a%20release%20check%20before%20our%20next%20release.%20A%20little%20about%20us%20and%20what%20we%20run%20is%20below.%20Happy%20to%20go%20deeper%20on%20a%20call.%0A%0AAbout%20us%0AName%20and%20role%3A%20%0ACompany%20and%20website%3A%20%0A%0AWhat%20we%20ship%0AServing%20engine%20and%20version%20%28e.g.%20vLLM%200.32%20with%20our%20patches%29%3A%20%0AModels%3A%20%0AHardware%3A%20%0AHow%20often%20we%20release%3A%20%0ACI%20system%3A%20%0A%0AWhat%20worries%20us%0AWhat%20broke%20last%20time%2C%20or%20what%20we%27re%20most%20afraid%20of%20breaking%3A%20%0AThe%20release%20we%27d%20like%20checked%2C%20and%20when%20it%20ships%3A%20%0A%0APractical%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0ATime%20zone%2C%20and%20the%20best%20way%20to%20reach%20us%3A%20%0AHow%20you%20heard%20about%20FuseZap%3A%20%0A">Book a release check</a><a class="btn btn-ghost-dark btn-lg" href="../reports/fusezap-validate-qwen2.5-72b-vllm.html">See a sample report</a></div>
+    <div class="offers offers-1 reveal"><div class="offer"><div class="offer-h"><span>For chip teams</span><a class="tl tl-dark" href="mailto:assessment@fusezap.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20FuseZap%20team%2C%0A%0AWe%27re%20bringing%20up%20a%20new%20chip%20and%20would%20like%20a%20free%20week-0%20assessment.%20A%20little%20about%20us%20and%20where%20we%20are%20is%20below%2C%20so%20you%20know%20who%20you%27re%20talking%20to.%20Happy%20to%20go%20deeper%20on%20a%20call.%0A%0AAbout%20us%0AName%20and%20role%3A%20%0ACompany%20and%20website%3A%20%0ATeam%20size%20working%20on%20software%20for%20the%20chip%3A%20%0A%0AAbout%20the%20chip%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AWhat%20it%27s%20built%20for%2C%20in%20a%20sentence%20%28e.g.%20inference%20at%20the%20edge%2C%20datacenter%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0AData%20types%20it%20supports%20well%20%28e.g.%20bf16%2C%20fp8%2C%20int8%29%3A%20%0A%0AWhat%20we%27re%20after%0AModels%20our%20customers%20ask%20for%20first%3A%20%0AWhat%20would%20make%20the%20next%203%20months%20a%20success%3A%20%0ATimeline%20%28e.g.%20silicon%20back%2C%20first%20customer%29%3A%20%0A%0APractical%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0ATime%20zone%2C%20and%20the%20best%20way%20to%20reach%20us%3A%20%0AHow%20you%20heard%20about%20FuseZap%3A%20%0A%0AAnything%20else%20you%27d%20like%20us%20to%20know%3A%20%0A">Request a chip assessment →</a></div><div class="offer-row"><p class="include-h">What you get</p><p class="offer-get"><b>Week 0: the op-coverage report.</b> What runs on your toolchain or simulator today, and what it would take for the rest. Free. <a class="tl tl-dark" href="../reports/sample-op-coverage.html">See a sample op-coverage report →</a></p></div><div class="offer-row"><p class="include-h">What to include</p><ol><li>Your stage: simulator, first silicon or shipping</li><li>Your kernel toolchain (C, LLVM, MLIR or other)</li><li>The models your customers ask for</li><li>Your timeline</li><li>Whether you need an NDA first</li></ol></div><p class="mailto-line mailto-dark">Or write to <span class="mailto-addr">assessment@fusezap.ai</span><button type="button" class="copy-addr" data-copy="assessment@fusezap.ai"><span>Copy address</span><span aria-hidden="true">Copied</span></button><span class="sr" role="status"></span></p></div></div>
+    <div class="letter reveal">
+      <div><b>One email a month.</b><span>What shipped, what we measured, and what’s still open. In plain words.</span></div>
+      <a class="tl tl-dark" href="mailto:hello@fusezap.ai?subject=Subscribe%3A%20FuseZap%20monthly&amp;body=Please%20add%20me%20to%20the%20FuseZap%20monthly%20update.%0A">Subscribe by email →</a>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a class="brand" href="../index.html" aria-label="FuseZap home"><img src="../favicon.svg" alt="" width="20" height="20"><img src="../wordmark-light.svg" alt="FuseZap" width="70" height="16"></a>
+        <p>FuseZap Core helps you get models running. FuseZap Validate helps you keep them working.</p>
+      </div>
+      <nav class="foot-map" aria-label="Sitemap">
+        <div><p class="foot-h">Product</p><ul><li><a href="../chips.html">Bring-Up Program</a></li><li><a href="../validate.html">Validate</a></li><li><a href="../core.html">Core &amp; Serve</a></li><li><a href="../matrix.html">Matrix</a></li></ul></div><div><p class="foot-h">Evidence</p><ul><li><a href="../status.html">Status</a></li><li><a href="../releases.html">Releases</a></li><li><a href="../method.html">Method</a></li><li><a href="../engineering.html">Engineering</a></li><li><a href="../reports/fusezap-validate-qwen2.5-72b-vllm.html">Sample Validate report</a></li><li><a href="../reports/sample-op-coverage.html">Sample op-coverage report</a></li></ul></div><div><p class="foot-h">Company</p><ul><li><a href="../about.html">About</a></li><li><a href="../blog/index.html">Blog</a></li><li><a href="../faq.html">FAQ</a></li><li><a href="mailto:hello@fusezap.ai">Contact</a></li></ul></div><div><p class="foot-h">Legal</p><ul><li><a href="../privacy.html">Privacy</a></li><li><a href="../terms.html">Terms</a></li></ul></div>
+      </nav>
+    </div>
+    <p class="foot-legal">Copyright © 2026 Techyodl. All rights reserved. FuseZap is a Techyodl product. vLLM, PyTorch, NVIDIA and other names are trademarks of their owners; FuseZap is not affiliated with or endorsed by them.</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+  // Source Serif 4: wider than 640px at once; on phones a face in the first screen at once, the rest after
+  // the first paint, so it doesn't share the network with the hero's fonts. site.css "Performance" 2.
+  // The same two rules are in a <noscript> in templates/base.html.
+  try {
+    const css = document.querySelector('link[rel=stylesheet][href*="site.css"]').href;
+    const added = {};
+    const load = style => {
+      if (added[style]) return; added[style] = true;
+      const f = style === 'italic' ? 'fz-serif-italic-latin' : 'fz-serif-latin';
+      const face = new FontFace('FZ Serif', `url(${new URL('fonts/' + f + '.woff2', css)}) format("woff2")`, { weight: '300 700', style, display: 'swap' });
+      document.fonts.add(face); face.load().catch(() => {});
+    };
+    const serif = () => { load('normal'); load('italic'); };
+    if (matchMedia('(min-width: 641px)').matches) serif();
+    else {
+      // A face whose text is in the first screen (the roman on the blog index, under the hero) loads at
+      // once. The scan runs when the browser is idle, looks only at likely text containers, in page
+      // order, stops at the first one below the screen, and stops as soon as both faces are needed.
+      const scan = () => {
+        const sel = 'p, h1, h2, h3, h4, li, blockquote, figcaption, dd, dt, .it, .story, .feat-t, .toc-t, .m-title, .track-note, .sig b';
+        for (const el of document.querySelectorAll(sel)) {
+          const r = el.getBoundingClientRect();
+          if (!r.width || r.bottom <= 0) continue;
+          if (r.top >= innerHeight) break;
+          if (![...el.childNodes].some(n => n.nodeType === 3 && n.data.trim())) continue;
+          const cs = getComputedStyle(el);
+          if (/^["']?FZ Serif/.test(cs.fontFamily)) load(cs.fontStyle === 'normal' ? 'normal' : 'italic');
+          if (added.normal && added.italic) break;
+        }
+      };
+      if (window.requestIdleCallback) requestIdleCallback(scan, { timeout: 500 }); else setTimeout(scan, 0);
+      if (window.PerformanceObserver && (PerformanceObserver.supportedEntryTypes || []).includes('paint'))
+        new PerformanceObserver((l, o) => { if (l.getEntriesByName('first-contentful-paint').length) { o.disconnect(); setTimeout(serif, 0); } }).observe({ type: 'paint', buffered: true });
+      else addEventListener('load', serif);
+      setTimeout(serif, 3000);
+    }
+  } catch (e) {}
+  // Escape closes the phone menu and puts focus back on its button
+  addEventListener('keydown', e => { const m = document.querySelector('.nav-more[open]'); if (e.key === 'Escape' && m) { m.open = false; m.querySelector('summary').focus(); } });
+  // "Copy address" next to a CTA (components.contact_line). Without the Clipboard API (old browsers,
+  // plain http) the address is selected instead, ready for Ctrl+C / Cmd+C.
+  document.querySelectorAll('.copy-addr').forEach(b => b.addEventListener('click', async () => {
+    const live = b.nextElementSibling;
+    let ok = false;
+    try { await navigator.clipboard.writeText(b.dataset.copy); ok = true; }
+    catch (e) { const r = document.createRange(); r.selectNodeContents(b.previousElementSibling); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+    b.classList.toggle('is-copied', ok);
+    live.textContent = ok ? 'Copied' : 'Address selected';
+    clearTimeout(b.t); b.t = setTimeout(() => { b.classList.remove('is-copied'); live.textContent = ''; }, 2500);
+  }));
+  document.querySelectorAll('.gate-bar').forEach(b => b.querySelectorAll('i').forEach((e, i) => e.style.setProperty('--i', i)));
+  // Video posters (far below the fold) load when the video nears the screen, not with the page
+  const setPoster = v => { v.poster = v.dataset.poster; v.removeAttribute('data-poster'); };
+  const vids = document.querySelectorAll('video[data-poster]');
+  if ('IntersectionObserver' in window) {
+    const vo = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { setPoster(e.target); vo.unobserve(e.target); } }), { rootMargin: '1000px 0px' });
+    vids.forEach(v => vo.observe(v));
+  } else vids.forEach(setPoster);
+  const els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    els.forEach(e => e.classList.add('in')); return;
+  }
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  els.forEach(e => io.observe(e));
+})();
+</script>
+
+</body>
+</html>

@@ -13,6 +13,7 @@
      belong to the component.
    - One accent: violet (#6C3BFF on light, #A58BFF "lume" on dark).
    - Clay (#B4512A) means "yours": only where a drawing or object marks the customer's silicon.
+     As text it is --clay-ink (#A84B27), which reaches 4.5:1 on the warm surfaces.
    - Green / red / amber appear only on verdicts (PROMOTE / BLOCK / REVIEW).
    - Source Serif 4 is the human voice (chapter titles, story), Inter the reference voice,
      JetBrains Mono the labels and evidence.
@@ -60,7 +61,7 @@
   --d-line-2: rgba(255,255,255,.14);
   --d-text: #EEEDF3;
   --d-mute: #9593A3;
-  --d-dim: #64626F;
+  --d-dim: #82808E;       /* 5.17:1 on ink-0, 4.80 on the app window (QA 3 Nov, was #64626F) */
   /* accent */
   --violet: #6C3BFF;
   --violet-deep: #5428E6;
@@ -75,11 +76,12 @@
   --ink: #16131D;
   --ink-2: #3E3948;
   --ink-mute: #5F5967;
-  --ink-dim: #8C8592;
+  --ink-dim: #6F6976;     /* 4.56:1 on cream, 4.96 on paper, 5.09 on plate (QA 3 Nov, was #8C8592) */
   --line: rgba(22,19,29,.11);
   --line-2: rgba(22,19,29,.2);
   /* "yours" */
-  --clay: #B4512A;
+  --clay: #B4512A;        /* fills and strokes: the copper die, leader lines */
+  --clay-ink: #A84B27;    /* clay as text ("YOURS", "Your chip"): 4.87:1 on cream, 5.31 on paper, 5.44 on plate */
   --clay-d: #D58A66;
   /* verdicts only */
   --ok: #18824B;
@@ -607,7 +609,7 @@ a.app:hover .feat-go i { transform: translateX(3px); }
 .ly-parts span { display: grid; gap: 4px; padding: 9px 9px; white-space: nowrap; border-radius: 7px; background: var(--plate); border: 1px solid rgba(108,59,255,.22); font-size: var(--fs-micro); font-weight: 500; letter-spacing: -0.01em; }
 .ly-parts i { font-style: normal; font-family: var(--mono); font-size: var(--fs-mono-sm); color: var(--violet); font-weight: 400; }
 .ly-yours { background: transparent; border-style: dashed; border-color: var(--line-2); }
-.ly-yours em { color: var(--clay); }
+.ly-yours em { color: var(--clay-ink); }
 .ly-chip { background: repeating-linear-gradient(135deg, transparent 0 7px, rgba(22,19,29,.035) 7px 8px); }
 .parts-dl { margin-top: 26px; border-top: 1px solid var(--line); }
 .parts-dl div { display: grid; grid-template-columns: 150px 1fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line); }
@@ -1405,8 +1407,8 @@ a.card:hover .go { transform: translateX(3px); }
 /* 1. Contrast (WCAG 1.4.3). Small mono labels, dates, captions and table headers use the
    "dim" tokens, which measured 3.1 to 3.4:1. Body-size text needs 4.5:1.
    --ink-dim #8C8592 -> #6F6976: 4.56 on cream, 4.96 on paper, 5.09 on plate.
-   --d-dim  #64626F -> #82808E: 5.17 on ink-0, 4.80 on the app window (#141121). */
-:root { --ink-dim: #6F6976; --d-dim: #82808E; }
+   --d-dim  #64626F -> #82808E: 5.17 on ink-0, 4.80 on the app window (#141121).
+   Both values now live in §01 (v9-polish, 4 Nov); the override that was here is gone. */
 /* Verdict chips on light: the chip text sat on its own 8% tint (3.5 to 4.4:1). Same hues,
    darker, text only; dots, bars and dark-surface chips keep --ok / --warn / --bad. */
 .v-promote { color: #137140; }
@@ -1604,3 +1606,93 @@ a.card:hover .go { transform: translateX(3px); }
 /* Review 4 Nov: the verdict's scope sits next to the verdict */
 .vl-scope { margin-top: 8px; max-width: 34em; font-size: var(--fs-small); line-height: 1.5; color: var(--ink-mute); }
 .vl-scope b { color: var(--ink); font-weight: 600; }
+
+/* Sample deliverables (v9-samples, 4 Nov) */
+/* the download row under a sample report (components.downloads) */
+.dl-row { margin-top: var(--sp-5); display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sp-2) var(--sp-4); font-size: var(--fs-ui); }
+.dl-k { font-family: var(--mono); font-size: var(--fs-mono-sm); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-dim); }
+.dl-row ul { display: flex; flex-wrap: wrap; gap: 6px 0; }
+.dl-row li:not(:last-child)::after { content: "·"; margin: 0 10px; color: var(--ink-dim); }
+.dl-row a { color: var(--violet); }
+.dl-row a:hover { text-decoration: underline; }
+.dl-row b { font-weight: 600; }
+.dl-sub { color: var(--ink-mute); }
+.plate .dl-row { margin-top: var(--sp-4); }
+/* the sample op-coverage report (reports/sample-op-coverage.html) */
+.oc-tbl td small { display: block; font-size: var(--fs-micro); color: var(--ink-dim); margin-top: 2px; }
+.oc-tbl code { font-family: var(--mono); font-size: var(--fs-micro); }
+.oc-tbl .st { vertical-align: 1px; }
+.oc-tbl .num { text-align: right; white-space: nowrap; }
+.oc-tbl th.num { text-align: right; }
+.oc-tbl b.oc-pass { color: var(--ok); font-weight: 600; }
+.oc-tbl b.oc-fail { color: var(--bad); font-weight: 600; }
+.oc-tbl b.oc-uns { color: var(--ink); font-weight: 600; }
+.oc-tbl tr.oc-comp td { border-top: 1px solid var(--line-2); }
+.oc-h { margin-top: var(--sp-8); font-size: var(--fs-h3); font-weight: 600; letter-spacing: -0.02em; }
+.oc-p { margin-top: var(--sp-2); max-width: 64ch; font-size: var(--fs-ui); color: var(--ink-mute); }
+.readout b.oc-fam { font-size: var(--fs-small); letter-spacing: .02em; }
+.checks.oc-named b .st { display: inline-flex; margin: 0 0 0 8px; font-size: var(--fs-mono-sm); font-weight: 400; color: var(--ink-2); vertical-align: 2px; }
+.oc-est { max-width: 760px; }
+.oc-est dl { margin-top: var(--sp-4); }
+.oc-est dl > div { display: grid; grid-template-columns: 14em 1fr; gap: var(--sp-3); padding: 12px 0; border-top: 1px dashed var(--line-2); font-size: var(--fs-ui); }
+.oc-est dt { color: var(--ink); font-weight: 500; }
+.oc-est dd { font-family: var(--mono); font-size: var(--fs-mono-sm); color: var(--ink-dim); }
+.oc-est .oc-est-f { margin-top: var(--sp-4); color: var(--ink-mute); }
+@media (max-width: 640px) { .oc-est dl > div { grid-template-columns: 1fr; gap: 4px; } }
+
+/* sample op-coverage: illustrative fields (no draft brackets) */
+.oc-ph { font-style: italic; color: var(--ink-mute); border-bottom: 1px dashed var(--line-2); }
+
+/* Review polish (v9-polish, 4 Nov) */
+/* 1. "Or write to <address>" with Copy address, next to a primary CTA (components.contact_line).
+      The address is plain, selectable text. The button only shows with JavaScript (html.js is set
+      before the first paint, so nothing moves); its two labels share one grid cell, so "Copied"
+      doesn't change its width. The live region ("Copied") is visually hidden. */
+.mailto-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: var(--sp-4); font-size: var(--fs-small); line-height: 1.5; color: var(--ink-mute); }
+.mailto-addr { font-family: var(--mono); font-size: var(--fs-mono); letter-spacing: .01em; color: var(--ink); user-select: all; overflow-wrap: anywhere; }
+.copy-addr { display: none; align-items: center; height: 28px; padding: 0 10px; border: 1px solid var(--line-2); border-radius: 6px; background: transparent; color: var(--ink-2); font: 500 var(--fs-mono-sm) var(--mono); letter-spacing: .04em; cursor: pointer; transition: border-color .2s, color .2s, background .2s; }
+.js .copy-addr { display: inline-grid; }
+.copy-addr > span { grid-area: 1 / 1; }
+.copy-addr > span + span, .copy-addr.is-copied > span:first-child { visibility: hidden; }
+.copy-addr.is-copied > span + span { visibility: visible; color: var(--violet-deep); }
+.copy-addr:hover { border-color: var(--violet); color: var(--violet-deep); }
+.copy-addr:focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
+.cta-row + .mailto-line { margin-top: var(--sp-4); }
+/* in the closing band's offer blocks (dark) */
+.mailto-dark { margin-top: 0; padding-top: var(--sp-4); border-top: 1px dashed var(--d-line-2); color: var(--d-mute); }
+.mailto-dark .mailto-addr { color: var(--d-text); }
+.mailto-dark .copy-addr { border-color: var(--d-line-2); color: var(--d-text); }
+.mailto-dark .copy-addr:hover { border-color: var(--lume); color: #fff; }
+.mailto-dark .copy-addr.is-copied > span + span { color: var(--lume); }
+.close .mailto-dark .copy-addr:focus-visible { outline-color: var(--lume); }
+@media (max-width: 1080px) { .copy-addr { height: 40px; } }
+/* side by side, the two "Or write to" lines sit level at the foot of their blocks */
+.offers-2 .offer { grid-template-rows: auto auto 1fr auto; }
+.offers-2 .offer > .offer-row { align-content: start; }
+
+/* 2. Matrix status: every cell is Preview until the first public release; the hero map's
+      legend says when Supported starts. */
+.mm-later { color: var(--d-dim); }
+
+/* 3. Matrix table (matrix.html, tablet widths, where it scrolls sideways): the model column and
+      its corner stay put. The sticky cells get an opaque background and their own right rule,
+      because collapsed borders scroll away with the table. */
+.scroll-box table.mf { border-collapse: separate; border-spacing: 0; }
+.mf th, .mf td { border-bottom: 1px solid var(--line); }
+.mf tbody tr:last-child > *, .mf td[rowspan] { border-bottom: 0; }
+.mf thead .mf-corner, .mf tbody th { background: var(--paper); background-clip: padding-box; }
+.mf thead .mf-corner { z-index: 3; }
+.mf tbody th { z-index: 2; }
+.mf thead .mf-corner, .mf tbody th { border-right: 1px solid var(--line-2); box-shadow: 6px 0 10px -8px rgba(22,19,29,.18); }
+
+/* 4. Home: two tracks under the hero object, one line each */
+/* stacked (phones, small tablets) the pair is taller than the hero's cream foot, so it brings its own */
+@media (max-width: 760px) {
+    }
+
+/* 6. Promod's photo is a <picture> (WebP, JPEG fallback); the <img> keeps its sizing rules */
+.person-ph picture, .fq-ph picture { display: contents; }
+/* end Review polish (v9-polish) */
+
+/* hero window: the verdict's scope (4 Nov) */
+.vd-scope { margin-top: 6px; font-size: var(--fs-small); line-height: 1.5; color: var(--d-mute); }

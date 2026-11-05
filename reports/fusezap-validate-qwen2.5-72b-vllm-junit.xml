@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="fusezap.validate">
+  <testsuite name="fusezap.validate Qwen/Qwen2.5-72B-Instruct" tests="34" failures="0" errors="0" skipped="12" time="514.5" timestamp="2026-10-25T07:33:06Z">
+    <properties>
+      <property name="verdict" value="PASS" />
+      <property name="decision" value="PROMOTE" />
+      <property name="exit_code" value="0" />
+      <property name="schema" value="fusezap.validate/v0" />
+      <property name="mode" value="single" />
+      <property name="engine" value="vllm 0.32.0" />
+      <property name="reference" value="Qwen/Qwen2.5-72B-Instruct" />
+      <property name="accuracy_method" value="logprobs" />
+    </properties>
+    <testcase classname="fusezap.validate.accuracy" name="accuracy.top1_agreement" time="0" />
+    <testcase classname="fusezap.validate.accuracy" name="accuracy.greedy_exact_match" time="0">
+      <skipped message="Greedy output matches the reference (text method): not applicable: accuracy.method is 'logprobs', not 'text'" />
+    </testcase>
+    <testcase classname="fusezap.validate.errors" name="errors.error_rate" time="0" />
+    <testcase classname="fusezap.validate.stability" name="stability.drift" time="0" />
+    <testcase classname="fusezap.validate.functional" name="functional.greedy_determinism" time="0" />
+    <testcase classname="fusezap.validate.functional" name="functional.max_tokens" time="0" />
+    <testcase classname="fusezap.validate.functional" name="functional.stop_sequence" time="0" />
+    <testcase classname="fusezap.validate.functional" name="functional.stream_consistency" time="0" />
+    <testcase classname="fusezap.validate.functional" name="functional.usage" time="0" />
+    <testcase classname="fusezap.validate.functional" name="functional.chat_template" time="0" />
+    <testcase classname="fusezap.validate.functional" name="functional.bad_requests" time="0" />
+    <testcase classname="fusezap.validate.functional" name="functional.n_choices" time="0" />
+    <testcase classname="fusezap.validate.functional" name="functional.seed_reproducible" time="0" />
+    <testcase classname="fusezap.validate.reliability" name="reliability.overload_survives" time="0" />
+    <testcase classname="fusezap.validate.reliability" name="reliability.overload_clean_errors" time="0" />
+    <testcase classname="fusezap.validate.reliability" name="reliability.overload_recovery" time="0" />
+    <testcase classname="fusezap.validate.reliability" name="reliability.cancel_stream_drain" time="0" />
+    <testcase classname="fusezap.validate.reliability" name="reliability.cancel_stream_serves" time="0" />
+    <testcase classname="fusezap.validate.reliability" name="reliability.abandon_drain" time="0" />
+    <testcase classname="fusezap.validate.reliability" name="reliability.abandon_serves" time="0" />
+    <testcase classname="fusezap.validate.reliability" name="reliability.restart_recovery" time="0" />
+    <testcase classname="fusezap.validate.structured" name="structured.json_schema_valid" time="0" />
+    <testcase classname="fusezap.validate.structured" name="structured.tool_calls_valid" time="0" />
+    <testcase classname="fusezap.validate.accuracy" name="relative.top1_agreement" time="0">
+      <skipped message="Top-1 agreement not more than 0.2 points below the baseline: no baseline in this run" />
+    </testcase>
+    <testcase classname="fusezap.validate.accuracy" name="relative.greedy_exact_match" time="0">
+      <skipped message="Greedy match not more than 5 points below the baseline (text method, paired 95% interval): no baseline in this run" />
+    </testcase>
+    <testcase classname="fusezap.validate.performance" name="relative.throughput@1" time="0">
+      <skipped message="Output tok/s at least 97% of the baseline (c=1): no baseline in this run" />
+    </testcase>
+    <testcase classname="fusezap.validate.performance" name="relative.throughput@8" time="0">
+      <skipped message="Output tok/s at least 97% of the baseline (c=8): no baseline in this run" />
+    </testcase>
+    <testcase classname="fusezap.validate.performance" name="relative.throughput@32" time="0">
+      <skipped message="Output tok/s at least 97% of the baseline (c=32): no baseline in this run" />
+    </testcase>
+    <testcase classname="fusezap.validate.structured" name="relative.json_schema_valid" time="0">
+      <skipped message="JSON schema-valid rate not more than 5 points below the baseline: no baseline in this run" />
+    </testcase>
+    <testcase classname="fusezap.validate.structured" name="relative.tool_calls_valid" time="0">
+      <skipped message="Tool-call valid rate not more than 5 points below the baseline: no baseline in this run" />
+    </testcase>
+    <testcase classname="fusezap.validate.long_context" name="long_context.needle_found" time="0">
+      <skipped message="Long context *: the answer contains the needle: the long_context check did not run" />
+    </testcase>
+    <testcase classname="fusezap.validate.long_context" name="long_context.top1_agreement" time="0">
+      <skipped message="Long context *: top-1 agreement with the reference (teacher-forced): the long_context check did not run" />
+    </testcase>
+    <testcase classname="fusezap.validate.long_context" name="relative.long_context.needle_found" time="0">
+      <skipped message="Long context *: needle found at most one prompt in 5 less often than the baseline: the long_context check did not run" />
+    </testcase>
+    <testcase classname="fusezap.validate.long_context" name="relative.long_context.top1_agreement" time="0">
+      <skipped message="Long context *: top-1 agreement not more than 2 points below the baseline: the long_context check did not run" />
+    </testcase>
+  </testsuite>
+</testsuites>

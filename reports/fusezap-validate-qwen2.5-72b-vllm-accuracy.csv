@@ -1,0 +1,25 @@
+release,id,prompt_tokens,ref_tokens,ref_eos,positions,top1_agree,top1_agreement,top1_agreement_strict,top1_agreement_generous,top1_ties,top1_agree_on_tie,top1_ties_k_lower_bound,near_tie_disagreements,logprob_abs_diff_mean,logprob_abs_diff_max,greedy_match_tokens,greedy_ref_tokens,greedy_exact_match,greedy_first_mismatch,greedy_compared_by,server_finish_reason,server_tokens,error,text
+candidate,p00,37,64,False,64,61.5,0.9609,0.9375,0.9844,3,3,0,0,0.01851,0.15548,10,64,0.1562,10,ids,length,64,,Write a short poem about the sea.
+candidate,p01,43,64,False,64,63.5,0.9922,0.9844,1.0,1,1,0,0,0.00449,0.11025,64,64,1.0,,ids,length,64,,"Explain how a hash table works, with an example in Python."
+candidate,p02,39,64,False,64,64,1.0,1.0,1.0,0,0,0,0,0.00561,0.05385,64,64,1.0,,ids,length,64,,What were the main causes of the French Revolution?
+candidate,p03,39,64,False,64,62.5,0.9766,0.9688,0.9844,1,1,0,0,0.01354,0.16809,12,64,0.1875,12,ids,length,64,,Give me a recipe for a vegetarian lasagna.
+candidate,p04,43,64,False,64,63.5,0.9922,0.9844,1.0,1,1,0,0,0.01828,0.2407,64,64,1.0,,ids,length,64,,Summarize the theory of evolution by natural selection in a paragraph.
+candidate,p05,47,14,True,14,14,1.0,1.0,1.0,0,0,0,0,0.00074,0.00454,15,15,1.0,,ids,stop,14,,"Translate into French: The weather is nice today, so we are going to the park."
+candidate,p06,66,64,False,64,62.5,0.9766,0.9688,0.9844,1,1,0,1,0.00614,0.06781,27,64,0.4219,27,ids,length,64,,A train leaves at 3 pm going 60 km/h; another at 4 pm going 90 km/h. When does the second catch up? Show the steps.
+candidate,p07,41,64,False,64,63.5,0.9922,0.9844,1.0,1,1,0,0,0.01158,0.13988,23,64,0.3594,23,ids,length,64,,List five tips for writing clean code and explain each briefly.
+candidate,p08,39,64,False,64,64,1.0,1.0,1.0,0,0,0,0,0.00902,0.06283,64,64,1.0,,ids,length,64,,Describe the water cycle to a ten-year-old.
+candidate,p09,46,64,False,64,63.5,0.9922,0.9844,1.0,1,1,0,0,0.00426,0.05841,6,64,0.0938,6,ids,length,64,,"Write a Python function that checks whether a string is a palindrome, and explain it."
+candidate,p10,41,64,False,64,64,1.0,1.0,1.0,0,0,0,0,0.01,0.10541,64,64,1.0,,ids,length,64,,What is the difference between a virus and a bacterium?
+candidate,p11,44,64,False,64,63.5,0.9922,0.9844,1.0,1,1,0,0,0.01622,0.08973,59,64,0.9219,59,ids,length,64,,Write a polite email asking a colleague to review a pull request by Friday.
+candidate,p12,44,64,False,64,64,1.0,1.0,1.0,0,0,0,0,0.01107,0.09842,64,64,1.0,,ids,length,64,,Explain what a GPU is and why it is good at matrix multiplication.
+candidate,p13,42,64,False,64,64,1.0,1.0,1.0,0,0,0,0,0.01009,0.08996,64,64,1.0,,ids,length,64,,Compare renting and buying a home: give three points for each.
+candidate,p14,43,64,False,64,63,0.9844,0.9688,1.0,2,2,0,0,0.02037,0.09,14,64,0.2188,14,ids,length,64,,Write the opening paragraph of a mystery novel set in a lighthouse.
+candidate,p15,40,64,False,64,64,1.0,1.0,1.0,0,0,0,0,0.00458,0.05569,64,64,1.0,,ids,length,64,,How does public-key cryptography work? Keep it simple.
+candidate,p16,47,64,False,64,63.5,0.9922,0.9844,1.0,1,1,0,0,0.0072,0.18097,22,64,0.3438,22,ids,length,64,,What is 17 multiplied by 23? Explain the calculation step by step.
+candidate,p17,38,64,False,64,62.5,0.9766,0.9688,0.9844,1,1,0,1,0.0118,0.16228,1,64,0.0156,1,ids,length,64,,Give a short history of the printing press.
+candidate,p18,49,64,False,64,64,1.0,1.0,1.0,0,0,0,0,0.00281,0.10301,64,64,1.0,,ids,length,64,,"Write a SQL query that returns the ten customers with the highest total order value, and explain it."
+candidate,p19,38,64,False,64,63,0.9844,0.9688,1.0,2,2,0,0,0.00954,0.10508,64,64,1.0,,ids,length,64,,What are the health benefits of regular exercise?
+candidate,p20,40,64,False,64,64,1.0,1.0,1.0,0,0,0,0,0.01185,0.10646,64,64,1.0,,ids,length,64,,Explain recursion using the example of computing a factorial.
+candidate,p21,40,64,False,64,64,1.0,1.0,1.0,0,0,0,0,0.00915,0.15216,64,64,1.0,,ids,length,64,,Describe three famous paintings and what makes each one special.
+candidate,p22,43,64,False,64,61.5,0.9609,0.9531,0.9688,1,1,0,1,0.01387,0.17317,34,64,0.5312,34,ids,length,64,,"Write a haiku about autumn, then explain the syllable structure."
+candidate,p23,41,64,False,64,64,1.0,1.0,1.0,0,0,0,0,0.00967,0.09027,64,64,1.0,,ids,length,64,,What should a beginner know before starting to learn the guitar?
