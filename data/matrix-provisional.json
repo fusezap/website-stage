@@ -1,5 +1,5 @@
 {
- "_comment": "PROVISIONAL. A snapshot (2 Nov 2026) of FuseZap's support matrix: one entry per model and chip, with its status, verdict where shown, key metric, baseline and the date it was verified. It will be replaced by the matrix published with each release. Evidence paths point into the FuseZap engine repository.",
+ "_comment": "PROVISIONAL. A snapshot (4 Nov 2026) of FuseZap's support matrix: one entry per model and chip, with its status, verdict where shown, key metric, baseline and the date it was verified. It will be replaced by the matrix published with each release. Evidence paths point into the FuseZap engine repository.",
  "status_definitions": {
   "Supported": "Starts with the first public release: a cell in a released version that passed a gate on real hardware, with evidence. No cell is Supported yet.",
   "Preview": "Ran on real hardware in a development build. Every cell is Preview until the first public release. The verdict, where shown, says whether the run passed Validate; caveats are noted in the cell.",
@@ -53,7 +53,8 @@
   "Qwen2.5-7B-Instruct",
   "Qwen2.5-32B-Instruct",
   "Qwen2.5-72B-Instruct",
-  "Llama-3.3-70B-Instruct"
+  "Llama-3.3-70B-Instruct",
+  "FLUX.2-klein-4B"
  ],
  "cells": [
   {
@@ -234,6 +235,23 @@
    "evidence": [
     "docs/STATUS.md"
    ]
+  },
+  {
+   "model": "FLUX.2-klein-4B",
+   "chip": "apple-metal",
+   "status": "Preview",
+   "verified": "2026-11-04",
+   "verdict": null,
+   "metric": "53 s per 1024×1024 image (diffusers: 4.4 s)",
+   "baseline": "diffusers bf16 on MPS",
+   "chip_note": "bf16, image model",
+   "note": "About 12× slower than diffusers; images closer to the full-precision ones (33.9 dB against 25.5 dB)",
+   "verified_text": null,
+   "config": "bf16 transformer, float32 text encoder and VAE, fusezap serve-image flux2-klein --device METAL",
+   "gate": "G6: closer to the float32 CPU image than diffusers bf16 on all 8 prompts at 1024×1024; OpenAI images client end to end",
+   "evidence": [
+    "docs/status/i81-flux2-klein-metal/README.md"
+   ]
   }
  ],
  "planned": [
@@ -244,6 +262,6 @@
  ],
  "generator_snapshot": {
   "schema": "fusezap.matrix/v1",
-  "updated": "2026-11-02"
+  "updated": "2026-11-04"
  }
 }

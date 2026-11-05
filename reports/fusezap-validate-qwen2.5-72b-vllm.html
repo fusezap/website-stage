@@ -4,12 +4,17 @@
 <meta name="robots" content="noindex,nofollow">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FuseZap Validate report</title>
+<title>FuseZap Validate report: Qwen/Qwen2.5-72B-Instruct: PROMOTE on 22 of 34 gates</title>
+<meta name="description" content="Validate report: Qwen/Qwen2.5-72B-Instruct on vllm 0.32.0, 2x H200 141 GB (RunPod), 2026-10-25: PROMOTE on 22 of 34 gates.">
+<link rel="icon" href="data:,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FuseZap Validate report: Qwen/Qwen2.5-72B-Instruct: PROMOTE on 22 of 34 gates">
+<meta property="og:description" content="Validate report: Qwen/Qwen2.5-72B-Instruct on vllm 0.32.0, 2x H200 141 GB (RunPod), 2026-10-25: PROMOTE on 22 of 34 gates.">
 <style>
 :root {
   --bg:#f4f3f8; --paper:#ffffff; --fg:#1c1a26; --muted:#625f70; --line:#e4e1ec; --soft:#f6f5fa;
   --accent:#6c3bff; --accent-soft:#efe9ff;
-  --ok:#157f3b; --ok-soft:#e6f6ec; --bad:#b42318; --bad-soft:#fdecea; --warn:#b45309; --warn-soft:#fff4e0; --info:#175cd3; --info-soft:#eaf1fd;
+  --ok:#13763a; --ok-soft:#e6f6ec; --bad:#b42318; --bad-soft:#fdecea; --warn:#a64b08; --warn-soft:#fff4e0; --info:#175cd3; --info-soft:#eaf1fd;
   --body: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   color-scheme: light;
@@ -25,11 +30,14 @@
   --ok:#5bd68a; --ok-soft:#173325; --bad:#ff8a7e; --bad-soft:#3a1d1b; --warn:#f2b35b; --warn-soft:#3a2a14; --info:#7fb0ff; --info-soft:#1a2740;
   color-scheme: dark; }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.5 var(--body); }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.5 var(--body); overflow-wrap: break-word; }
 main { max-width: 1060px; margin: 0 auto; padding: 20px 16px 48px; }
 h1, h2, h3 { margin: 0; text-wrap: balance; }
 code, .mono { font-family: var(--mono); font-size: .86em; }
 .muted { color: var(--muted); } .small { font-size: 12px; }
+.vh { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.mono, code, .runid, .nm, .sub { overflow-wrap: anywhere; }
+td .mono, td.mono { overflow-wrap: normal; }   /* in a table, an id keeps its width and the table scrolls */
 .paper { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 28px clamp(16px, 4vw, 40px); }
 .rtop { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 3px solid var(--accent); }
 .brand { font-weight: 800; font-size: 17px; letter-spacing: -.01em; } .brand span { color: var(--accent); }
@@ -48,15 +56,19 @@ code, .mono { font-family: var(--mono); font-size: .86em; }
 .relcard .nm { font-weight: 700; font-size: 15px; margin: 2px 0; overflow-wrap: anywhere; }
 .relcard .sub { font-size: 12.5px; color: var(--muted); overflow-wrap: anywhere; }
 .vs { align-self: center; font: 700 12px var(--mono); color: var(--muted); }
-.meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px 20px; background: var(--soft); border-radius: 10px; padding: 14px 16px; font-size: 13px; margin-top: 10px; }
+.meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); gap: 10px 20px; background: var(--soft); border-radius: 10px; padding: 14px 16px; font-size: 13px; margin-top: 10px; }
 .meta div { min-width: 0; overflow-wrap: anywhere; } .meta b { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); font-weight: 700; }
-.verdict { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; align-items: center; margin: 18px 0 8px; padding: 16px 18px; border: 1.5px solid var(--bad); background: var(--bad-soft); border-radius: 10px; }
-.verdict .big { font-weight: 800; font-size: 22px; letter-spacing: .01em; color: var(--bad); white-space: nowrap; }
-.verdict p { margin: 0; min-width: 0; }
-.verdict .decision { display: block; margin-top: 3px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.verdict { margin: 18px 0 8px; padding: 16px 18px; border: 1.5px solid var(--bad); background: var(--bad-soft); border-radius: 10px; }
+.verdict .vword { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 14px; }
+.verdict .big { font-weight: 800; font-size: 22px; letter-spacing: .01em; color: var(--bad); }
+.verdict p { margin: 0; min-width: 0; max-width: 92ch; }
+.verdict .decision { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.verdict .vscope { margin-top: 4px; font-size: 14.5px; }
+.verdict .vwhy { margin-top: 6px; }
+.verdict .vnote { margin-top: 8px; font-size: 12.5px; color: var(--muted); }
 .verdict.pass { border-color: var(--ok); background: var(--ok-soft); } .verdict.pass .big { color: var(--ok); }
 .verdict.inconclusive { border-color: var(--warn); background: var(--warn-soft); } .verdict.inconclusive .big { color: var(--warn); }
-.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0 6px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 10px; margin: 14px 0 6px; }
 .kpi { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-width: 0; }
 .kpi b { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
 .kpi .v { font-weight: 700; font-size: 20px; font-variant-numeric: tabular-nums; } .kpi .d { font-size: 12px; color: var(--muted); }
@@ -64,7 +76,14 @@ section.rsec { margin-top: 28px; }
 .rsec h2 { font-weight: 700; font-size: 16px; margin-bottom: 8px; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
 .rsec h2 small { font-weight: 500; font-size: 12px; color: var(--muted); }
 .rsec h3 { font-weight: 600; font-size: 13px; margin: 14px 0 6px; }
-.tbl { overflow-x: auto; }
+/* wide tables scroll inside their box; a shadow at an edge shows there is more to that side (scroll shadows) */
+.tbl { overflow-x: auto; max-width: 100%;
+  background: linear-gradient(to right, var(--paper) 30%, transparent) left center / 40px 100% no-repeat local,
+              linear-gradient(to left, var(--paper) 30%, transparent) right center / 40px 100% no-repeat local,
+              linear-gradient(to right, color-mix(in srgb, var(--fg) 16%, transparent), transparent) left center / 12px 100% no-repeat scroll,
+              linear-gradient(to left, color-mix(in srgb, var(--fg) 16%, transparent), transparent) right center / 12px 100% no-repeat scroll; }
+.tbl:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+caption { text-align: left; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 7px 8px; border-bottom: 1.5px solid var(--line); white-space: nowrap; }
 td { padding: 8px; border-bottom: 1px solid var(--line); vertical-align: top; font-variant-numeric: tabular-nums; }
@@ -89,7 +108,7 @@ tr.inconcrow td { background: color-mix(in srgb, var(--warn-soft) 60%, transpare
 .box.info { border-left-color: var(--info); }
 .method { display: flex; gap: 10px; flex-wrap: wrap; align-items: baseline; margin-bottom: 8px; font-size: 13px; }
 .method span:last-child { min-width: 0; flex: 1 1 300px; }
-.charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 18px; }
 .chart { min-width: 0; } .chart h3 { font-weight: 600; font-size: 13px; margin: 0 0 4px; }
 .chart svg { width: 100%; height: auto; display: block; }
 .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 4px; }
@@ -97,21 +116,22 @@ tr.inconcrow td { background: color-mix(in srgb, var(--warn-soft) 60%, transpare
 .legend i.base { border-top: 2px dashed var(--muted); } .legend i.gate { border-top: 1.5px dashed var(--bad); }
 .evid { background: var(--soft); border-radius: 8px; padding: 10px 12px; font: 12px/1.55 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; margin-top: 8px; }
 .evid b { font-family: var(--body); } .evid .bad { color: var(--bad); }
-.scope { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px 16px; font-size: 13px; }
+.scope { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 8px 16px; font-size: 13px; }
 .scope div { display: flex; gap: 8px; align-items: baseline; min-width: 0; }
 .scope .n { font: 600 11px var(--mono); color: var(--accent); flex: none; width: 22px; }
 .repro { background: var(--soft); border-radius: 8px; padding: 12px 14px; overflow-x: auto; font: 12.5px/1.6 var(--mono); white-space: pre-wrap; word-break: break-all; }
 footer.rfoot { margin-top: 28px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: space-between; }
 .powered { font-weight: 600; font-size: 11px; letter-spacing: .02em; }
 .print-only { display: none; }
-@media (max-width: 640px) { .rel { grid-template-columns: 1fr; } .vs { justify-self: center; } .verdict { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .rel { grid-template-columns: 1fr; } .vs { justify-self: center; } .tbl { scrollbar-width: thin; } }
+@media (max-width: 420px) { main { padding: 8px 6px 32px; } .paper { padding: 20px 14px; } .rtitle { font-size: 21px; } }
 
 /* ---------- print / PDF: page 1 = one-page summary, then the detail pages ---------- */
 @page { size: Letter; margin: 12mm 12mm 14mm; }
 @media print {
   :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
     --bg:#fff; --paper:#fff; --fg:#1c1a26; --muted:#55525f; --line:#d9d6e2; --soft:#f4f3f8;
-    --ok:#157f3b; --ok-soft:#e6f6ec; --bad:#b42318; --bad-soft:#fdecea; --warn:#b45309; --warn-soft:#fff4e0; --info:#175cd3; --info-soft:#eaf1fd;
+    --ok:#13763a; --ok-soft:#e6f6ec; --bad:#b42318; --bad-soft:#fdecea; --warn:#a64b08; --warn-soft:#fff4e0; --info:#175cd3; --info-soft:#eaf1fd;
 --accent:#6c3bff; --accent-soft:#efe9ff;    color-scheme: light; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body { font-size: 10.5px; background: #fff; }
@@ -122,6 +142,7 @@ footer.rfoot { margin-top: 28px; padding-top: 12px; border-top: 1px solid var(--
   .sumpage .rtitle { font-size: 18px; margin: 8px 0 0; }
   .sumpage .verdict { margin: 4px 0 0; padding: 10px 14px; }
   .sumpage .verdict .big { font-size: 18px; }
+  .verdict .vscope { font-size: 11.5px; } .verdict .vnote { font-size: 9.5px; margin-top: 4px; }
   .sumpage table { font-size: 9.5px; } .sumpage th { font-size: 8.5px; padding: 3px 6px; } .sumpage td { padding: 3px 6px; }
   .sumpage td.groupcap { padding: 3px 6px; font-size: 8.5px; }
   .sumpage .ci { font-size: 8.5px; } .sumpage .pill { font-size: 8.5px; padding: 1px 6px; }
@@ -129,7 +150,7 @@ footer.rfoot { margin-top: 28px; padding-top: 12px; border-top: 1px solid var(--
   .sumpage .chart h3 { font-size: 10px; } .sumpage .legend { font-size: 9px; margin-top: 2px; }
   .sumpage .pfoot { border-top: 1px solid var(--line); padding-top: 6px; color: var(--muted); display: flex; justify-content: space-between; font-size: 9px; }
   .rsec h2 { break-after: avoid; } tr, .kpis, .verdict, .chart, .box, .evid, .relcard { break-inside: avoid; }
-  .tbl { overflow: visible; }
+  .tbl { overflow: visible; background: none; }
   section.rsec { margin-top: 18px; }
   .charts { grid-template-columns: 1fr 1fr; }
 }
@@ -142,11 +163,14 @@ footer.rfoot { margin-top: 28px; padding-top: 12px; border-top: 1px solid var(--
   <div class="rtop">
 <div class="brand">Fuse<span>Zap</span> Validate</div>  <div class="runid">20261025T073306Z-37c4e6</div>
 </div>
-  <div><h1 class="rtitle">70B check: Qwen/Qwen2.5-72B-Instruct on vLLM 0.32.0 (TP=2, 2x H200)</h1>
+  <div><h2 class="rtitle">70B check: Qwen/Qwen2.5-72B-Instruct on vLLM 0.32.0 (TP=2, 2x H200)</h2>
     <div class="muted">Qwen/Qwen2.5-72B-Instruct &middot; 2x H200 141 GB (RunPod) &middot; one release</div></div>
-  <div class="verdict pass"><span class="big">QUALIFIED<span class="decision">Decision: PROMOTE</span></span>
-  <p><b>PROMOTE</b>: every gate passed on valid data: the candidate can replace the baseline. <b>0 failed, 0 inconclusive, 22 passed, 12 skipped</b> of 34 gates. every gate passed. <span class="muted">Exit code 0.</span></p></div>
-  <div class="tbl"><table><thead><tr><th>Gate</th><th class="r">Limit</th><th class="r">Value</th><th>Status</th></tr></thead><tbody>
+  <div class="verdict pass">
+  <div class="vword"><span class="big">QUALIFIED</span><span class="decision">Decision: PROMOTE</span></div>
+  <p class="vscope"><b>On the 22 gates that ran: 22 passed, 0 failed.</b> 12 didn’t run: 7 compare with a baseline release (this run had none), 4 long-prompt gates weren’t run (the check wasn’t requested), 1 doesn’t apply.</p>
+  <p class="vwhy"><b>PROMOTE</b>: every gate that ran passed on valid data: the release can be promoted. <span class="muted">Exit code 0.</span></p>
+  <p class="vnote">A PROMOTE covers only the gates that ran; each skipped gate and why is listed below.</p></div>
+  <div class="tbl" role="region" tabindex="0" aria-label="Gate summary: the limit, measured value and status of each gate"><table><caption class="vh">Gate summary: the limit, measured value and status of each gate</caption><thead><tr><th>Gate</th><th class="r">Limit</th><th class="r">Value</th><th>Status</th></tr></thead><tbody>
 <tr><td class="groupcap" colspan="4">Accuracy<span>1 pass, 3 skip</span></td></tr>
 <tr class="">
   <td><span class="mono">accuracy.top1_agreement</span> <span class="muted">Top-1 agreement with the reference (teacher-forced)</span></td>
@@ -239,14 +263,17 @@ One release checked on its own; 3 performance repeats; accuracy against a float3
   <div class="relcard cand"><b>Release</b><div class="nm">vLLM 0.32.0 TP=2</div><div class="sub">vllm 0.32.0 &middot; 2x H200 141 GB (RunPod) &middot; <span class="mono">http://&lt;host&gt;:18001</span></div></div>
 </div>
 
-<div class="verdict pass"><span class="big">QUALIFIED<span class="decision">Decision: PROMOTE</span></span>
-  <p><b>PROMOTE</b>: every gate passed on valid data: the candidate can replace the baseline. <b>0 failed, 0 inconclusive, 22 passed, 12 skipped</b> of 34 gates. every gate passed. <span class="muted">Exit code 0.</span></p></div>
+<div class="verdict pass">
+  <div class="vword"><span class="big">QUALIFIED</span><span class="decision">Decision: PROMOTE</span></div>
+  <p class="vscope"><b>On the 22 gates that ran: 22 passed, 0 failed.</b> 12 didn’t run: 7 compare with a baseline release (this run had none), 4 long-prompt gates weren’t run (the check wasn’t requested), 1 doesn’t apply.</p>
+  <p class="vwhy"><b>PROMOTE</b>: every gate that ran passed on valid data: the release can be promoted. <span class="muted">Exit code 0.</span></p>
+  <p class="vnote">A PROMOTE covers only the gates that ran; each skipped gate and why is listed below.</p></div>
 
 <div class="kpis">
 <div class="kpi"><b>Top-1 agreement</b><div class="v">99.02%</div><div class="d">teacher-forced, vs reference</div></div><div class="kpi"><b>Greedy exact match</b><div class="v">71.9%</div><div class="d">logprobs method</div></div><div class="kpi"><b>Peak tok/s (c=32)</b><div class="v">1,221</div><div class="d"></div></div><div class="kpi"><b>TTFT p50 / TPOT p50 at c=1</b><div class="v">36 / 20.1 ms</div><div class="d"></div></div><div class="kpi"><b>Tool calls valid</b><div class="v">98.9%</div><div class="d">93 tasks; JSON schema-valid 100%</div></div><div class="kpi"><b>Stability drift</b><div class="v">+6.3%</div><div class="d">error rate 0.00%</div></div></div>
 
 <section class="rsec"><h2>1. Gates <small>default gates; relative gates compare the candidate with the baseline and decide on the 95% interval</small></h2>
-<div class="tbl"><table><thead><tr><th>Gate</th><th>Type</th><th class="r">Limit</th><th class="r">Value</th><th>Status</th></tr></thead><tbody>
+<div class="tbl" role="region" tabindex="0" aria-label="Gates: the limit, measured value and status of each gate"><table><caption class="vh">Gates: the limit, measured value and status of each gate</caption><thead><tr><th>Gate</th><th>Type</th><th class="r">Limit</th><th class="r">Value</th><th>Status</th></tr></thead><tbody>
 <tr><td class="groupcap" colspan="5">Accuracy<span>1 pass, 3 skip</span></td></tr>
 <tr class="">
   <td><span class="mono">accuracy.top1_agreement</span> Top-1 agreement with the reference (teacher-forced)</td>
@@ -429,7 +456,7 @@ One release checked on its own; 3 performance repeats; accuracy against a float3
 </section>
 
 <section class="rsec"><h2>2. What was tested <small>observed = read from the server &middot; declared = from the config</small></h2>
-<div class="tbl"><table><thead><tr><th>Field</th><th>Release</th><th>Check</th></tr></thead><tbody>
+<div class="tbl" role="region" tabindex="0" aria-label="What was tested: version fields, observed or declared"><table><caption class="vh">What was tested: version fields, observed or declared</caption><thead><tr><th>Field</th><th>Release</th><th>Check</th></tr></thead><tbody>
 <tr><td class="mono">engine</td>
 <td><div class="vline">vllm<span class="obs o">observed</span></div></td><td></td></tr>
 <tr><td class="mono">engine_version</td>
@@ -451,16 +478,16 @@ One release checked on its own; 3 performance repeats; accuracy against a float3
 </section>
 
 <section class="rsec"><h2>3. Accuracy and functional behaviour <small>24 prompts vs the reference</small></h2>
-<div class="method"><span class="pill info">logprobs</span><span>The server returned next-token log-probabilities: every position of the reference's own continuation (1,486 positions in 24 prompts) is scored under the reference's context (teacher forcing), so one early difference does not cascade.</span></div><div class="tbl"><table><tbody>
-  <tr><td>Method</td><td><span class="pill info">logprobs</span> echo, tokens matched by id; prompts as tokens</td></tr>
-  <tr><td>Prompts / positions</td><td>24 / 1,486</td></tr>
-<tr><td>Top-1 agreement</td><td><b>99.02%</b> (6 disagreements, 3 at near ties under 0.1 nats); |logprob error| mean 0.0103, max 0.241</td></tr>
-<tr><td>Exact ties</td><td>17 positions where the server's top log-probability was shared by two or more tokens (17 of them include the reference token).
-    Ties are split: a tie of k tokens that includes the reference token counts 1/k. Ties counted as misses (strict): <b>98.45%</b>; ties counted as matches (generous): <b>99.60%</b>.</td></tr>  <tr><td>Greedy exact match</td><td><b>71.9%</b> mean; 14 of 24 prompts identical to the reference</td></tr>
+<div class="method"><span class="pill info">logprobs</span><span>The server returned next-token log-probabilities: every position of the reference's own continuation (1,486 positions in 24 prompts) is scored under the reference's context (teacher forcing), so one early difference does not cascade.</span></div><div class="tbl" role="region" tabindex="0" aria-label="Accuracy of vLLM 0.32.0 TP=2 against the reference"><table><caption class="vh">Accuracy of vLLM 0.32.0 TP=2 against the reference</caption><tbody>
+  <tr><th scope="row">Method</th><td><span class="pill info">logprobs</span> echo, tokens matched by id; prompts as tokens</td></tr>
+  <tr><th scope="row">Prompts / positions</th><td>24 / 1,486</td></tr>
+<tr><th scope="row">Top-1 agreement</th><td><b>99.02%</b> (6 disagreements, 3 at near ties under 0.1 nats); |logprob error| mean 0.0103, max 0.241</td></tr>
+<tr><th scope="row">Exact ties</th><td>17 positions where the server's top log-probability was shared by two or more tokens (17 of them include the reference token).
+    Ties are split: a tie of k tokens that includes the reference token counts 1/k. Ties counted as misses (strict): <b>98.45%</b>; ties counted as matches (generous): <b>99.60%</b>.</td></tr>  <tr><th scope="row">Greedy exact match</th><td><b>71.9%</b> mean; 14 of 24 prompts identical to the reference</td></tr>
 </tbody></table></div>
 
 <h3>Lowest-scoring prompts (release)</h3>
-<div class="tbl"><table><thead><tr><th>Prompt</th><th class="r">Top-1</th><th class="r">Greedy match</th><th class="r">First difference at</th><th>Reference vs output (start)</th></tr></thead><tbody>
+<div class="tbl" role="region" tabindex="0" aria-label="Lowest-scoring prompts: top-1 agreement, greedy match and first difference"><table><caption class="vh">Lowest-scoring prompts: top-1 agreement, greedy match and first difference</caption><thead><tr><th>Prompt</th><th class="r">Top-1</th><th class="r">Greedy match</th><th class="r">First difference at</th><th>Reference vs output (start)</th></tr></thead><tbody>
 <tr><td><span class="mono">p00</span> Write a short poem about the sea.</td><td class="r">96.1%</td><td class="r">15.6%</td>
 <td class="r">10</td><td class="small"><div class="muted">ref: Upon the vast and endless blue,
 The sea stretches wide, a canvas true.
@@ -501,7 +528,7 @@ A haiku is a traditional form of Japan</div></td></tr><tr><td><span class="mono"
 
 ### Step 1: Define th</div><div>out: To determine when the second train catches up to the first, we need to set up an equation based on the distances traveled by both trains. Let&#39;s break it down st</div></td></tr></tbody></table></div><p class="note">Every prompt is in accuracy.csv.</p>
 <h3>Functional checks</h3>
-<div class="tbl"><table><thead><tr><th>Check</th><th>Result</th><th>Detail</th></tr></thead><tbody>
+<div class="tbl" role="region" tabindex="0" aria-label="Functional checks"><table><caption class="vh">Functional checks</caption><thead><tr><th>Check</th><th>Result</th><th>Detail</th></tr></thead><tbody>
 <tr class=""><td>Greedy determinism <span class="mono muted small">greedy_determinism</span></td>
 <td><span class="pill pass">pass</span></td><td class="small">two identical requests gave the same 209-character output</td></tr><tr class=""><td>max_tokens honoured <span class="mono muted small">max_tokens</span></td>
 <td><span class="pill pass">pass</span></td><td class="small">finish_reason length, usage.completion_tokens 8</td></tr><tr class=""><td>Stop sequence honoured <span class="mono muted small">stop_sequence</span></td>
@@ -514,7 +541,7 @@ A haiku is a traditional form of Japan</div></td></tr><tr><td><span class="mono"
 <td><span class="pill pass">pass</span></td><td class="small">identical sampled outputs</td></tr></tbody></table></div></section>
 
 <section class="rsec"><h2>Reliability <small>overload, cancelled and abandoned requests, restart</small></h2>
-<div class="tbl"><table><thead><tr><th>Check</th><th>Result</th><th>Detail</th></tr></thead><tbody>
+<div class="tbl" role="region" tabindex="0" aria-label="Reliability checks"><table><caption class="vh">Reliability checks</caption><thead><tr><th>Check</th><th>Result</th><th>Detail</th></tr></thead><tbody>
 <tr class=""><td>Survives an overload burst <span class="mono muted small">overload_survives</span></td>
 <td><span class="pill pass">pass</span></td><td class="small">the server answers /v1/models after the burst</td></tr><tr class=""><td>Overload: requests complete or are refused cleanly (429 / 503) <span class="mono muted small">overload_clean_errors</span></td>
 <td><span class="pill pass">pass</span></td><td class="small">256 completed, 0 refused cleanly (429 / 503), 0 other errors</td></tr><tr class=""><td>Back to idle latency after the overload <span class="mono muted small">overload_recovery</span></td>
@@ -526,7 +553,7 @@ A haiku is a traditional form of Japan</div></td></tr><tr><td><span class="mono"
 <td><span class="pill pass">pass</span></td><td class="small">back after 70.4 s with the same greedy output</td></tr></tbody></table></div></section>
 
 <section class="rsec"><h2>4. Structured output and tool calls <small>tasks tools-v1 (101) and json-v1 (50); greedy; the gates decide on the Wilson 95% interval</small></h2>
-<div class="tbl"><table><thead><tr><th>Check</th><th class="r">Result</th><th>Note</th></tr></thead><tbody>
+<div class="tbl" role="region" tabindex="0" aria-label="Structured output and tool-call validity by mode"><table><caption class="vh">Structured output and tool-call validity by mode</caption><thead><tr><th>Check</th><th class="r">Result</th><th>Note</th></tr></thead><tbody>
 <tr><td>JSON, json schema <span class="muted small">gated</span></td>
 <td class="r"><b>100%</b> valid (50/50, [92.9%, 100.0%])</td>
 <td class="small">parse 100%, expected values 98%; wrong_value 1</td></tr><tr><td>JSON, json object</td>
@@ -541,7 +568,7 @@ A haiku is a traditional form of Japan</div></td></tr><tr><td><span class="mono"
 <td class="r"><b style="color:var(--bad)">96%</b> valid (78/81, [89.7%, 98.7%])</td>
 <td class="small">wrong_value 3</td></tr></tbody></table></div>
 <h3>Tool calls by category <span class="muted small">valid / tasks per tool_choice mode; parallel is reported, not gated</span></h3>
-<div class="tbl"><table class="small"><thead><tr><th>Category</th><th class="r">Tasks</th><th class="r">auto</th><th class="r">named</th><th class="r">named strict</th><th>Errors (auto)</th></tr></thead><tbody>
+<div class="tbl" role="region" tabindex="0" aria-label="Tool calls valid by category and tool_choice mode"><table class="small"><caption class="vh">Tool calls valid by category and tool_choice mode</caption><thead><tr><th>Category</th><th class="r">Tasks</th><th class="r">auto</th><th class="r">named</th><th class="r">named strict</th><th>Errors (auto)</th></tr></thead><tbody>
 <tr><td>string enum</td><td class="r">9</td>
 <td class="r">9/9</td><td class="r">9/9</td><td class="r">9/9</td><td></td></tr><tr><td>integer number</td><td class="r">9</td>
 <td class="r">9/9</td><td class="r">9/9</td><td class="r">9/9</td><td></td></tr><tr><td>boolean</td><td class="r">8</td>
@@ -555,7 +582,7 @@ A haiku is a traditional form of Japan</div></td></tr><tr><td><span class="mono"
 <td class="r">8/8</td><td class="r">&ndash;</td><td class="r">&ndash;</td><td></td></tr><tr><td>multi turn</td><td class="r">8</td>
 <td class="r">8/8</td><td class="r">4/4</td><td class="r">4/4</td><td></td></tr><tr><td>long schema</td><td class="r">8</td>
 <td class="r">8/8</td><td class="r">8/8</td><td class="r">6/8</td><td></td></tr></tbody></table></div><h3>JSON by category <span class="muted small">schema-valid / tasks per mode</span></h3>
-<div class="tbl"><table class="small"><thead><tr><th>Category</th><th class="r">Tasks</th><th class="r">json schema</th><th class="r">json object</th><th class="r">instruction</th><th>Errors (json schema)</th></tr></thead><tbody>
+<div class="tbl" role="region" tabindex="0" aria-label="JSON schema-valid by category and mode"><table class="small"><caption class="vh">JSON schema-valid by category and mode</caption><thead><tr><th>Category</th><th class="r">Tasks</th><th class="r">json schema</th><th class="r">json object</th><th class="r">instruction</th><th>Errors (json schema)</th></tr></thead><tbody>
 <tr><td>flat</td><td class="r">7</td>
 <td class="r">7/7</td><td class="r">7/7</td><td class="r">7/7</td><td></td></tr><tr><td>enum</td><td class="r">7</td>
 <td class="r">7/7</td><td class="r">7/7</td><td class="r">7/7</td><td></td></tr><tr><td>nested</td><td class="r">7</td>
@@ -564,7 +591,7 @@ A haiku is a traditional form of Japan</div></td></tr><tr><td><span class="mono"
 <td class="r">7/7</td><td class="r">7/7</td><td class="r">7/7</td><td></td></tr><tr><td>numbers</td><td class="r">7</td>
 <td class="r">7/7</td><td class="r">7/7</td><td class="r">7/7</td><td></td></tr><tr><td>long schema</td><td class="r">7</td>
 <td class="r">7/7</td><td class="r">7/7</td><td class="r">7/7</td><td>wrong_value 1</td></tr></tbody></table></div><h3>Tool-call failures by type <span class="muted small">auto; first tasks and argument paths</span></h3>
-<div class="tbl"><table class="small"><thead><tr><th>Type</th><th class="r">Count</th><th>Tasks</th><th>Paths</th></tr></thead><tbody>
+<div class="tbl" role="region" tabindex="0" aria-label="Tool-call failures by type"><table class="small"><caption class="vh">Tool-call failures by type</caption><thead><tr><th>Type</th><th class="r">Count</th><th>Tasks</th><th>Paths</th></tr></thead><tbody>
 <tr><td class="mono">no_tool_call</td><td class="r">1</td><td>op.contact</td><td class="mono"></td></tr></tbody></table></div><h3>Evidence <span class="muted small">request / response samples of failed checks (truncated)</span></h3>
 <div class="evid"><b>Evidence &middot; json.json_schema &middot; candidate</b> <span class="muted">candidate:json.json_schema:0</span>
 <span class="bad">wrong_value: $.address.street: &#34;Keizersgracht&#34; does not contain &#39;keizersgracht 120&#39;</span>
@@ -593,7 +620,7 @@ response: {&#34;message&#34;: {&#34;role&#34;: &#34;assistant&#34;, &#34;tool_ca
 <div class="charts"><div class="chart"><h3>Output tokens per second</h3><svg viewBox="0 0 460 220" role="img" aria-label="output tok/s by concurrency"><line x1="64" x2="446" y1="186.0" y2="186.0" stroke="var(--line)" stroke-width="1"/><text x="56" y="190.0" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">0</text><line x1="64" x2="446" y1="143.5" y2="143.5" stroke="var(--line)" stroke-width="1"/><text x="56" y="147.5" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">375</text><line x1="64" x2="446" y1="101.0" y2="101.0" stroke="var(--line)" stroke-width="1"/><text x="56" y="105.0" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">750</text><line x1="64" x2="446" y1="58.5" y2="58.5" stroke="var(--line)" stroke-width="1"/><text x="56" y="62.5" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">1,125</text><line x1="64" x2="446" y1="16.0" y2="16.0" stroke="var(--line)" stroke-width="1"/><text x="56" y="20.0" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">1,500</text><text x="64.0" y="206" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">1</text><text x="255.0" y="206" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">8</text><text x="446.0" y="206" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">32</text><text x="255.0" y="219" text-anchor="middle" font-size="10.5" fill="var(--muted)">concurrent requests</text><text x="12" y="101.0" text-anchor="middle" font-size="10.5" fill="var(--muted)" transform="rotate(-90 12 101.0)">output tok/s</text><polygon points="64.0,186.0 64.0,180.4 255.0,145.4 446.0,47.6 446.0,186.0" fill="var(--accent)" fill-opacity=".10"/><polyline points="64.0,180.4 255.0,145.4 446.0,47.6" fill="none" stroke="var(--accent)" stroke-width="2.5"/><line x1="64.0" x2="64.0" y1="180.4" y2="180.4" stroke="var(--accent)" stroke-width="1.5"/><line x1="60.0" x2="68.0" y1="180.4" y2="180.4" stroke="var(--accent)" stroke-width="1.5"/><line x1="60.0" x2="68.0" y1="180.4" y2="180.4" stroke="var(--accent)" stroke-width="1.5"/><circle cx="64.0" cy="180.4" r="3.5" fill="var(--accent)" stroke="var(--paper)" stroke-width="1.5"/><line x1="255.0" x2="255.0" y1="145.8" y2="145.1" stroke="var(--accent)" stroke-width="1.5"/><line x1="251.0" x2="259.0" y1="145.8" y2="145.8" stroke="var(--accent)" stroke-width="1.5"/><line x1="251.0" x2="259.0" y1="145.1" y2="145.1" stroke="var(--accent)" stroke-width="1.5"/><circle cx="255.0" cy="145.4" r="3.5" fill="var(--accent)" stroke="var(--paper)" stroke-width="1.5"/><line x1="446.0" x2="446.0" y1="48.5" y2="46.7" stroke="var(--accent)" stroke-width="1.5"/><line x1="442.0" x2="450.0" y1="48.5" y2="48.5" stroke="var(--accent)" stroke-width="1.5"/><line x1="442.0" x2="450.0" y1="46.7" y2="46.7" stroke="var(--accent)" stroke-width="1.5"/><circle cx="446.0" cy="47.6" r="3.5" fill="var(--accent)" stroke="var(--paper)" stroke-width="1.5"/></svg>
   <div class="legend"><span><i></i>measured, 95% interval</span></div></div><div class="chart"><h3>Time to first token, slowest 1% (p99)</h3><svg viewBox="0 0 460 220" role="img" aria-label="TTFT p99 (ms) by concurrency"><line x1="64" x2="446" y1="186.0" y2="186.0" stroke="var(--line)" stroke-width="1"/><text x="56" y="190.0" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">0</text><line x1="64" x2="446" y1="143.5" y2="143.5" stroke="var(--line)" stroke-width="1"/><text x="56" y="147.5" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">200</text><line x1="64" x2="446" y1="101.0" y2="101.0" stroke="var(--line)" stroke-width="1"/><text x="56" y="105.0" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">400</text><line x1="64" x2="446" y1="58.5" y2="58.5" stroke="var(--line)" stroke-width="1"/><text x="56" y="62.5" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">600</text><line x1="64" x2="446" y1="16.0" y2="16.0" stroke="var(--line)" stroke-width="1"/><text x="56" y="20.0" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">800</text><text x="64.0" y="206" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">1</text><text x="255.0" y="206" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">8</text><text x="446.0" y="206" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">32</text><text x="255.0" y="219" text-anchor="middle" font-size="10.5" fill="var(--muted)">concurrent requests</text><text x="12" y="101.0" text-anchor="middle" font-size="10.5" fill="var(--muted)" transform="rotate(-90 12 101.0)">TTFT p99 (ms)</text><polyline points="64.0,176.6 255.0,143.2 446.0,48.4" fill="none" stroke="var(--accent)" stroke-width="2.5"/><line x1="64.0" x2="64.0" y1="179.0" y2="175.2" stroke="var(--accent)" stroke-width="1.5"/><line x1="60.0" x2="68.0" y1="179.0" y2="179.0" stroke="var(--accent)" stroke-width="1.5"/><line x1="60.0" x2="68.0" y1="175.2" y2="175.2" stroke="var(--accent)" stroke-width="1.5"/><circle cx="64.0" cy="176.6" r="3.5" fill="var(--accent)" stroke="var(--paper)" stroke-width="1.5"/><line x1="255.0" x2="255.0" y1="148.0" y2="141.3" stroke="var(--accent)" stroke-width="1.5"/><line x1="251.0" x2="259.0" y1="148.0" y2="148.0" stroke="var(--accent)" stroke-width="1.5"/><line x1="251.0" x2="259.0" y1="141.3" y2="141.3" stroke="var(--accent)" stroke-width="1.5"/><circle cx="255.0" cy="143.2" r="3.5" fill="var(--accent)" stroke="var(--paper)" stroke-width="1.5"/><line x1="446.0" x2="446.0" y1="57.0" y2="45.0" stroke="var(--accent)" stroke-width="1.5"/><line x1="442.0" x2="450.0" y1="57.0" y2="57.0" stroke="var(--accent)" stroke-width="1.5"/><line x1="442.0" x2="450.0" y1="45.0" y2="45.0" stroke="var(--accent)" stroke-width="1.5"/><circle cx="446.0" cy="48.4" r="3.5" fill="var(--accent)" stroke="var(--paper)" stroke-width="1.5"/></svg>
   <div class="legend"><span><i></i>measured, 95% interval</span></div></div></div><h3>Release: vLLM 0.32.0 TP=2</h3>
-<div class="tbl"><table><thead><tr><th class="r">Load</th><th class="r">Achieved</th><th class="r">Requests</th><th class="r">Errors</th><th class="r">Output tok/s (95% CI)</th><th class="r">TTFT p50 / p99 ms</th><th class="r">TPOT p50 / p99 ms</th><th class="r">ITL p99 ms</th><th class="r">E2E p50 / p99 ms</th></tr></thead><tbody>
+<div class="tbl" role="region" tabindex="0" aria-label="Performance of vLLM 0.32.0 TP=2 by load point"><table><caption class="vh">Performance of vLLM 0.32.0 TP=2 by load point</caption><thead><tr><th class="r">Load</th><th class="r">Achieved</th><th class="r">Requests</th><th class="r">Errors</th><th class="r">Output tok/s (95% CI)</th><th class="r">TTFT p50 / p99 ms</th><th class="r">TPOT p50 / p99 ms</th><th class="r">ITL p99 ms</th><th class="r">E2E p50 / p99 ms</th></tr></thead><tbody>
 <tr><td class="r">c=1</td>
 <td class="r">c 1.0</td>
 <td class="r">48</td><td class="r">0</td>
@@ -613,7 +640,7 @@ response: {&#34;message&#34;: {&#34;role&#34;: &#34;assistant&#34;, &#34;tool_ca
 </section>
 
 <section class="rsec"><h2>6. Stability and memory <small>180 s soak at 16 concurrent requests</small></h2>
-<div class="tbl"><table><thead><tr><th>Metric</th><th class="r">Release</th></tr></thead><tbody>
+<div class="tbl" role="region" tabindex="0" aria-label="Stability and memory"><table><caption class="vh">Stability and memory</caption><thead><tr><th>Metric</th><th class="r">Release</th></tr></thead><tbody>
 <tr><td>Requests completed</td><td class="r">800</td></tr>
 <tr><td>Errors</td><td class="r">0</td></tr>
 <tr><td>Output tok/s overall</td><td class="r">558.1</td></tr>

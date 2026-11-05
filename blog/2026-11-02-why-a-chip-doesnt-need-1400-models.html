@@ -112,6 +112,7 @@
   <p>On Inferentia2 we’re still about 5 ms behind AWS’s library to the first token. A faster setting existed. It changed the answers slightly, so we shipped the exact one. Those 5 ms bother us. We’d still make the same choice.</p>
   <p>Here’s what we don’t run yet. No mixture-of-experts models, and no models with sliding-window attention. No image, video or audio models. Text models only, so far. It’s all on <a href="../status.html">the status page</a>, with the target next to what we’ve measured.</p>
   <p>Next, we’re exploring diffusion models for images, such as FLUX, as our first family beyond language. Exploring means just that: we’re looking hard at the work, and we’re not promising a date.</p>
+  <p class="post-update"><b>Update, 4 November.</b> We stopped exploring and started building. FLUX.2 [klein], an image model, now makes 1024×1024 pictures on FuseZap on an Apple GPU, behind an OpenAI-style images API. Its images are closer to the full-precision ones than diffusers’ (33.9 dB against 25.5), but it’s about 12 times slower for now, and making it fast is the next job. It’s on <a href="../status.html">the status page</a>, slow number and all.</p>
   <p>We’re also testing our own bet. We believe a second model on a new chip costs far less than the first. We’re measuring that on Inferentia2 now, with a structurally different model, and we’ll publish the number whichever way it comes out.</p>
 
   <h2 id="your-chip">For your next planning meeting</h2>
