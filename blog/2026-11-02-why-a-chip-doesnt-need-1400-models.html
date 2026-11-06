@@ -107,7 +107,8 @@
   <p><b>1 November.</b> We rewrote the kernels that process the prompt. The first token went from 90.6 to 55.4 milliseconds, with the same answers, bit for bit.</p>
   <p>Through all of it, the server, the model code and the API above the backend didn’t change. That’s what climbing one family feels like from the inside. Not a thousand models. One family, made right on one more chip.</p>
 
-  <h2 id="today">Where we are, honestly</h2>
+  <h2 id="today">Where we were on 2 November</h2>
+  <p class="post-update"><b>Today, 6 November:</b> dense language models and one image model, FLUX.2 [klein], run on FuseZap. Support varies by chip; the updates below and <a href="../matrix.html">the matrix</a> have the details.</p>
   <p>One family. Dense language models run on FuseZap today, and the ones we’ve tested end to end are Qwen2.5 and Llama 3.3.</p>
   <p>They run on NVIDIA GPUs, on one H100 or with a 70B model split across two H200s. Qwen2.5 also runs on Apple silicon, on CPU, which is our yardstick for getting answers right, and on Inferentia2. The details, chip by chip, are on <a href="../matrix.html">the matrix</a>.</p>
   <p>On Inferentia2 we’re still about 5 ms behind AWS’s library to the first token. A faster setting existed. It changed the answers slightly, so we shipped the exact one. Those 5 ms bother us. We’d still make the same choice.</p>

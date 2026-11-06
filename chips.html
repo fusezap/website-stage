@@ -76,7 +76,7 @@
       <span role="cell" data-step="0 · Op coverage" class="board-cell"><b>1,171 of 1,174</b><small>operation tests passed on the first full run on the chip</small><time datetime="2026-10-26">26 Oct 2026</time></span>
       <span role="cell" data-step="1 · First model correct" class="board-cell"><b>24 of 24</b><small>reference prompts matched by Qwen2.5-0.5B</small><time datetime="2026-10-27">27 Oct 2026</time></span>
       <span role="cell" data-step="2 · Served" class="board-cell"><b>Qwen2.5-7B</b><small>across both cores of one chip, behind the OpenAI API</small><time datetime="2026-10-29">29 Oct 2026</time></span>
-      <span role="cell" data-step="3 · Validate" class="board-cell"><b><span class="v v-promote">PROMOTE</span></b><small>38.8 ms a token, against 40.6 for AWS NxD Inference</small><time datetime="2026-11-01">1 Nov 2026</time></span>
+      <span role="cell" data-step="3 · Validate" class="board-cell"><b><span class="v v-promote">PROMOTE</span></b><small>38.8 ms a token served, against 40.6 for AWS NxD Inference run directly</small><time datetime="2026-11-01">1 Nov 2026</time></span>
     </div>
     <div class="board-row board-you" role="row">
       <span role="rowheader" class="board-chip"><b>Your chip</b><small>Simulator or silicon</small></span>
@@ -112,7 +112,7 @@
   </div><figure class="plate plate-stack reveal" aria-labelledby="stack-cap">
   <ol class="layers">
     <li class="ly"><span>Your customers’ apps</span><em>Unchanged</em></li>
-    <li class="ly ly-fz"><span>FuseZap Serve <small>The OpenAI API your customers already call</small></span><em>FuseZap</em></li>
+    <li class="ly ly-fz"><span>FuseZap Serve <small>OpenAI-compatible: the API your customers already call</small></span><em>FuseZap</em></li>
     <li class="ly ly-fz"><span>FuseZap Core <small>28 basic operations</small></span><em>FuseZap</em></li>
     <li class="ly ly-be">
       <div class="ly-be-h"><span>One backend for your chip</span><em>Built with your team</em></div>
@@ -135,7 +135,7 @@
     <p>Our first chip that isn’t a GPU. We started where you might be starting now: before the real chip, on AWS’s simulator, with one new Core backend. A renderer for AWS’s NKI kernel language, and a device that compiles each kernel once and keeps it loaded.</p>
     <p>The tests passed in the simulator first. Then we ran on the real chip, one step at a time. Nothing above the new backend changed: not Serve, not the models, not the API.</p>
   </div>
-  </div><div class="does reveal"><p class="does-k">What FuseZap does</p><h3>Behind the API your customers already call.</h3><p>FuseZap Serve puts the model behind the OpenAI API, with streaming, tool calls and structured output. On Inferentia2 that was Qwen2.5-7B across both cores of one chip, at <b>38.8 ms</b> a token against 40.6 for AWS’s own library.</p></div></div>
+  </div><div class="does reveal"><p class="does-k">What FuseZap does</p><h3>Behind the API your customers already call.</h3><p>FuseZap Serve puts the model behind an OpenAI-compatible API, with streaming, tool calls and structured output (<a href='engineering.html#not-done'>known limits</a>). On Inferentia2 that was Qwen2.5-7B across both cores of one chip, at <b>38.8 ms</b> a token, served over HTTP, against 40.6 for AWS’s own library run directly with no server in front.</p></div></div>
   <figure class="ex reveal" aria-labelledby="ex-cap"><figcaption id="ex-cap" class="ex-cap"><span class="kicker kicker-sm">The Inferentia2 bring-up · Fig. 4</span><b>Every dot is a dated run.</b><span>Each one is written up in the engineering notes, with its test counts and timings.</span></figcaption><div class="ex-plot"><div class="ex-axis" aria-hidden="true"><span style="--x:0">Sim</span><span style="--x:20">26 Oct</span><span style="--x:33.3">27</span><span style="--x:46.7">28</span><span style="--x:60">29</span><span style="--x:73.3">30</span><span style="--x:86.7">31</span><span style="--x:100">1 Nov</span></div><div class="ex-rail" aria-hidden="true"><i class="ex-fill"></i></div><ol class="ex-ev"><li style="--x:0"><span class="ex-dot ex-dot-sim"></span><time>Before the chip</time><b>Tests pass on AWS’s simulator</b><span>One new Core backend: a renderer for NKI and a device that compiles each kernel once.</span></li><li style="--x:20"><span class="ex-dot"></span><time datetime="2026-10-26">26 Oct 2026</time><b>1,171 of 1,174</b><span>operation tests passed on the first full run on the real chip.</span></li><li style="--x:33.3" class="ex-low"><span class="ex-dot"></span><time datetime="2026-10-27">27 Oct 2026</time><b>First model correct</b><span>Qwen2.5-0.5B matched the reference on all 24 reference prompts.</span></li><li style="--x:60"><span class="ex-dot"></span><time datetime="2026-10-29">29 Oct 2026</time><b>A 7B model served</b><span>Across both cores of one chip, behind the OpenAI API. <span class="v v-promote v-xs">PROMOTE</span></span></li><li style="--x:100" class="ex-low ex-end"><span class="ex-dot ex-dot-lume"></span><time datetime="2026-11-01">1 Nov 2026</time><b>First token in 55 ms</b><span>Down from 91, with the same answers, bit for bit.</span></li></ol></div><p class="ex-more"><a class="tl tl-dark" href="engineering.html#inferentia2">Every test count and timing →</a><a class="tl tl-dark" href="matrix.html">Where it stands on the matrix →</a></p></figure>
 </div></section>
 

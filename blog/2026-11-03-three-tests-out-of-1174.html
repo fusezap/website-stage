@@ -79,7 +79,7 @@
   <p>We didn’t start on the chip. We started on AWS’s simulator.</p>
   <p>A FuseZap backend needs two things from a chip: a way to compile a kernel, and a way to launch it. A functional simulator with the same interface is enough to begin. So that’s where the first tests ran, and where they first passed. All of them.</p>
   <p>On the simulator we proved the answers. Speed could wait for real hardware.</p>
-  <p>Nobody outside the team sees that kind of win. It still counts. When a test later fails on the chip, you already know the test is sound. You look at the chip, not at your own work.</p>
+  <p>Nobody outside the team sees that kind of win. It still counts. When a test later fails on the chip, the search is already narrower. You still check the test, the reference, the compiler and the runtime, but you start much closer to the answer.</p>
 
   <h2 id="backend">One backend, and a chip that didn’t quite fit</h2>
   <p>We wrote one new Core backend for Inferentia2. Two parts of it did the real work.</p>

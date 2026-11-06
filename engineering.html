@@ -57,14 +57,14 @@
 </nav>
 
 <main id="main">
-<header class="hero phero phero-narrow" id="top"><svg class="hero-grid" aria-hidden="true" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice"><defs><pattern id="cells" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#fff" stroke-width=".5"/></pattern><radialGradient id="gridFade" cx="50%" cy="38%" r="60%"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="gridMask"><rect width="1200" height="700" fill="url(#gridFade)"/></mask></defs><g mask="url(#gridMask)" opacity=".05"><rect width="1200" height="700" fill="url(#cells)"/></g></svg><div class="hero-glow" aria-hidden="true"></div><div class="wrap hero-copy"><p class="eyebrow rise"><span class="eyebrow-dot" aria-hidden="true"></span>Engineering notes · the lab notebook</p><h1 class="rise d1">Everything we measured,<br><span>including what isn’t done yet.</span></h1><p class="lede rise d2">Last updated 31 October 2026. Written for compiler, runtime and ML-systems engineers.</p></div><div class="wrap phero-obj rise d4">
+<header class="hero phero phero-narrow" id="top"><svg class="hero-grid" aria-hidden="true" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice"><defs><pattern id="cells" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#fff" stroke-width=".5"/></pattern><radialGradient id="gridFade" cx="50%" cy="38%" r="60%"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="gridMask"><rect width="1200" height="700" fill="url(#gridFade)"/></mask></defs><g mask="url(#gridMask)" opacity=".05"><rect width="1200" height="700" fill="url(#cells)"/></g></svg><div class="hero-glow" aria-hidden="true"></div><div class="wrap hero-copy"><p class="eyebrow rise"><span class="eyebrow-dot" aria-hidden="true"></span>Engineering notes · the lab notebook</p><h1 class="rise d1">Everything we measured,<br><span>including what isn’t done yet.</span></h1><p class="lede rise d2">Last updated 6 November 2026. Written for compiler, runtime and ML-systems engineers.</p></div><div class="wrap phero-obj rise d4">
 <div class="app" aria-label="Notebook entries">
   <div class="app-bar"><span class="app-crumb"><b>Notebook</b><i>/</i>Engineering</span><span class="app-status">Every setting and number is below</span></div>
   <ol class="drows">
     <li><a href="#h100"><time>26 Oct</time><b>One NVIDIA H100</b><span>Level with vLLM: 5.57 ms a token, vLLM 5.85</span><i aria-hidden="true">→</i></a></li>
     <li><a href="#h200"><time>26 Oct</time><b>Two NVIDIA H200s, 70B</b><span>Within 5% of vLLM per output token</span><i aria-hidden="true">→</i></a></li>
     <li><a href="#inferentia2-oct27"><time>27 Oct</time><b>AWS Inferentia2, first model</b><span>1,441 of 1,441 tokens match the reference</span><i aria-hidden="true">→</i></a></li>
-    <li><a href="#inferentia2-oct29"><time>1 Nov</time><b>Inferentia2, 7B on both cores</b><span>38.8 ms a token, AWS’s library 40.6</span><i aria-hidden="true">→</i></a></li>
+    <li><a href="#inferentia2-oct29"><time>1 Nov</time><b>Inferentia2, 7B on both cores</b><span>38.8 ms a token served, AWS’s library 40.6 run directly</span><i aria-hidden="true">→</i></a></li>
     <li class="is-open"><a href="#not-done"><time>Open</time><b>Not done yet</b><span>First token: about 5 ms behind on Inferentia2</span><i aria-hidden="true">→</i></a></li>
   </ol>
 </div>
@@ -113,7 +113,7 @@
   <figure class="plate plate-stack reveal" aria-labelledby="stack-cap">
   <ol class="layers">
     <li class="ly"><span>Your customers’ apps</span><em>Unchanged</em></li>
-    <li class="ly ly-fz"><span>FuseZap Serve <small>The OpenAI API your customers already call</small></span><em>FuseZap</em></li>
+    <li class="ly ly-fz"><span>FuseZap Serve <small>OpenAI-compatible: the API your customers already call</small></span><em>FuseZap</em></li>
     <li class="ly ly-fz"><span>FuseZap Core <small>28 basic operations</small></span><em>FuseZap</em></li>
     <li class="ly ly-be">
       <div class="ly-be-h"><span>One backend for your chip</span><em>Built with your team</em></div>

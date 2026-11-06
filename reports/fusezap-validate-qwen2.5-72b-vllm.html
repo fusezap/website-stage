@@ -168,7 +168,7 @@ footer.rfoot { margin-top: 28px; padding-top: 12px; border-top: 1px solid var(--
   <div class="verdict pass">
   <div class="vword"><span class="big">QUALIFIED</span><span class="decision">Decision: PROMOTE</span></div>
   <p class="vscope"><b>On the 22 gates that ran: 22 passed, 0 failed.</b> 12 didn’t run: 7 compare with a baseline release (this run had none), 4 long-prompt gates weren’t run (the check wasn’t requested), 1 doesn’t apply.</p>
-  <p class="vwhy"><b>PROMOTE</b>: every gate that ran passed on valid data: the release can be promoted. <span class="muted">Exit code 0.</span></p>
+  <p class="vwhy"><b>PROMOTE</b>: every gate that ran passed on valid data (22 passed, 12 skipped): the release can be promoted. <span class="muted">Exit code 0.</span></p>
   <p class="vnote">A PROMOTE covers only the gates that ran; each skipped gate and why is listed below.</p></div>
   <div class="tbl" role="region" tabindex="0" aria-label="Gate summary: the limit, measured value and status of each gate"><table><caption class="vh">Gate summary: the limit, measured value and status of each gate</caption><thead><tr><th>Gate</th><th class="r">Limit</th><th class="r">Value</th><th>Status</th></tr></thead><tbody>
 <tr><td class="groupcap" colspan="4">Accuracy<span>1 pass, 3 skip</span></td></tr>
@@ -266,11 +266,11 @@ One release checked on its own; 3 performance repeats; accuracy against a float3
 <div class="verdict pass">
   <div class="vword"><span class="big">QUALIFIED</span><span class="decision">Decision: PROMOTE</span></div>
   <p class="vscope"><b>On the 22 gates that ran: 22 passed, 0 failed.</b> 12 didn’t run: 7 compare with a baseline release (this run had none), 4 long-prompt gates weren’t run (the check wasn’t requested), 1 doesn’t apply.</p>
-  <p class="vwhy"><b>PROMOTE</b>: every gate that ran passed on valid data: the release can be promoted. <span class="muted">Exit code 0.</span></p>
+  <p class="vwhy"><b>PROMOTE</b>: every gate that ran passed on valid data (22 passed, 12 skipped): the release can be promoted. <span class="muted">Exit code 0.</span></p>
   <p class="vnote">A PROMOTE covers only the gates that ran; each skipped gate and why is listed below.</p></div>
 
 <div class="kpis">
-<div class="kpi"><b>Top-1 agreement</b><div class="v">99.02%</div><div class="d">teacher-forced, vs reference</div></div><div class="kpi"><b>Greedy exact match</b><div class="v">71.9%</div><div class="d">logprobs method</div></div><div class="kpi"><b>Peak tok/s (c=32)</b><div class="v">1,221</div><div class="d"></div></div><div class="kpi"><b>TTFT p50 / TPOT p50 at c=1</b><div class="v">36 / 20.1 ms</div><div class="d"></div></div><div class="kpi"><b>Tool calls valid</b><div class="v">98.9%</div><div class="d">93 tasks; JSON schema-valid 100%</div></div><div class="kpi"><b>Stability drift</b><div class="v">+6.3%</div><div class="d">error rate 0.00%</div></div></div>
+<div class="kpi"><b>Top-1 agreement</b><div class="v">99.02%</div><div class="d">teacher-forced, vs reference</div></div><div class="kpi"><b>Mean greedy prefix match</b><div class="v">71.9%</div><div class="d">complete-output exact match 14 of 24 (58.3%); logprobs method</div></div><div class="kpi"><b>Peak tok/s (c=32)</b><div class="v">1,221</div><div class="d"></div></div><div class="kpi"><b>TTFT p50 / TPOT p50 at c=1</b><div class="v">36 / 20.1 ms</div><div class="d"></div></div><div class="kpi"><b>Tool calls valid</b><div class="v">98.9%</div><div class="d">93 tasks; JSON schema-valid 100%</div></div><div class="kpi"><b>Stability drift</b><div class="v">+6.3%</div><div class="d">error rate 0.00%</div></div></div>
 
 <section class="rsec"><h2>1. Gates <small>default gates; relative gates compare the candidate with the baseline and decide on the 95% interval</small></h2>
 <div class="tbl" role="region" tabindex="0" aria-label="Gates: the limit, measured value and status of each gate"><table><caption class="vh">Gates: the limit, measured value and status of each gate</caption><thead><tr><th>Gate</th><th>Type</th><th class="r">Limit</th><th class="r">Value</th><th>Status</th></tr></thead><tbody>
@@ -483,11 +483,11 @@ One release checked on its own; 3 performance repeats; accuracy against a float3
   <tr><th scope="row">Prompts / positions</th><td>24 / 1,486</td></tr>
 <tr><th scope="row">Top-1 agreement</th><td><b>99.02%</b> (6 disagreements, 3 at near ties under 0.1 nats); |logprob error| mean 0.0103, max 0.241</td></tr>
 <tr><th scope="row">Exact ties</th><td>17 positions where the server's top log-probability was shared by two or more tokens (17 of them include the reference token).
-    Ties are split: a tie of k tokens that includes the reference token counts 1/k. Ties counted as misses (strict): <b>98.45%</b>; ties counted as matches (generous): <b>99.60%</b>.</td></tr>  <tr><th scope="row">Greedy exact match</th><td><b>71.9%</b> mean; 14 of 24 prompts identical to the reference</td></tr>
+    Ties are split: a tie of k tokens that includes the reference token counts 1/k. Ties counted as misses (strict): <b>98.45%</b>; ties counted as matches (generous): <b>99.60%</b>.</td></tr><tr><th scope="row">Mean greedy prefix match</th><td><b>71.9%</b> mean matched prefix of the greedy output (the share of the reference's tokens matched before the first difference). Complete-output exact match: 14 of 24 prompts (58.3%)</td></tr>
 </tbody></table></div>
 
 <h3>Lowest-scoring prompts (release)</h3>
-<div class="tbl" role="region" tabindex="0" aria-label="Lowest-scoring prompts: top-1 agreement, greedy match and first difference"><table><caption class="vh">Lowest-scoring prompts: top-1 agreement, greedy match and first difference</caption><thead><tr><th>Prompt</th><th class="r">Top-1</th><th class="r">Greedy match</th><th class="r">First difference at</th><th>Reference vs output (start)</th></tr></thead><tbody>
+<div class="tbl" role="region" tabindex="0" aria-label="Lowest-scoring prompts: top-1 agreement, greedy prefix match and first difference"><table><caption class="vh">Lowest-scoring prompts: top-1 agreement, greedy prefix match and first difference</caption><thead><tr><th>Prompt</th><th class="r">Top-1</th><th class="r">Greedy prefix match</th><th class="r">First difference at</th><th>Reference vs output (start)</th></tr></thead><tbody>
 <tr><td><span class="mono">p00</span> Write a short poem about the sea.</td><td class="r">96.1%</td><td class="r">15.6%</td>
 <td class="r">10</td><td class="small"><div class="muted">ref: Upon the vast and endless blue,
 The sea stretches wide, a canvas true.
@@ -554,20 +554,20 @@ A haiku is a traditional form of Japan</div></td></tr><tr><td><span class="mono"
 
 <section class="rsec"><h2>4. Structured output and tool calls <small>tasks tools-v1 (101) and json-v1 (50); greedy; the gates decide on the Wilson 95% interval</small></h2>
 <div class="tbl" role="region" tabindex="0" aria-label="Structured output and tool-call validity by mode"><table><caption class="vh">Structured output and tool-call validity by mode</caption><thead><tr><th>Check</th><th class="r">Result</th><th>Note</th></tr></thead><tbody>
-<tr><td>JSON, json schema <span class="muted small">gated</span></td>
+<tr><td>JSON, json schema <span class="muted small">gated mode</span></td>
 <td class="r"><b>100%</b> valid (50/50, [92.9%, 100.0%])</td>
-<td class="small">parse 100%, expected values 98%; wrong_value 1</td></tr><tr><td>JSON, json object</td>
+<td class="small">parse 100%, expected values 98%; wrong_value 1</td></tr><tr><td>JSON, json object <span class="muted small">reported, not gated</span></td>
 <td class="r"><b>100%</b> valid (50/50, [92.9%, 100.0%])</td>
-<td class="small">parse 100%, expected values 98%; wrong_value 1</td></tr><tr><td>JSON, instruction (instruction only)</td>
+<td class="small">parse 100%, expected values 98%; wrong_value 1</td></tr><tr><td>JSON, instruction (instruction only) <span class="muted small">reported, not gated</span></td>
 <td class="r"><b>100%</b> valid (50/50, [92.9%, 100.0%])</td>
-<td class="small">parse 100%, expected values 98%; wrong_value 1</td></tr><tr><td>Tool calls, tool_choice auto <span class="muted small">gated</span></td>
+<td class="small">parse 100%, expected values 98%; wrong_value 1</td></tr><tr><td>Tool calls, tool_choice auto <span class="muted small">gated mode</span></td>
 <td class="r"><b style="color:var(--bad)">99%</b> valid (92/93, [94.2%, 99.8%])</td>
-<td class="small">parallel 8/8 (not gated); no_tool_call 1</td></tr><tr><td>Tool calls, tool_choice named</td>
+<td class="small">parallel 8/8 (not gated); no_tool_call 1</td></tr><tr><td>Tool calls, tool_choice named <span class="muted small">reported, not gated</span></td>
 <td class="r"><b>100%</b> valid (81/81, [95.5%, 100.0%])</td>
-<td class="small"></td></tr><tr><td>Tool calls, tool_choice named strict</td>
+<td class="small"></td></tr><tr><td>Tool calls, tool_choice named strict <span class="muted small">reported, not gated</span></td>
 <td class="r"><b style="color:var(--bad)">96%</b> valid (78/81, [89.7%, 98.7%])</td>
 <td class="small">wrong_value 3</td></tr></tbody></table></div>
-<h3>Tool calls by category <span class="muted small">valid / tasks per tool_choice mode; parallel is reported, not gated</span></h3>
+<p class="note">Gated mode: tool calls, tool_choice auto; JSON, json schema. The other modes are reported, not gated.</p><h3>Tool calls by category <span class="muted small">valid / tasks per tool_choice mode (gated mode: auto); parallel is reported, not gated</span></h3>
 <div class="tbl" role="region" tabindex="0" aria-label="Tool calls valid by category and tool_choice mode"><table class="small"><caption class="vh">Tool calls valid by category and tool_choice mode</caption><thead><tr><th>Category</th><th class="r">Tasks</th><th class="r">auto</th><th class="r">named</th><th class="r">named strict</th><th>Errors (auto)</th></tr></thead><tbody>
 <tr><td>string enum</td><td class="r">9</td>
 <td class="r">9/9</td><td class="r">9/9</td><td class="r">9/9</td><td></td></tr><tr><td>integer number</td><td class="r">9</td>

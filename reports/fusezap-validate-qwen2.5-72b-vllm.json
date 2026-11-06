@@ -168,7 +168,15 @@
  "verdict": "PASS",
  "decision": {
   "label": "PROMOTE",
-  "reason": "every gate passed on valid data: the candidate can replace the baseline"
+  "reason": "every gate that ran passed on valid data (22 passed, 12 skipped): the release can be promoted",
+  "gates": {
+   "failed": 0,
+   "error": 0,
+   "inconclusive": 0,
+   "passed": 22,
+   "skipped": 12
+  },
+  "has_baseline": false
  },
  "exit_code": 0,
  "target": {
@@ -229,9 +237,11 @@
    "tpot_p50_ms_c1": 20.144,
    "stability_drift_pct": 6.32,
    "error_rate": 0.0,
-   "kv_cache_usage_max": 0.0215
+   "kv_cache_usage_max": 0.0215,
+   "greedy_full_matches": 14,
+   "greedy_full_match_fraction": 0.5833
   },
-  "headline": "every gate passed."
+  "headline": "22 gates that ran passed; 12 skipped."
  },
  "gates": [
   {
@@ -1843,7 +1853,8 @@
     "reference_text_head": "Starting to learn the guitar is an exciting journey, and there are a few key things a beginner should know to make the process smoother and more enjoyable. Here",
     "error": null
    }
-  ]
+  ],
+  "greedy_full_match_fraction": 0.5833
  },
  "functional": {
   "checks": [
@@ -10982,7 +10993,8 @@
       "reference_text_head": "Starting to learn the guitar is an exciting journey, and there are a few key things a beginner should know to make the process smoother and more enjoyable. Here",
       "error": null
      }
-    ]
+    ],
+    "greedy_full_match_fraction": 0.5833
    },
    "functional": {
     "checks": [
@@ -19403,6 +19415,8 @@
  },
  "presentation": {
   "page_size": "letter",
-  "branding": null
+  "branding": null,
+  "brand_url": "../validate.html",
+  "brand_title": "FuseZap Validate on fusezap.ai"
  }
 }

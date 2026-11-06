@@ -1,5 +1,5 @@
 {
- "_comment": "PROVISIONAL. A snapshot (5 Nov 2026) of FuseZap's support matrix: one entry per model and chip, with its status, verdict where shown, key metric, baseline and the date it was verified. It will be replaced by the matrix published with each release. Evidence paths point into the FuseZap engine repository.",
+ "_comment": "PROVISIONAL. A snapshot (6 Nov 2026) of FuseZap's support matrix: one entry per model and chip, with its status, verdict where shown, key metric, baseline and the date it was verified. It will be replaced by the matrix published with each release. Evidence paths point into the FuseZap engine repository.",
  "status_definitions": {
   "Supported": "Starts with the first public release: a cell in a released version that passed a gate on real hardware, with evidence. No cell is Supported yet.",
   "Preview": "Ran on real hardware in a development build. Every cell is Preview until the first public release. The verdict, where shown, says whether the run passed Validate; caveats are noted in the cell.",
@@ -61,12 +61,12 @@
    "model": "Qwen2.5-0.5B-Instruct",
    "chip": "aws-inf2",
    "status": "Preview",
-   "verified": "2026-10-26",
+   "verified": "2026-10-27",
    "verdict": "PROMOTE",
    "metric": "27.1 ms a token",
    "baseline": null,
    "chip_note": "fp32, 1 NeuronCore (inf2.xlarge)",
-   "note": "Measured before the 27 Oct to 1 Nov kernel work",
+   "note": "Same evening as the first served run (about 161 ms a token), after fusing each layer's kernels into one launch (the evening of 26 Oct Pacific time, 27 Oct UTC)",
    "verified_text": null,
    "config": "fp32, 1 NeuronCore (inf2.xlarge), fusezap serve",
    "gate": "Validate accuracy over HTTP (top-1 1.0, greedy exact 1.0); 24/24 prompts token-exact vs the float32 reference",
