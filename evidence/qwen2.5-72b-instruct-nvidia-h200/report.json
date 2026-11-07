@@ -1,0 +1,3801 @@
+{
+ "schema": "fusezap.validate/v0",
+ "mode": "single",
+ "execution": {
+  "mode": "single",
+  "slots": [
+   {
+    "slot": 0,
+    "release": "candidate",
+    "repeat": 0,
+    "started_utc": "2026-10-26T17:29:07Z",
+    "duration_s": 57.7
+   },
+   {
+    "slot": 1,
+    "release": "candidate",
+    "repeat": 1,
+    "started_utc": "2026-10-26T17:30:04Z",
+    "duration_s": 55.8
+   },
+   {
+    "slot": 2,
+    "release": "candidate",
+    "repeat": 2,
+    "started_utc": "2026-10-26T17:31:00Z",
+    "duration_s": 55.8
+   }
+  ],
+  "repeats": 3
+ },
+ "run": {
+  "id": "20261026T172846Z-c8b7c5",
+  "name": "I60 M5: Qwen/Qwen2.5-72B-Instruct on FuseZap serve --tp 2 (2x H200), all-reduce variant default",
+  "started_utc": "2026-10-26T17:28:46Z",
+  "finished_utc": "2026-10-26T17:31:56Z",
+  "duration_s": 190.5,
+  "tool_version": "0.1.0",
+  "tool_commit": "ed08951",
+  "command": "python -m fusezap validate --config results/qwen2.5-72b-instruct.json",
+  "host": "<redacted>",
+  "checks": [
+   "accuracy",
+   "performance"
+  ],
+  "config_file": "qwen2.5-72b-instruct.json",
+  "config_sha256": "69aa0fa6865e4e77d7cef6646c8b84f6261f5acaf920d3a3b862c52c76dee384"
+ },
+ "config": {
+  "name": "I60 M5: Qwen/Qwen2.5-72B-Instruct on FuseZap serve --tp 2 (2x H200), all-reduce variant default",
+  "model": "Qwen/Qwen2.5-72B-Instruct",
+  "seed": 0,
+  "a_a": false,
+  "baseline_report": null,
+  "reference": {
+   "file": "qwen2.5-72b-instruct-f32.json"
+  },
+  "releases": {
+   "candidate": {
+    "label": "FuseZap serve --tp 2 (default)",
+    "base_url": "http://<host>:18005",
+    "hardware": "2x H200 141 GB (RunPod)",
+    "declared": {
+     "engine": "fusezap",
+     "flags": "--tp 2 --max-model-len 8192 --num-blocks 8192 "
+    }
+   }
+  },
+  "checks": [
+   "accuracy",
+   "performance"
+  ],
+  "accuracy": {
+   "method": "auto",
+   "concurrency": 8,
+   "max_positions": null
+  },
+  "functional": {},
+  "structured": {
+   "max_tokens": 256,
+   "concurrency": 8,
+   "builtin": true,
+   "tool_tasks_file": null,
+   "json_tasks_file": null,
+   "tool_modes": [
+    "auto",
+    "named"
+   ]
+  },
+  "performance": {
+   "workload": "short",
+   "profiles": null,
+   "concurrency": [
+    1,
+    8,
+    32
+   ],
+   "rates": [],
+   "rate_requests": 32,
+   "rate_max_concurrency": 64,
+   "requests_per_point": null,
+   "repeats": 3,
+   "warmup": true
+  },
+  "long_context": {
+   "lengths": [
+    4096,
+    8192,
+    16384,
+    32768
+   ],
+   "per_length": 5,
+   "max_new_tokens": 24,
+   "reference": null,
+   "method": "auto",
+   "teacher_forcing": "stepwise",
+   "concurrency": 4
+  },
+  "stability": {
+   "duration_s": 180.0,
+   "concurrency": 16,
+   "workload": "gate"
+  },
+  "reliability": {
+   "overload_concurrency": null,
+   "overload_requests": null,
+   "overload_output_tokens": 64,
+   "request_timeout_s": 300.0,
+   "recovery_timeout_s": 60.0,
+   "cancel_requests": 16,
+   "cancel_output_tokens": 4096,
+   "abandon_after_s": 1.0,
+   "drain_timeout_s": 10.0,
+   "restart_cmd": null,
+   "restart_timeout_s": 900.0
+  },
+  "noise": {
+   "confidence": 0.95
+  },
+  "gates": null,
+  "outputs": {
+   "dir": "qwen2.5-72b-instruct",
+   "pdf": false,
+   "show_url": false
+  },
+  "fail_on_inconclusive": false,
+  "execution": {
+   "mode": "auto",
+   "calibration": null
+  },
+  "branding": null,
+  "page_size": "letter",
+  "client": {
+   "tokenizer": null,
+   "connect_timeout": 1200,
+   "request_timeout": 600.0,
+   "gpu_sample_ms": 500
+  }
+ },
+ "verdict": "PASS",
+ "decision": {
+  "label": "PROMOTE",
+  "reason": "every gate passed on valid data: the candidate can replace the baseline"
+ },
+ "exit_code": 0,
+ "target": {
+  "base_url": "http://<host>:18005",
+  "engine_reported": "fusezap",
+  "engine_version": null,
+  "model": "Qwen/Qwen2.5-72B-Instruct",
+  "served_model_id": "Qwen/Qwen2.5-72B-Instruct",
+  "hardware": "2x H200 141 GB (RunPod)",
+  "dtype_or_quant": null,
+  "notes": null,
+  "serving_mode": "exact"
+ },
+ "reference": {
+  "source": "file",
+  "model": "Qwen/Qwen2.5-72B-Instruct",
+  "revision": "495f39366efef23836d0cfae4fbe635880d2be31",
+  "dtype": "float32",
+  "dtype_detail": "float32 compute; the checkpoint's bf16 linear weights widened exactly to f32 per matmul (equals float32)",
+  "hardware": "NVIDIA H200",
+  "file": "qwen2.5-72b-instruct-f32.json",
+  "sha256": "ca20f25146f80080b71de752014c54808c344f74d2e9217699da4cbe3e117654",
+  "key": "c61e52228dca70c2",
+  "prompts": 24,
+  "max_new_tokens": 64,
+  "top_k": 5,
+  "chat_template": true,
+  "transformers_version": "5.20.1",
+  "created_utc": "2026-10-24T20:32:40Z"
+ },
+ "summary": {
+  "gates_passed": 2,
+  "gates_failed": 0,
+  "gates_inconclusive": 0,
+  "gates_skipped": 17,
+  "gates_error": 0,
+  "checks_completed": [
+   "accuracy",
+   "performance"
+  ],
+  "could_not_run": [],
+  "headline_metrics": {
+   "accuracy_method": "logprobs",
+   "top1_agreement": 0.9933,
+   "greedy_exact_match_mean": 0.8125,
+   "logprob_abs_diff_mean": 0.00851,
+   "functional_passed": null,
+   "functional_failed": null,
+   "json_schema_valid_rate": null,
+   "tool_call_valid_rate": null,
+   "peak_output_tok_s": 1183.09,
+   "peak_concurrency": 32,
+   "ttft_p50_ms_c1": 65.872,
+   "tpot_p50_ms_c1": 20.688,
+   "stability_drift_pct": null,
+   "error_rate": 0.0,
+   "kv_cache_usage_max": 0.0508
+  },
+  "headline": "every gate passed."
+ },
+ "gates": [
+  {
+   "id": "accuracy.top1_agreement",
+   "check": "accuracy",
+   "name": "Top-1 agreement with the reference (teacher-forced)",
+   "kind": "absolute",
+   "relative": null,
+   "metric": "accuracy.top1_agreement",
+   "comparator": ">=",
+   "threshold": 0.98,
+   "unit": "fraction",
+   "value": 0.9933,
+   "baseline_value": null,
+   "candidate_value": 0.9933,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": "value",
+   "status": "pass",
+   "reason": "0.9933 >= 0.98"
+  },
+  {
+   "id": "accuracy.greedy_exact_match",
+   "check": "accuracy",
+   "name": "Greedy output matches the reference (text method)",
+   "kind": "absolute",
+   "relative": null,
+   "metric": "accuracy.greedy_exact_match_mean",
+   "comparator": ">=",
+   "threshold": 0.7,
+   "unit": "fraction",
+   "value": null,
+   "baseline_value": null,
+   "candidate_value": null,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": null,
+   "status": "skip",
+   "reason": "not applicable: accuracy.method is 'logprobs', not 'text'",
+   "threshold_source": "per-model default (*, reduced): any other model in reduced precision: the V0 proof runs' floor (0.76) minus a margin; calibrate per model"
+  },
+  {
+   "id": "errors.error_rate",
+   "check": "errors",
+   "name": "No failed requests (all checks)",
+   "kind": "absolute",
+   "relative": null,
+   "metric": "requests.error_rate",
+   "comparator": "==",
+   "threshold": 0.0,
+   "unit": "fraction",
+   "value": 0.0,
+   "baseline_value": null,
+   "candidate_value": 0.0,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": "value",
+   "status": "pass",
+   "reason": "0 == 0"
+  },
+  {
+   "id": "stability.drift",
+   "check": "stability",
+   "name": "Throughput drift, start vs end of the stability run",
+   "kind": "absolute",
+   "relative": null,
+   "metric": "stability.drift_pct",
+   "comparator": "within",
+   "threshold": 10.0,
+   "unit": "%",
+   "value": null,
+   "baseline_value": null,
+   "candidate_value": null,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": null,
+   "status": "skip",
+   "reason": "the stability check did not run"
+  },
+  {
+   "id": "functional",
+   "check": "functional",
+   "name": "Functional: *",
+   "kind": "absolute",
+   "relative": null,
+   "metric": "functional.checks[id=*].status",
+   "comparator": "==",
+   "threshold": "pass",
+   "unit": "",
+   "value": null,
+   "baseline_value": null,
+   "candidate_value": null,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": null,
+   "status": "skip",
+   "reason": "the functional check did not run"
+  },
+  {
+   "id": "reliability",
+   "check": "reliability",
+   "name": "Reliability: *",
+   "kind": "absolute",
+   "relative": null,
+   "metric": "reliability.checks[id=*].status",
+   "comparator": "==",
+   "threshold": "pass",
+   "unit": "",
+   "value": null,
+   "baseline_value": null,
+   "candidate_value": null,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": null,
+   "status": "skip",
+   "reason": "the reliability check did not run"
+  },
+  {
+   "id": "structured.json_schema_valid",
+   "check": "structured",
+   "name": "JSON output valid against its schema (best supported mode, Wilson 95% interval)",
+   "kind": "absolute",
+   "relative": null,
+   "metric": "structured.json.schema_valid_rate",
+   "comparator": ">=",
+   "threshold": 0.9,
+   "unit": "fraction",
+   "value": null,
+   "baseline_value": null,
+   "candidate_value": null,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": null,
+   "status": "skip",
+   "reason": "the structured check did not run"
+  },
+  {
+   "id": "structured.tool_calls_valid",
+   "check": "structured",
+   "name": "Tool calls correct (right tool or none, arguments valid against the schema, expected values; Wilson 95% interval)",
+   "kind": "absolute",
+   "relative": null,
+   "metric": "structured.tools.valid_rate",
+   "comparator": ">=",
+   "threshold": 0.9,
+   "unit": "fraction",
+   "value": null,
+   "baseline_value": null,
+   "candidate_value": null,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": null,
+   "status": "skip",
+   "reason": "the structured check did not run"
+  },
+  {
+   "id": "relative.top1_agreement",
+   "check": "accuracy",
+   "name": "Top-1 agreement not more than 0.2 points below the baseline",
+   "kind": "relative",
+   "relative": "delta",
+   "metric": "accuracy.top1_agreement",
+   "comparator": ">=",
+   "threshold": -0.002,
+   "unit": "fraction",
+   "value": null,
+   "baseline_value": null,
+   "candidate_value": null,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": null,
+   "status": "skip",
+   "reason": "no baseline in this run"
+  },
+  {
+   "id": "relative.greedy_exact_match",
+   "check": "accuracy",
+   "name": "Greedy match not more than 5 points below the baseline (text method, paired 95% interval)",
+   "kind": "relative",
+   "relative": "delta",
+   "metric": "accuracy.greedy_exact_match_mean",
+   "comparator": ">=",
+   "threshold": -0.05,
+   "unit": "fraction",
+   "value": null,
+   "baseline_value": null,
+   "candidate_value": null,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": null,
+   "status": "skip",
+   "reason": "no baseline in this run"
+  },
+  {
+   "id": "relative.throughput@1",
+   "check": "performance",
+   "name": "Output tok/s at least 97% of the baseline (c=1)",
+   "kind": "relative",
+   "relative": "ratio",
+   "metric": "performance.points[concurrency=1].output_tok_s",
+   "comparator": ">=",
+   "threshold": 0.97,
+   "unit": "ratio",
+   "value": null,
+   "baseline_value": null,
+   "candidate_value": null,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": null,
+   "status": "skip",
+   "reason": "no baseline in this run"
+  },
+  {
+   "id": "relative.throughput@8",
+   "check": "performance",
+   "name": "Output tok/s at least 97% of the baseline (c=8)",
+   "kind": "relative",
+   "relative": "ratio",
+   "metric": "performance.points[concurrency=8].output_tok_s",
+   "comparator": ">=",
+   "threshold": 0.97,
+   "unit": "ratio",
+   "value": null,
+   "baseline_value": null,
+   "candidate_value": null,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": null,
+   "status": "skip",
+   "reason": "no baseline in this run"
+  },
+  {
+   "id": "relative.throughput@32",
+   "check": "performance",
+   "name": "Output tok/s at least 97% of the baseline (c=32)",
+   "kind": "relative",
+   "relative": "ratio",
+   "metric": "performance.points[concurrency=32].output_tok_s",
+   "comparator": ">=",
+   "threshold": 0.97,
+   "unit": "ratio",
+   "value": null,
+   "baseline_value": null,
+   "candidate_value": null,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": null,
+   "status": "skip",
+   "reason": "no baseline in this run"
+  },
+  {
+   "id": "relative.json_schema_valid",
+   "check": "structured",
+   "name": "JSON schema-valid rate not more than 5 points below the baseline",
+   "kind": "relative",
+   "relative": "delta",
+   "metric": "structured.json.schema_valid_rate",
+   "comparator": ">=",
+   "threshold": -0.05,
+   "unit": "fraction",
+   "value": null,
+   "baseline_value": null,
+   "candidate_value": null,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": null,
+   "status": "skip",
+   "reason": "the structured check did not run"
+  },
+  {
+   "id": "relative.tool_calls_valid",
+   "check": "structured",
+   "name": "Tool-call valid rate not more than 5 points below the baseline",
+   "kind": "relative",
+   "relative": "delta",
+   "metric": "structured.tools.valid_rate",
+   "comparator": ">=",
+   "threshold": -0.05,
+   "unit": "fraction",
+   "value": null,
+   "baseline_value": null,
+   "candidate_value": null,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": null,
+   "status": "skip",
+   "reason": "the structured check did not run"
+  },
+  {
+   "id": "long_context.needle_found",
+   "check": "long_context",
+   "name": "Long context *: the answer contains the needle",
+   "kind": "absolute",
+   "relative": null,
+   "metric": "long_context.buckets[bucket=*].needle_found_rate",
+   "comparator": ">=",
+   "threshold": 0.8,
+   "unit": "fraction",
+   "value": null,
+   "baseline_value": null,
+   "candidate_value": null,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": null,
+   "status": "skip",
+   "reason": "the long_context check did not run"
+  },
+  {
+   "id": "long_context.top1_agreement",
+   "check": "long_context",
+   "name": "Long context *: top-1 agreement with the reference (teacher-forced)",
+   "kind": "absolute",
+   "relative": null,
+   "metric": "long_context.buckets[bucket=*].top1_agreement",
+   "comparator": ">=",
+   "threshold": 0.95,
+   "unit": "fraction",
+   "value": null,
+   "baseline_value": null,
+   "candidate_value": null,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": null,
+   "status": "skip",
+   "reason": "the long_context check did not run"
+  },
+  {
+   "id": "relative.long_context.needle_found",
+   "check": "long_context",
+   "name": "Long context *: needle found at most one prompt in 5 less often than the baseline",
+   "kind": "relative",
+   "relative": "delta",
+   "metric": "long_context.buckets[bucket=*].needle_found_rate",
+   "comparator": ">=",
+   "threshold": -0.2,
+   "unit": "fraction",
+   "value": null,
+   "baseline_value": null,
+   "candidate_value": null,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": null,
+   "status": "skip",
+   "reason": "the long_context check did not run"
+  },
+  {
+   "id": "relative.long_context.top1_agreement",
+   "check": "long_context",
+   "name": "Long context *: top-1 agreement not more than 2 points below the baseline",
+   "kind": "relative",
+   "relative": "delta",
+   "metric": "long_context.buckets[bucket=*].top1_agreement",
+   "comparator": ">=",
+   "threshold": -0.02,
+   "unit": "fraction",
+   "value": null,
+   "baseline_value": null,
+   "candidate_value": null,
+   "delta": null,
+   "delta_pct": null,
+   "ci": null,
+   "decided_by": null,
+   "status": "skip",
+   "reason": "the long_context check did not run"
+  }
+ ],
+ "accuracy": {
+  "method": "logprobs",
+  "method_strength": "strong",
+  "logprobs_mode": "echo",
+  "token_match": "id",
+  "prompt_format": "tokens",
+  "top_k": 5,
+  "near_tie_eps": 0.1,
+  "prompts": 24,
+  "positions": 1486,
+  "top1_tie_rule": "split",
+  "top1_agree": 1476,
+  "top1_agreement": 0.9933,
+  "top1_agree_strict": 1476,
+  "top1_agreement_strict": 0.9933,
+  "top1_agree_generous": 1476,
+  "top1_agreement_generous": 0.9933,
+  "top1_disagreements": 10,
+  "top1_disagreements_near_tie": 6,
+  "top1_ties": 0,
+  "top1_agree_on_tie": 0,
+  "top1_ties_k_lower_bound": 0,
+  "greedy_exact_match_mean": 0.8125,
+  "greedy_full_matches": 16,
+  "greedy_match_tokens_mean": 49.96,
+  "logprob_abs_diff_mean": 0.00851,
+  "logprob_abs_diff_max": 0.21385,
+  "requests": 48,
+  "errors": 0,
+  "prompts_with_errors": 0,
+  "notes": [
+   "requests set repetition_penalty=1.0 (neutral greedy decoding)"
+  ],
+  "worst_prompts": [
+   {
+    "id": "p14",
+    "text": "Write the opening paragraph of a mystery novel set in a lighthouse.",
+    "top1_agreement": 0.9688,
+    "greedy_exact_match": 0.2188,
+    "greedy_first_mismatch": 14,
+    "first_disagreement": {
+     "position": 14,
+     "reference": " that",
+     "reference_id": 429,
+     "server": "token_id:323",
+     "reference_gap": 0.20461
+    },
+    "server_text_head": "The storm had been brewing all day, a relentless churn of gray clouds and angry waves that seemed to lash out at the solitary lighthouse perched on the jagged c",
+    "reference_text_head": "The storm had been brewing all day, a relentless churn of gray clouds that finally unleashed its fury as night fell. Perched on a jagged cliff, the old lighthou"
+   },
+   {
+    "id": "p06",
+    "text": "A train leaves at 3 pm going 60 km/h; another at 4 pm going 90 km/h. When does the second catch up? Show the steps.",
+    "top1_agreement": 0.9688,
+    "greedy_exact_match": 0.4219,
+    "greedy_first_mismatch": 27,
+    "first_disagreement": {
+     "position": 27,
+     "reference": ".\n\n",
+     "reference_id": 382,
+     "server": "token_id:13",
+     "reference_gap": 0.0237
+    },
+    "server_text_head": "To determine when the second train catches up to the first, we need to set up an equation based on the distances traveled by both trains. Let's denote the time ",
+    "reference_text_head": "To determine when the second train catches up to the first, we need to set up an equation based on the distances traveled by both trains.\n\n### Step 1: Define th"
+   },
+   {
+    "id": "p00",
+    "text": "Write a short poem about the sea.",
+    "top1_agreement": 0.9844,
+    "greedy_exact_match": 0.1562,
+    "greedy_first_mismatch": 10,
+    "first_disagreement": {
+     "position": 10,
+     "reference": " wide",
+     "reference_id": 6884,
+     "server": "token_id:11",
+     "reference_gap": 0.01709
+    },
+    "server_text_head": "Upon the vast and endless blue,\nThe sea stretches, a canvas true,\nWaves whisper secrets to the shore,\nIn ebb and flow, forever more.\n\nSunset paints the horizon'",
+    "reference_text_head": "Upon the vast and endless blue,\nThe sea stretches wide, a canvas true.\nWaves whisper secrets to the shore,\nIn ebb and flow, forever more.\n\nSunset paints the hor"
+   },
+   {
+    "id": "p03",
+    "text": "Give me a recipe for a vegetarian lasagna.",
+    "top1_agreement": 0.9844,
+    "greedy_exact_match": 0.1875,
+    "greedy_first_mismatch": 12,
+    "first_disagreement": {
+     "position": 12,
+     "reference": " sure",
+     "reference_id": 2704,
+     "server": "token_id:2176",
+     "reference_gap": 0.16534
+    },
+    "server_text_head": "Certainly! Here's a delicious vegetarian lasagna recipe that's both comforting and packed with flavor. This recipe serves 6-8 people.\n\n### Ingredients:\n\n#### Fo",
+    "reference_text_head": "Certainly! Here's a delicious vegetarian lasagna recipe that's sure to please. This recipe serves 6-8 people.\n\n### Ingredients:\n\n#### For the Tomato Sauce:\n- 2 "
+   },
+   {
+    "id": "p17",
+    "text": "Give a short history of the printing press.",
+    "top1_agreement": 0.9844,
+    "greedy_exact_match": 0.4219,
+    "greedy_first_mismatch": 27,
+    "first_disagreement": {
+     "position": 27,
+     "reference": " Printing",
+     "reference_id": 50769,
+     "server": "token_id:7843",
+     "reference_gap": 0.00822
+    },
+    "server_text_head": "The history of the printing press is a significant chapter in the development of human communication and technology. Here’s a brief overview:\n\n### Early Develop",
+    "reference_text_head": "The history of the printing press is a significant chapter in the development of human communication and technology. Here’s a brief overview:\n\n### Early Printin"
+   }
+  ],
+  "per_prompt": [
+   {
+    "id": "p00",
+    "text": "Write a short poem about the sea.",
+    "prompt_tokens": 37,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 63,
+    "top1_agreement": 0.9844,
+    "top1_agreement_strict": 0.9844,
+    "top1_agreement_generous": 0.9844,
+    "near_tie_disagreements": 1,
+    "logprob_abs_diff_mean": 0.02067,
+    "logprob_abs_diff_max": 0.12343,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": {
+     "position": 10,
+     "reference": " wide",
+     "reference_id": 6884,
+     "server": "token_id:11",
+     "reference_gap": 0.01709
+    },
+    "disagreements": [
+     {
+      "position": 10,
+      "reference": " wide",
+      "reference_id": 6884,
+      "server": "token_id:11",
+      "reference_gap": 0.01709
+     }
+    ],
+    "greedy_match_tokens": 10,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 0.1562,
+    "greedy_first_mismatch": 10,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "Upon the vast and endless blue,\nThe sea stretches, a canvas true,\nWaves whisper secrets to the shore,\nIn ebb and flow, forever more.\n\nSunset paints the horizon'",
+    "reference_text_head": "Upon the vast and endless blue,\nThe sea stretches wide, a canvas true.\nWaves whisper secrets to the shore,\nIn ebb and flow, forever more.\n\nSunset paints the hor",
+    "error": null
+   },
+   {
+    "id": "p01",
+    "text": "Explain how a hash table works, with an example in Python.",
+    "prompt_tokens": 43,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 63,
+    "top1_agreement": 0.9844,
+    "top1_agreement_strict": 0.9844,
+    "top1_agreement_generous": 0.9844,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.00455,
+    "logprob_abs_diff_max": 0.09624,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": {
+     "position": 41,
+     "reference": " of",
+     "reference_id": 315,
+     "server": "token_id:504",
+     "reference_gap": 0.11226
+    },
+    "disagreements": [
+     {
+      "position": 41,
+      "reference": " of",
+      "reference_id": 315,
+      "server": "token_id:504",
+      "reference_gap": 0.11226
+     }
+    ],
+    "greedy_match_tokens": 41,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 0.6406,
+    "greedy_first_mismatch": 41,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "Certainly! A hash table (or hash map) is a data structure that implements an associative array, a structure that can map keys to values. It uses a hash function",
+    "reference_text_head": "Certainly! A hash table (or hash map) is a data structure that implements an associative array, a structure that can map keys to values. It uses a hash function",
+    "error": null
+   },
+   {
+    "id": "p02",
+    "text": "What were the main causes of the French Revolution?",
+    "prompt_tokens": 39,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 64,
+    "top1_agreement": 1.0,
+    "top1_agreement_strict": 1.0,
+    "top1_agreement_generous": 1.0,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.00427,
+    "logprob_abs_diff_max": 0.05578,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": null,
+    "disagreements": [],
+    "greedy_match_tokens": 64,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 1.0,
+    "greedy_first_mismatch": null,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "The French Revolution, which began in 1789, was a period of radical social and political upheaval in France that fundamentally changed the course of French hist",
+    "reference_text_head": "The French Revolution, which began in 1789, was a period of radical social and political upheaval in France that fundamentally changed the course of French hist",
+    "error": null
+   },
+   {
+    "id": "p03",
+    "text": "Give me a recipe for a vegetarian lasagna.",
+    "prompt_tokens": 39,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 63,
+    "top1_agreement": 0.9844,
+    "top1_agreement_strict": 0.9844,
+    "top1_agreement_generous": 0.9844,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.01089,
+    "logprob_abs_diff_max": 0.17771,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": {
+     "position": 12,
+     "reference": " sure",
+     "reference_id": 2704,
+     "server": "token_id:2176",
+     "reference_gap": 0.16534
+    },
+    "disagreements": [
+     {
+      "position": 12,
+      "reference": " sure",
+      "reference_id": 2704,
+      "server": "token_id:2176",
+      "reference_gap": 0.16534
+     }
+    ],
+    "greedy_match_tokens": 12,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 0.1875,
+    "greedy_first_mismatch": 12,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "Certainly! Here's a delicious vegetarian lasagna recipe that's both comforting and packed with flavor. This recipe serves 6-8 people.\n\n### Ingredients:\n\n#### Fo",
+    "reference_text_head": "Certainly! Here's a delicious vegetarian lasagna recipe that's sure to please. This recipe serves 6-8 people.\n\n### Ingredients:\n\n#### For the Tomato Sauce:\n- 2 ",
+    "error": null
+   },
+   {
+    "id": "p04",
+    "text": "Summarize the theory of evolution by natural selection in a paragraph.",
+    "prompt_tokens": 43,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 64,
+    "top1_agreement": 1.0,
+    "top1_agreement_strict": 1.0,
+    "top1_agreement_generous": 1.0,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.01772,
+    "logprob_abs_diff_max": 0.21385,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": null,
+    "disagreements": [],
+    "greedy_match_tokens": 64,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 1.0,
+    "greedy_first_mismatch": null,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "The theory of evolution by natural selection, primarily developed by Charles Darwin and Alfred Russel Wallace, posits that species of organisms evolve over gene",
+    "reference_text_head": "The theory of evolution by natural selection, primarily developed by Charles Darwin and Alfred Russel Wallace, posits that species of organisms evolve over gene",
+    "error": null
+   },
+   {
+    "id": "p05",
+    "text": "Translate into French: The weather is nice today, so we are going to the park.",
+    "prompt_tokens": 47,
+    "ref_tokens": 14,
+    "ref_eos": true,
+    "positions": 14,
+    "top1_agree": 14,
+    "top1_agreement": 1.0,
+    "top1_agreement_strict": 1.0,
+    "top1_agreement_generous": 1.0,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.00108,
+    "logprob_abs_diff_max": 0.00942,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": null,
+    "disagreements": [],
+    "greedy_match_tokens": 15,
+    "greedy_ref_tokens": 15,
+    "greedy_exact_match": 1.0,
+    "greedy_first_mismatch": null,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "stop",
+    "server_tokens": 14,
+    "server_text_head": "Le temps est agréable aujourd'hui, donc nous allons au parc.",
+    "reference_text_head": "Le temps est agréable aujourd'hui, donc nous allons au parc.",
+    "error": null
+   },
+   {
+    "id": "p06",
+    "text": "A train leaves at 3 pm going 60 km/h; another at 4 pm going 90 km/h. When does the second catch up? Show the steps.",
+    "prompt_tokens": 66,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 62,
+    "top1_agreement": 0.9688,
+    "top1_agreement_strict": 0.9688,
+    "top1_agreement_generous": 0.9688,
+    "near_tie_disagreements": 2,
+    "logprob_abs_diff_mean": 0.0055,
+    "logprob_abs_diff_max": 0.05629,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": {
+     "position": 27,
+     "reference": ".\n\n",
+     "reference_id": 382,
+     "server": "token_id:13",
+     "reference_gap": 0.0237
+    },
+    "disagreements": [
+     {
+      "position": 27,
+      "reference": ".\n\n",
+      "reference_id": 382,
+      "server": "token_id:13",
+      "reference_gap": 0.0237
+     },
+     {
+      "position": 62,
+      "reference": ".\n",
+      "reference_id": 624,
+      "server": "token_id:382",
+      "reference_gap": 0.00674
+     }
+    ],
+    "greedy_match_tokens": 27,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 0.4219,
+    "greedy_first_mismatch": 27,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "To determine when the second train catches up to the first, we need to set up an equation based on the distances traveled by both trains. Let's denote the time ",
+    "reference_text_head": "To determine when the second train catches up to the first, we need to set up an equation based on the distances traveled by both trains.\n\n### Step 1: Define th",
+    "error": null
+   },
+   {
+    "id": "p07",
+    "text": "List five tips for writing clean code and explain each briefly.",
+    "prompt_tokens": 41,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 63,
+    "top1_agreement": 0.9844,
+    "top1_agreement_strict": 0.9844,
+    "top1_agreement_generous": 0.9844,
+    "near_tie_disagreements": 1,
+    "logprob_abs_diff_mean": 0.00962,
+    "logprob_abs_diff_max": 0.07064,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": {
+     "position": 23,
+     "reference": " understand",
+     "reference_id": 3535,
+     "server": "token_id:1349",
+     "reference_gap": 0.00108
+    },
+    "disagreements": [
+     {
+      "position": 23,
+      "reference": " understand",
+      "reference_id": 3535,
+      "server": "token_id:1349",
+      "reference_gap": 0.00108
+     }
+    ],
+    "greedy_match_tokens": 64,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 1.0,
+    "greedy_first_mismatch": null,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "Writing clean code is essential for maintaining and scaling software projects. Clean code is not only error-free but also easy to understand, modify, and extend",
+    "reference_text_head": "Writing clean code is essential for maintaining and scaling software projects. Clean code is not only error-free but also easy to understand, modify, and extend",
+    "error": null
+   },
+   {
+    "id": "p08",
+    "text": "Describe the water cycle to a ten-year-old.",
+    "prompt_tokens": 39,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 64,
+    "top1_agreement": 1.0,
+    "top1_agreement_strict": 1.0,
+    "top1_agreement_generous": 1.0,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.00736,
+    "logprob_abs_diff_max": 0.07735,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": null,
+    "disagreements": [],
+    "greedy_match_tokens": 64,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 1.0,
+    "greedy_first_mismatch": null,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "Sure! The water cycle is like a big, never-ending journey that water takes all around the Earth. Imagine water as a little traveler that moves from the ground t",
+    "reference_text_head": "Sure! The water cycle is like a big, never-ending journey that water takes all around the Earth. Imagine water as a little traveler that moves from the ground t",
+    "error": null
+   },
+   {
+    "id": "p09",
+    "text": "Write a Python function that checks whether a string is a palindrome, and explain it.",
+    "prompt_tokens": 46,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 64,
+    "top1_agreement": 1.0,
+    "top1_agreement_strict": 1.0,
+    "top1_agreement_generous": 1.0,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.00288,
+    "logprob_abs_diff_max": 0.03226,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": null,
+    "disagreements": [],
+    "greedy_match_tokens": 64,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 1.0,
+    "greedy_first_mismatch": null,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "Certainly! A palindrome is a word, phrase, number, or other sequences of characters that reads the same backward as forward. For example, \"madam\", \"racecar\", an",
+    "reference_text_head": "Certainly! A palindrome is a word, phrase, number, or other sequences of characters that reads the same backward as forward. For example, \"madam\", \"racecar\", an",
+    "error": null
+   },
+   {
+    "id": "p10",
+    "text": "What is the difference between a virus and a bacterium?",
+    "prompt_tokens": 41,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 64,
+    "top1_agreement": 1.0,
+    "top1_agreement_strict": 1.0,
+    "top1_agreement_generous": 1.0,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.0087,
+    "logprob_abs_diff_max": 0.06904,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": null,
+    "disagreements": [],
+    "greedy_match_tokens": 64,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 1.0,
+    "greedy_first_mismatch": null,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "Viruses and bacteria are both microorganisms, but they differ significantly in their structure, function, and the ways they cause disease. Here’s a detailed com",
+    "reference_text_head": "Viruses and bacteria are both microorganisms, but they differ significantly in their structure, function, and the ways they cause disease. Here’s a detailed com",
+    "error": null
+   },
+   {
+    "id": "p11",
+    "text": "Write a polite email asking a colleague to review a pull request by Friday.",
+    "prompt_tokens": 44,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 64,
+    "top1_agreement": 1.0,
+    "top1_agreement_strict": 1.0,
+    "top1_agreement_generous": 1.0,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.01295,
+    "logprob_abs_diff_max": 0.0911,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": null,
+    "disagreements": [],
+    "greedy_match_tokens": 59,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 0.9219,
+    "greedy_first_mismatch": 59,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "Subject: Request for Review of Pull Request by Friday\n\nHi [Colleague's Name],\n\nI hope this message finds you well. I wanted to reach out to you regarding a pull",
+    "reference_text_head": "Subject: Request for Review of Pull Request by Friday\n\nHi [Colleague's Name],\n\nI hope this message finds you well. I wanted to reach out to you regarding a pull",
+    "error": null
+   },
+   {
+    "id": "p12",
+    "text": "Explain what a GPU is and why it is good at matrix multiplication.",
+    "prompt_tokens": 44,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 64,
+    "top1_agreement": 1.0,
+    "top1_agreement_strict": 1.0,
+    "top1_agreement_generous": 1.0,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.00726,
+    "logprob_abs_diff_max": 0.11879,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": null,
+    "disagreements": [],
+    "greedy_match_tokens": 64,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 1.0,
+    "greedy_first_mismatch": null,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "A GPU, or Graphics Processing Unit, is a specialized electronic circuit designed to rapidly manipulate and alter memory to accelerate the creation of images in ",
+    "reference_text_head": "A GPU, or Graphics Processing Unit, is a specialized electronic circuit designed to rapidly manipulate and alter memory to accelerate the creation of images in ",
+    "error": null
+   },
+   {
+    "id": "p13",
+    "text": "Compare renting and buying a home: give three points for each.",
+    "prompt_tokens": 42,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 64,
+    "top1_agreement": 1.0,
+    "top1_agreement_strict": 1.0,
+    "top1_agreement_generous": 1.0,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.00494,
+    "logprob_abs_diff_max": 0.03681,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": null,
+    "disagreements": [],
+    "greedy_match_tokens": 64,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 1.0,
+    "greedy_first_mismatch": null,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "Certainly! When deciding between renting and buying a home, there are several factors to consider. Here are three key points for each option:\n\n### Renting a Hom",
+    "reference_text_head": "Certainly! When deciding between renting and buying a home, there are several factors to consider. Here are three key points for each option:\n\n### Renting a Hom",
+    "error": null
+   },
+   {
+    "id": "p14",
+    "text": "Write the opening paragraph of a mystery novel set in a lighthouse.",
+    "prompt_tokens": 43,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 62,
+    "top1_agreement": 0.9688,
+    "top1_agreement_strict": 0.9688,
+    "top1_agreement_generous": 0.9688,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.02081,
+    "logprob_abs_diff_max": 0.1273,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": {
+     "position": 14,
+     "reference": " that",
+     "reference_id": 429,
+     "server": "token_id:323",
+     "reference_gap": 0.20461
+    },
+    "disagreements": [
+     {
+      "position": 14,
+      "reference": " that",
+      "reference_id": 429,
+      "server": "token_id:323",
+      "reference_gap": 0.20461
+     },
+     {
+      "position": 22,
+      "reference": ".",
+      "reference_id": 13,
+      "server": "token_id:916",
+      "reference_gap": 0.11017
+     }
+    ],
+    "greedy_match_tokens": 14,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 0.2188,
+    "greedy_first_mismatch": 14,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "The storm had been brewing all day, a relentless churn of gray clouds and angry waves that seemed to lash out at the solitary lighthouse perched on the jagged c",
+    "reference_text_head": "The storm had been brewing all day, a relentless churn of gray clouds that finally unleashed its fury as night fell. Perched on a jagged cliff, the old lighthou",
+    "error": null
+   },
+   {
+    "id": "p15",
+    "text": "How does public-key cryptography work? Keep it simple.",
+    "prompt_tokens": 40,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 64,
+    "top1_agreement": 1.0,
+    "top1_agreement_strict": 1.0,
+    "top1_agreement_generous": 1.0,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.0037,
+    "logprob_abs_diff_max": 0.04938,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": null,
+    "disagreements": [],
+    "greedy_match_tokens": 64,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 1.0,
+    "greedy_first_mismatch": null,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "Sure! Public-key cryptography, also known as asymmetric cryptography, uses a pair of keys to encrypt and decrypt information:\n\n1. **Public Key**: This key is sh",
+    "reference_text_head": "Sure! Public-key cryptography, also known as asymmetric cryptography, uses a pair of keys to encrypt and decrypt information:\n\n1. **Public Key**: This key is sh",
+    "error": null
+   },
+   {
+    "id": "p16",
+    "text": "What is 17 multiplied by 23? Explain the calculation step by step.",
+    "prompt_tokens": 47,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 64,
+    "top1_agreement": 1.0,
+    "top1_agreement_strict": 1.0,
+    "top1_agreement_generous": 1.0,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.00396,
+    "logprob_abs_diff_max": 0.06341,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": null,
+    "disagreements": [],
+    "greedy_match_tokens": 64,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 1.0,
+    "greedy_first_mismatch": null,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "Certainly! To multiply 17 by 23, you can use the standard multiplication method. Here’s how you do it step by step:\n\n1. **Write down the numbers:**\n   ```\n     ",
+    "reference_text_head": "Certainly! To multiply 17 by 23, you can use the standard multiplication method. Here’s how you do it step by step:\n\n1. **Write down the numbers:**\n   ```\n     ",
+    "error": null
+   },
+   {
+    "id": "p17",
+    "text": "Give a short history of the printing press.",
+    "prompt_tokens": 38,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 63,
+    "top1_agreement": 0.9844,
+    "top1_agreement_strict": 0.9844,
+    "top1_agreement_generous": 0.9844,
+    "near_tie_disagreements": 1,
+    "logprob_abs_diff_mean": 0.00924,
+    "logprob_abs_diff_max": 0.09441,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": {
+     "position": 27,
+     "reference": " Printing",
+     "reference_id": 50769,
+     "server": "token_id:7843",
+     "reference_gap": 0.00822
+    },
+    "disagreements": [
+     {
+      "position": 27,
+      "reference": " Printing",
+      "reference_id": 50769,
+      "server": "token_id:7843",
+      "reference_gap": 0.00822
+     }
+    ],
+    "greedy_match_tokens": 27,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 0.4219,
+    "greedy_first_mismatch": 27,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "The history of the printing press is a significant chapter in the development of human communication and technology. Here’s a brief overview:\n\n### Early Develop",
+    "reference_text_head": "The history of the printing press is a significant chapter in the development of human communication and technology. Here’s a brief overview:\n\n### Early Printin",
+    "error": null
+   },
+   {
+    "id": "p18",
+    "text": "Write a SQL query that returns the ten customers with the highest total order value, and explain it.",
+    "prompt_tokens": 49,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 64,
+    "top1_agreement": 1.0,
+    "top1_agreement_strict": 1.0,
+    "top1_agreement_generous": 1.0,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.00205,
+    "logprob_abs_diff_max": 0.05598,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": null,
+    "disagreements": [],
+    "greedy_match_tokens": 64,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 1.0,
+    "greedy_first_mismatch": null,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "Certainly! Below is a SQL query that returns the ten customers with the highest total order value, along with an explanation of each part of the query.\n\n### SQL",
+    "reference_text_head": "Certainly! Below is a SQL query that returns the ten customers with the highest total order value, along with an explanation of each part of the query.\n\n### SQL",
+    "error": null
+   },
+   {
+    "id": "p19",
+    "text": "What are the health benefits of regular exercise?",
+    "prompt_tokens": 38,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 64,
+    "top1_agreement": 1.0,
+    "top1_agreement_strict": 1.0,
+    "top1_agreement_generous": 1.0,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.00987,
+    "logprob_abs_diff_max": 0.07051,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": null,
+    "disagreements": [],
+    "greedy_match_tokens": 64,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 1.0,
+    "greedy_first_mismatch": null,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "Regular exercise offers a wide range of health benefits that can improve both physical and mental well-being. Here are some of the key benefits:\n\n1. **Improves ",
+    "reference_text_head": "Regular exercise offers a wide range of health benefits that can improve both physical and mental well-being. Here are some of the key benefits:\n\n1. **Improves ",
+    "error": null
+   },
+   {
+    "id": "p20",
+    "text": "Explain recursion using the example of computing a factorial.",
+    "prompt_tokens": 40,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 64,
+    "top1_agreement": 1.0,
+    "top1_agreement_strict": 1.0,
+    "top1_agreement_generous": 1.0,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.00668,
+    "logprob_abs_diff_max": 0.068,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": null,
+    "disagreements": [],
+    "greedy_match_tokens": 64,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 1.0,
+    "greedy_first_mismatch": null,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "Certainly! Recursion is a programming technique where a function calls itself to solve a smaller instance of the same problem. This process continues until a ba",
+    "reference_text_head": "Certainly! Recursion is a programming technique where a function calls itself to solve a smaller instance of the same problem. This process continues until a ba",
+    "error": null
+   },
+   {
+    "id": "p21",
+    "text": "Describe three famous paintings and what makes each one special.",
+    "prompt_tokens": 40,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 64,
+    "top1_agreement": 1.0,
+    "top1_agreement_strict": 1.0,
+    "top1_agreement_generous": 1.0,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.0074,
+    "logprob_abs_diff_max": 0.08652,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": null,
+    "disagreements": [],
+    "greedy_match_tokens": 64,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 1.0,
+    "greedy_first_mismatch": null,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "Certainly! Here are three famous paintings, each with a unique significance and artistic value:\n\n1. **Mona Lisa by Leonardo da Vinci (c. 1503-1506)**\n   - **Des",
+    "reference_text_head": "Certainly! Here are three famous paintings, each with a unique significance and artistic value:\n\n1. **Mona Lisa by Leonardo da Vinci (c. 1503-1506)**\n   - **Des",
+    "error": null
+   },
+   {
+    "id": "p22",
+    "text": "Write a haiku about autumn, then explain the syllable structure.",
+    "prompt_tokens": 43,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 63,
+    "top1_agreement": 0.9844,
+    "top1_agreement_strict": 0.9844,
+    "top1_agreement_generous": 0.9844,
+    "near_tie_disagreements": 1,
+    "logprob_abs_diff_mean": 0.00901,
+    "logprob_abs_diff_max": 0.09066,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": {
+     "position": 34,
+     "reference": " form",
+     "reference_id": 1352,
+     "server": "token_id:8606",
+     "reference_gap": 0.00342
+    },
+    "disagreements": [
+     {
+      "position": 34,
+      "reference": " form",
+      "reference_id": 1352,
+      "server": "token_id:8606",
+      "reference_gap": 0.00342
+     }
+    ],
+    "greedy_match_tokens": 34,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 0.5312,
+    "greedy_first_mismatch": 34,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "Leaves whisper, falling,\nCrisp air holds secrets of smoke,\nSunset paints gold paths.\n\n**Syllable Structure Explanation:**\nA haiku is a traditional form of Japan",
+    "reference_text_head": "Leaves whisper, falling,\nCrisp air holds secrets of smoke,\nSunset paints gold paths.\n\n**Syllable Structure Explanation:**\nA haiku is a form of poetry that tradi",
+    "error": null
+   },
+   {
+    "id": "p23",
+    "text": "What should a beginner know before starting to learn the guitar?",
+    "prompt_tokens": 41,
+    "ref_tokens": 64,
+    "ref_eos": false,
+    "positions": 64,
+    "top1_agree": 64,
+    "top1_agreement": 1.0,
+    "top1_agreement_strict": 1.0,
+    "top1_agreement_generous": 1.0,
+    "near_tie_disagreements": 0,
+    "logprob_abs_diff_mean": 0.00732,
+    "logprob_abs_diff_max": 0.07194,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "first_disagreement": null,
+    "disagreements": [],
+    "greedy_match_tokens": 64,
+    "greedy_ref_tokens": 64,
+    "greedy_exact_match": 1.0,
+    "greedy_first_mismatch": null,
+    "greedy_compared_by": "ids",
+    "server_finish_reason": "length",
+    "server_tokens": 64,
+    "server_text_head": "Starting to learn the guitar is an exciting journey, and there are a few key things a beginner should know to make the process smoother and more enjoyable. Here",
+    "reference_text_head": "Starting to learn the guitar is an exciting journey, and there are a few key things a beginner should know to make the process smoother and more enjoyable. Here",
+    "error": null
+   }
+  ]
+ },
+ "functional": null,
+ "structured": null,
+ "performance": {
+  "workload": "short",
+  "input_tokens": 128,
+  "output_tokens": 128,
+  "repeats": 3,
+  "requests_per_point": "max(16, 2 x concurrency)",
+  "sampling": {
+   "temperature": 0.0,
+   "ignore_eos": true,
+   "stream": true
+  },
+  "points": [
+   {
+    "mode": "concurrency",
+    "concurrency": 1,
+    "requested_concurrency": 1,
+    "rate": null,
+    "requested_rate": null,
+    "achieved_concurrency": 1.0,
+    "achieved_rate": null,
+    "repeats": 3,
+    "requests": 48,
+    "completed": 48,
+    "errors": 0,
+    "first_error": null,
+    "short_outputs": 0,
+    "output_tok_s": 47.5,
+    "output_tok_s_ci": [
+     47.45,
+     47.56
+    ],
+    "req_s": 0.371,
+    "ttft_ms": {
+     "p50": 65.872,
+     "p90": 67.724,
+     "p99": 71.928
+    },
+    "tpot_ms": {
+     "p50": 20.688,
+     "p90": 20.696,
+     "p99": 20.813
+    },
+    "itl_ms": {
+     "p50": 20.683,
+     "p90": 20.751,
+     "p99": 20.95
+    },
+    "e2e_ms": {
+     "p50": 2692.913,
+     "p90": 2695.162,
+     "p99": 2710.944
+    },
+    "reps": [
+     {
+      "wall_s": 43.097,
+      "requests": 16,
+      "completed": 16,
+      "errors": 0,
+      "first_error": null,
+      "short_outputs": 0,
+      "output_tokens": 2048,
+      "output_tok_s": 47.521,
+      "req_s": 0.3713,
+      "achieved_concurrency": 1.0,
+      "ttft_ms": {
+       "p50": 65.606,
+       "p90": 67.574,
+       "p99": 72.058
+      },
+      "tpot_ms": {
+       "p50": 20.683,
+       "p90": 20.689,
+       "p99": 20.691
+      },
+      "itl_ms": {
+       "p50": 20.68,
+       "p90": 20.745,
+       "p99": 20.86
+      },
+      "e2e_ms": {
+       "p50": 2692.153,
+       "p90": 2693.275,
+       "p99": 2697.943
+      }
+     },
+     {
+      "wall_s": 43.136,
+      "requests": 16,
+      "completed": 16,
+      "errors": 0,
+      "first_error": null,
+      "short_outputs": 0,
+      "output_tokens": 2048,
+      "output_tok_s": 47.478,
+      "req_s": 0.3709,
+      "achieved_concurrency": 1.0,
+      "ttft_ms": {
+       "p50": 65.518,
+       "p90": 67.131,
+       "p99": 70.611
+      },
+      "tpot_ms": {
+       "p50": 20.69,
+       "p90": 20.701,
+       "p99": 20.879
+      },
+      "itl_ms": {
+       "p50": 20.686,
+       "p90": 20.762,
+       "p99": 21.064
+      },
+      "e2e_ms": {
+       "p50": 2693.157,
+       "p90": 2697.018,
+       "p99": 2718.321
+      }
+     },
+     {
+      "wall_s": 43.107,
+      "requests": 16,
+      "completed": 16,
+      "errors": 0,
+      "first_error": null,
+      "short_outputs": 0,
+      "output_tokens": 2048,
+      "output_tok_s": 47.51,
+      "req_s": 0.3712,
+      "achieved_concurrency": 1.0,
+      "ttft_ms": {
+       "p50": 66.4,
+       "p90": 67.342,
+       "p99": 68.13
+      },
+      "tpot_ms": {
+       "p50": 20.689,
+       "p90": 20.696,
+       "p99": 20.699
+      },
+      "itl_ms": {
+       "p50": 20.682,
+       "p90": 20.747,
+       "p99": 20.96
+      },
+      "e2e_ms": {
+       "p50": 2693.276,
+       "p90": 2694.974,
+       "p99": 2695.196
+      }
+     }
+    ]
+   },
+   {
+    "mode": "concurrency",
+    "concurrency": 8,
+    "requested_concurrency": 8,
+    "rate": null,
+    "requested_rate": null,
+    "achieved_concurrency": 7.99,
+    "achieved_rate": null,
+    "repeats": 3,
+    "requests": 48,
+    "completed": 48,
+    "errors": 0,
+    "first_error": null,
+    "short_outputs": 0,
+    "output_tok_s": 356.47,
+    "output_tok_s_ci": [
+     354.97,
+     357.97
+    ],
+    "req_s": 2.785,
+    "ttft_ms": {
+     "p50": 193.869,
+     "p90": 206.453,
+     "p99": 224.199
+    },
+    "tpot_ms": {
+     "p50": 21.046,
+     "p90": 22.017,
+     "p99": 22.028
+    },
+    "itl_ms": {
+     "p50": 21.01,
+     "p90": 21.122,
+     "p99": 21.986
+    },
+    "e2e_ms": {
+     "p50": 2867.034,
+     "p90": 2880.347,
+     "p99": 2881.721
+    },
+    "reps": [
+     {
+      "wall_s": 5.734,
+      "requests": 16,
+      "completed": 16,
+      "errors": 0,
+      "first_error": null,
+      "short_outputs": 0,
+      "output_tokens": 2048,
+      "output_tok_s": 357.163,
+      "req_s": 2.7903,
+      "achieved_concurrency": 7.99,
+      "ttft_ms": {
+       "p50": 192.985,
+       "p90": 195.582,
+       "p99": 197.026
+      },
+      "tpot_ms": {
+       "p50": 21.037,
+       "p90": 21.526,
+       "p99": 22.004
+      },
+      "itl_ms": {
+       "p50": 21.004,
+       "p90": 21.07,
+       "p99": 21.67
+      },
+      "e2e_ms": {
+       "p50": 2864.424,
+       "p90": 2868.186,
+       "p99": 2870.195
+      }
+     },
+     {
+      "wall_s": 5.749,
+      "requests": 16,
+      "completed": 16,
+      "errors": 0,
+      "first_error": null,
+      "short_outputs": 0,
+      "output_tokens": 2048,
+      "output_tok_s": 356.211,
+      "req_s": 2.7829,
+      "achieved_concurrency": 7.99,
+      "ttft_ms": {
+       "p50": 193.669,
+       "p90": 215.272,
+       "p99": 224.448
+      },
+      "tpot_ms": {
+       "p50": 21.032,
+       "p90": 22.019,
+       "p99": 22.029
+      },
+      "itl_ms": {
+       "p50": 21.016,
+       "p90": 21.091,
+       "p99": 21.96
+      },
+      "e2e_ms": {
+       "p50": 2871.608,
+       "p90": 2880.422,
+       "p99": 2880.611
+      }
+     },
+     {
+      "wall_s": 5.752,
+      "requests": 16,
+      "completed": 16,
+      "errors": 0,
+      "first_error": null,
+      "short_outputs": 0,
+      "output_tokens": 2048,
+      "output_tok_s": 356.042,
+      "req_s": 2.7816,
+      "achieved_concurrency": 7.99,
+      "ttft_ms": {
+       "p50": 194.112,
+       "p90": 206.263,
+       "p99": 209.055
+      },
+      "tpot_ms": {
+       "p50": 21.053,
+       "p90": 22.022,
+       "p99": 22.026
+      },
+      "itl_ms": {
+       "p50": 21.015,
+       "p90": 21.191,
+       "p99": 22.105
+      },
+      "e2e_ms": {
+       "p50": 2872.463,
+       "p90": 2881.238,
+       "p99": 2881.89
+      }
+     }
+    ]
+   },
+   {
+    "mode": "concurrency",
+    "concurrency": 32,
+    "requested_concurrency": 32,
+    "rate": null,
+    "requested_rate": null,
+    "achieved_concurrency": 31.93,
+    "achieved_rate": null,
+    "repeats": 3,
+    "requests": 192,
+    "completed": 192,
+    "errors": 0,
+    "first_error": null,
+    "short_outputs": 0,
+    "output_tok_s": 1183.09,
+    "output_tok_s_ci": [
+     1180.64,
+     1185.54
+    ],
+    "req_s": 9.243,
+    "ttft_ms": {
+     "p50": 599.711,
+     "p90": 613.496,
+     "p99": 621.989
+    },
+    "tpot_ms": {
+     "p50": 22.475,
+     "p90": 24.266,
+     "p99": 26.494
+    },
+    "itl_ms": {
+     "p50": 22.387,
+     "p90": 22.718,
+     "p99": 25.459
+    },
+    "e2e_ms": {
+     "p50": 3455.505,
+     "p90": 3472.299,
+     "p99": 3481.23
+    },
+    "reps": [
+     {
+      "wall_s": 6.92,
+      "requests": 64,
+      "completed": 64,
+      "errors": 0,
+      "first_error": null,
+      "short_outputs": 0,
+      "output_tokens": 8192,
+      "output_tok_s": 1183.733,
+      "req_s": 9.2479,
+      "achieved_concurrency": 31.95,
+      "ttft_ms": {
+       "p50": 603.984,
+       "p90": 608.307,
+       "p99": 614.848
+      },
+      "tpot_ms": {
+       "p50": 22.458,
+       "p90": 22.515,
+       "p99": 26.518
+      },
+      "itl_ms": {
+       "p50": 22.381,
+       "p90": 22.688,
+       "p99": 23.965
+      },
+      "e2e_ms": {
+       "p50": 3453.533,
+       "p90": 3462.985,
+       "p99": 3475.644
+      }
+     },
+     {
+      "wall_s": 6.931,
+      "requests": 64,
+      "completed": 64,
+      "errors": 0,
+      "first_error": null,
+      "short_outputs": 0,
+      "output_tokens": 8192,
+      "output_tok_s": 1181.957,
+      "req_s": 9.234,
+      "achieved_concurrency": 31.94,
+      "ttft_ms": {
+       "p50": 596.104,
+       "p90": 613.318,
+       "p99": 622.835
+      },
+      "tpot_ms": {
+       "p50": 22.463,
+       "p90": 22.69,
+       "p99": 26.464
+      },
+      "itl_ms": {
+       "p50": 22.378,
+       "p90": 22.675,
+       "p99": 23.789
+      },
+      "e2e_ms": {
+       "p50": 3457.729,
+       "p90": 3479.158,
+       "p99": 3481.312
+      }
+     },
+     {
+      "wall_s": 6.921,
+      "requests": 64,
+      "completed": 64,
+      "errors": 0,
+      "first_error": null,
+      "short_outputs": 0,
+      "output_tokens": 8192,
+      "output_tok_s": 1183.58,
+      "req_s": 9.2467,
+      "achieved_concurrency": 31.91,
+      "ttft_ms": {
+       "p50": 570.0,
+       "p90": 614.432,
+       "p99": 621.812
+      },
+      "tpot_ms": {
+       "p50": 22.753,
+       "p90": 24.311,
+       "p99": 26.308
+      },
+      "itl_ms": {
+       "p50": 22.4,
+       "p90": 22.784,
+       "p99": 27.716
+      },
+      "e2e_ms": {
+       "p50": 3452.44,
+       "p90": 3470.705,
+       "p99": 3479.556
+      }
+     }
+    ]
+   }
+  ],
+  "rate_points": [],
+  "prompt_format": "tokens",
+  "tokenizer": true
+ },
+ "stability": null,
+ "reliability": null,
+ "memory": {
+  "status": "ok",
+  "source": "prometheus",
+  "samples": 31,
+  "metric_names": {
+   "vllm:kv_cache_usage_perc": "vllm:kv_cache_usage_perc",
+   "vllm:num_preemptions_total": "vllm:num_preemptions_total",
+   "process_resident_memory_bytes": "process_resident_memory_bytes"
+  },
+  "kv_cache_usage_max": 0.0508,
+  "kv_cache_usage_mean_stability": null,
+  "preemptions": 0,
+  "server_rss_mib_start": 116.7,
+  "server_rss_mib_end": 119.0,
+  "server_rss_growth_mib_stability": null,
+  "config_info": {}
+ },
+ "long_context": null,
+ "requests": {
+  "total": 336,
+  "errors": 0,
+  "error_rate": 0.0,
+  "by_check": {
+   "accuracy": {
+    "total": 48,
+    "errors": 0
+   },
+   "performance": {
+    "total": 288,
+    "errors": 0
+   }
+  }
+ },
+ "versions": {
+  "observed": {
+   "engine": "fusezap",
+   "engine_version": null,
+   "served_model": "Qwen/Qwen2.5-72B-Instruct",
+   "model_root": null,
+   "max_model_len": 8192,
+   "server_header": "uvicorn",
+   "serving_mode": "exact"
+  },
+  "declared": {
+   "engine": "fusezap",
+   "flags": "--tp 2 --max-model-len 8192 --num-blocks 8192 ",
+   "hardware": "2x H200 141 GB (RunPod)"
+  },
+  "fields": [
+   {
+    "field": "engine",
+    "value": "fusezap",
+    "kind": "observed",
+    "source": "/v1/models, /version, /get_server_info, headers"
+   },
+   {
+    "field": "served_model",
+    "value": "Qwen/Qwen2.5-72B-Instruct",
+    "kind": "observed",
+    "source": "/v1/models, /version, /get_server_info, headers"
+   },
+   {
+    "field": "max_model_len",
+    "value": 8192,
+    "kind": "observed",
+    "source": "/v1/models, /version, /get_server_info, headers"
+   },
+   {
+    "field": "server_header",
+    "value": "uvicorn",
+    "kind": "observed",
+    "source": "/v1/models, /version, /get_server_info, headers"
+   },
+   {
+    "field": "serving_mode",
+    "value": "exact",
+    "kind": "observed",
+    "source": "/v1/models, /version, /get_server_info, headers"
+   },
+   {
+    "field": "engine",
+    "value": "fusezap",
+    "kind": "declared",
+    "source": "config"
+   },
+   {
+    "field": "flags",
+    "value": "--tp 2 --max-model-len 8192 --num-blocks 8192 ",
+    "kind": "declared",
+    "source": "config"
+   },
+   {
+    "field": "hardware",
+    "value": "2x H200 141 GB (RunPod)",
+    "kind": "declared",
+    "source": "config"
+   }
+  ],
+  "models": [
+   {
+    "id": "Qwen/Qwen2.5-72B-Instruct",
+    "object": "model",
+    "owned_by": "fusezap",
+    "max_model_len": 8192,
+    "created": 1793035725,
+    "fusezap_mode": "exact"
+   }
+  ],
+  "headers": {
+   "server": "uvicorn",
+   "content-type": "application/json",
+   "x-fusezap-mode": "exact"
+  },
+  "sources": [
+   "/v1/models"
+  ],
+  "metrics_config_info": {},
+  "flags": []
+ },
+ "releases": {
+  "candidate": {
+   "name": "candidate",
+   "label": "FuseZap serve --tp 2 (default)",
+   "errors": [],
+   "target": {
+    "base_url": "http://<host>:18005",
+    "engine_reported": "fusezap",
+    "engine_version": null,
+    "model": "Qwen/Qwen2.5-72B-Instruct",
+    "served_model_id": "Qwen/Qwen2.5-72B-Instruct",
+    "hardware": "2x H200 141 GB (RunPod)",
+    "dtype_or_quant": null,
+    "notes": null,
+    "serving_mode": "exact"
+   },
+   "accuracy": {
+    "method": "logprobs",
+    "method_strength": "strong",
+    "logprobs_mode": "echo",
+    "token_match": "id",
+    "prompt_format": "tokens",
+    "top_k": 5,
+    "near_tie_eps": 0.1,
+    "prompts": 24,
+    "positions": 1486,
+    "top1_tie_rule": "split",
+    "top1_agree": 1476,
+    "top1_agreement": 0.9933,
+    "top1_agree_strict": 1476,
+    "top1_agreement_strict": 0.9933,
+    "top1_agree_generous": 1476,
+    "top1_agreement_generous": 0.9933,
+    "top1_disagreements": 10,
+    "top1_disagreements_near_tie": 6,
+    "top1_ties": 0,
+    "top1_agree_on_tie": 0,
+    "top1_ties_k_lower_bound": 0,
+    "greedy_exact_match_mean": 0.8125,
+    "greedy_full_matches": 16,
+    "greedy_match_tokens_mean": 49.96,
+    "logprob_abs_diff_mean": 0.00851,
+    "logprob_abs_diff_max": 0.21385,
+    "requests": 48,
+    "errors": 0,
+    "prompts_with_errors": 0,
+    "notes": [
+     "requests set repetition_penalty=1.0 (neutral greedy decoding)"
+    ],
+    "worst_prompts": [
+     {
+      "id": "p14",
+      "text": "Write the opening paragraph of a mystery novel set in a lighthouse.",
+      "top1_agreement": 0.9688,
+      "greedy_exact_match": 0.2188,
+      "greedy_first_mismatch": 14,
+      "first_disagreement": {
+       "position": 14,
+       "reference": " that",
+       "reference_id": 429,
+       "server": "token_id:323",
+       "reference_gap": 0.20461
+      },
+      "server_text_head": "The storm had been brewing all day, a relentless churn of gray clouds and angry waves that seemed to lash out at the solitary lighthouse perched on the jagged c",
+      "reference_text_head": "The storm had been brewing all day, a relentless churn of gray clouds that finally unleashed its fury as night fell. Perched on a jagged cliff, the old lighthou"
+     },
+     {
+      "id": "p06",
+      "text": "A train leaves at 3 pm going 60 km/h; another at 4 pm going 90 km/h. When does the second catch up? Show the steps.",
+      "top1_agreement": 0.9688,
+      "greedy_exact_match": 0.4219,
+      "greedy_first_mismatch": 27,
+      "first_disagreement": {
+       "position": 27,
+       "reference": ".\n\n",
+       "reference_id": 382,
+       "server": "token_id:13",
+       "reference_gap": 0.0237
+      },
+      "server_text_head": "To determine when the second train catches up to the first, we need to set up an equation based on the distances traveled by both trains. Let's denote the time ",
+      "reference_text_head": "To determine when the second train catches up to the first, we need to set up an equation based on the distances traveled by both trains.\n\n### Step 1: Define th"
+     },
+     {
+      "id": "p00",
+      "text": "Write a short poem about the sea.",
+      "top1_agreement": 0.9844,
+      "greedy_exact_match": 0.1562,
+      "greedy_first_mismatch": 10,
+      "first_disagreement": {
+       "position": 10,
+       "reference": " wide",
+       "reference_id": 6884,
+       "server": "token_id:11",
+       "reference_gap": 0.01709
+      },
+      "server_text_head": "Upon the vast and endless blue,\nThe sea stretches, a canvas true,\nWaves whisper secrets to the shore,\nIn ebb and flow, forever more.\n\nSunset paints the horizon'",
+      "reference_text_head": "Upon the vast and endless blue,\nThe sea stretches wide, a canvas true.\nWaves whisper secrets to the shore,\nIn ebb and flow, forever more.\n\nSunset paints the hor"
+     },
+     {
+      "id": "p03",
+      "text": "Give me a recipe for a vegetarian lasagna.",
+      "top1_agreement": 0.9844,
+      "greedy_exact_match": 0.1875,
+      "greedy_first_mismatch": 12,
+      "first_disagreement": {
+       "position": 12,
+       "reference": " sure",
+       "reference_id": 2704,
+       "server": "token_id:2176",
+       "reference_gap": 0.16534
+      },
+      "server_text_head": "Certainly! Here's a delicious vegetarian lasagna recipe that's both comforting and packed with flavor. This recipe serves 6-8 people.\n\n### Ingredients:\n\n#### Fo",
+      "reference_text_head": "Certainly! Here's a delicious vegetarian lasagna recipe that's sure to please. This recipe serves 6-8 people.\n\n### Ingredients:\n\n#### For the Tomato Sauce:\n- 2 "
+     },
+     {
+      "id": "p17",
+      "text": "Give a short history of the printing press.",
+      "top1_agreement": 0.9844,
+      "greedy_exact_match": 0.4219,
+      "greedy_first_mismatch": 27,
+      "first_disagreement": {
+       "position": 27,
+       "reference": " Printing",
+       "reference_id": 50769,
+       "server": "token_id:7843",
+       "reference_gap": 0.00822
+      },
+      "server_text_head": "The history of the printing press is a significant chapter in the development of human communication and technology. Here’s a brief overview:\n\n### Early Develop",
+      "reference_text_head": "The history of the printing press is a significant chapter in the development of human communication and technology. Here’s a brief overview:\n\n### Early Printin"
+     }
+    ],
+    "per_prompt": [
+     {
+      "id": "p00",
+      "text": "Write a short poem about the sea.",
+      "prompt_tokens": 37,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 63,
+      "top1_agreement": 0.9844,
+      "top1_agreement_strict": 0.9844,
+      "top1_agreement_generous": 0.9844,
+      "near_tie_disagreements": 1,
+      "logprob_abs_diff_mean": 0.02067,
+      "logprob_abs_diff_max": 0.12343,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": {
+       "position": 10,
+       "reference": " wide",
+       "reference_id": 6884,
+       "server": "token_id:11",
+       "reference_gap": 0.01709
+      },
+      "disagreements": [
+       {
+        "position": 10,
+        "reference": " wide",
+        "reference_id": 6884,
+        "server": "token_id:11",
+        "reference_gap": 0.01709
+       }
+      ],
+      "greedy_match_tokens": 10,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 0.1562,
+      "greedy_first_mismatch": 10,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "Upon the vast and endless blue,\nThe sea stretches, a canvas true,\nWaves whisper secrets to the shore,\nIn ebb and flow, forever more.\n\nSunset paints the horizon'",
+      "reference_text_head": "Upon the vast and endless blue,\nThe sea stretches wide, a canvas true.\nWaves whisper secrets to the shore,\nIn ebb and flow, forever more.\n\nSunset paints the hor",
+      "error": null
+     },
+     {
+      "id": "p01",
+      "text": "Explain how a hash table works, with an example in Python.",
+      "prompt_tokens": 43,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 63,
+      "top1_agreement": 0.9844,
+      "top1_agreement_strict": 0.9844,
+      "top1_agreement_generous": 0.9844,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.00455,
+      "logprob_abs_diff_max": 0.09624,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": {
+       "position": 41,
+       "reference": " of",
+       "reference_id": 315,
+       "server": "token_id:504",
+       "reference_gap": 0.11226
+      },
+      "disagreements": [
+       {
+        "position": 41,
+        "reference": " of",
+        "reference_id": 315,
+        "server": "token_id:504",
+        "reference_gap": 0.11226
+       }
+      ],
+      "greedy_match_tokens": 41,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 0.6406,
+      "greedy_first_mismatch": 41,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "Certainly! A hash table (or hash map) is a data structure that implements an associative array, a structure that can map keys to values. It uses a hash function",
+      "reference_text_head": "Certainly! A hash table (or hash map) is a data structure that implements an associative array, a structure that can map keys to values. It uses a hash function",
+      "error": null
+     },
+     {
+      "id": "p02",
+      "text": "What were the main causes of the French Revolution?",
+      "prompt_tokens": 39,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 64,
+      "top1_agreement": 1.0,
+      "top1_agreement_strict": 1.0,
+      "top1_agreement_generous": 1.0,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.00427,
+      "logprob_abs_diff_max": 0.05578,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": null,
+      "disagreements": [],
+      "greedy_match_tokens": 64,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 1.0,
+      "greedy_first_mismatch": null,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "The French Revolution, which began in 1789, was a period of radical social and political upheaval in France that fundamentally changed the course of French hist",
+      "reference_text_head": "The French Revolution, which began in 1789, was a period of radical social and political upheaval in France that fundamentally changed the course of French hist",
+      "error": null
+     },
+     {
+      "id": "p03",
+      "text": "Give me a recipe for a vegetarian lasagna.",
+      "prompt_tokens": 39,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 63,
+      "top1_agreement": 0.9844,
+      "top1_agreement_strict": 0.9844,
+      "top1_agreement_generous": 0.9844,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.01089,
+      "logprob_abs_diff_max": 0.17771,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": {
+       "position": 12,
+       "reference": " sure",
+       "reference_id": 2704,
+       "server": "token_id:2176",
+       "reference_gap": 0.16534
+      },
+      "disagreements": [
+       {
+        "position": 12,
+        "reference": " sure",
+        "reference_id": 2704,
+        "server": "token_id:2176",
+        "reference_gap": 0.16534
+       }
+      ],
+      "greedy_match_tokens": 12,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 0.1875,
+      "greedy_first_mismatch": 12,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "Certainly! Here's a delicious vegetarian lasagna recipe that's both comforting and packed with flavor. This recipe serves 6-8 people.\n\n### Ingredients:\n\n#### Fo",
+      "reference_text_head": "Certainly! Here's a delicious vegetarian lasagna recipe that's sure to please. This recipe serves 6-8 people.\n\n### Ingredients:\n\n#### For the Tomato Sauce:\n- 2 ",
+      "error": null
+     },
+     {
+      "id": "p04",
+      "text": "Summarize the theory of evolution by natural selection in a paragraph.",
+      "prompt_tokens": 43,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 64,
+      "top1_agreement": 1.0,
+      "top1_agreement_strict": 1.0,
+      "top1_agreement_generous": 1.0,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.01772,
+      "logprob_abs_diff_max": 0.21385,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": null,
+      "disagreements": [],
+      "greedy_match_tokens": 64,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 1.0,
+      "greedy_first_mismatch": null,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "The theory of evolution by natural selection, primarily developed by Charles Darwin and Alfred Russel Wallace, posits that species of organisms evolve over gene",
+      "reference_text_head": "The theory of evolution by natural selection, primarily developed by Charles Darwin and Alfred Russel Wallace, posits that species of organisms evolve over gene",
+      "error": null
+     },
+     {
+      "id": "p05",
+      "text": "Translate into French: The weather is nice today, so we are going to the park.",
+      "prompt_tokens": 47,
+      "ref_tokens": 14,
+      "ref_eos": true,
+      "positions": 14,
+      "top1_agree": 14,
+      "top1_agreement": 1.0,
+      "top1_agreement_strict": 1.0,
+      "top1_agreement_generous": 1.0,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.00108,
+      "logprob_abs_diff_max": 0.00942,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": null,
+      "disagreements": [],
+      "greedy_match_tokens": 15,
+      "greedy_ref_tokens": 15,
+      "greedy_exact_match": 1.0,
+      "greedy_first_mismatch": null,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "stop",
+      "server_tokens": 14,
+      "server_text_head": "Le temps est agréable aujourd'hui, donc nous allons au parc.",
+      "reference_text_head": "Le temps est agréable aujourd'hui, donc nous allons au parc.",
+      "error": null
+     },
+     {
+      "id": "p06",
+      "text": "A train leaves at 3 pm going 60 km/h; another at 4 pm going 90 km/h. When does the second catch up? Show the steps.",
+      "prompt_tokens": 66,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 62,
+      "top1_agreement": 0.9688,
+      "top1_agreement_strict": 0.9688,
+      "top1_agreement_generous": 0.9688,
+      "near_tie_disagreements": 2,
+      "logprob_abs_diff_mean": 0.0055,
+      "logprob_abs_diff_max": 0.05629,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": {
+       "position": 27,
+       "reference": ".\n\n",
+       "reference_id": 382,
+       "server": "token_id:13",
+       "reference_gap": 0.0237
+      },
+      "disagreements": [
+       {
+        "position": 27,
+        "reference": ".\n\n",
+        "reference_id": 382,
+        "server": "token_id:13",
+        "reference_gap": 0.0237
+       },
+       {
+        "position": 62,
+        "reference": ".\n",
+        "reference_id": 624,
+        "server": "token_id:382",
+        "reference_gap": 0.00674
+       }
+      ],
+      "greedy_match_tokens": 27,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 0.4219,
+      "greedy_first_mismatch": 27,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "To determine when the second train catches up to the first, we need to set up an equation based on the distances traveled by both trains. Let's denote the time ",
+      "reference_text_head": "To determine when the second train catches up to the first, we need to set up an equation based on the distances traveled by both trains.\n\n### Step 1: Define th",
+      "error": null
+     },
+     {
+      "id": "p07",
+      "text": "List five tips for writing clean code and explain each briefly.",
+      "prompt_tokens": 41,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 63,
+      "top1_agreement": 0.9844,
+      "top1_agreement_strict": 0.9844,
+      "top1_agreement_generous": 0.9844,
+      "near_tie_disagreements": 1,
+      "logprob_abs_diff_mean": 0.00962,
+      "logprob_abs_diff_max": 0.07064,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": {
+       "position": 23,
+       "reference": " understand",
+       "reference_id": 3535,
+       "server": "token_id:1349",
+       "reference_gap": 0.00108
+      },
+      "disagreements": [
+       {
+        "position": 23,
+        "reference": " understand",
+        "reference_id": 3535,
+        "server": "token_id:1349",
+        "reference_gap": 0.00108
+       }
+      ],
+      "greedy_match_tokens": 64,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 1.0,
+      "greedy_first_mismatch": null,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "Writing clean code is essential for maintaining and scaling software projects. Clean code is not only error-free but also easy to understand, modify, and extend",
+      "reference_text_head": "Writing clean code is essential for maintaining and scaling software projects. Clean code is not only error-free but also easy to understand, modify, and extend",
+      "error": null
+     },
+     {
+      "id": "p08",
+      "text": "Describe the water cycle to a ten-year-old.",
+      "prompt_tokens": 39,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 64,
+      "top1_agreement": 1.0,
+      "top1_agreement_strict": 1.0,
+      "top1_agreement_generous": 1.0,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.00736,
+      "logprob_abs_diff_max": 0.07735,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": null,
+      "disagreements": [],
+      "greedy_match_tokens": 64,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 1.0,
+      "greedy_first_mismatch": null,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "Sure! The water cycle is like a big, never-ending journey that water takes all around the Earth. Imagine water as a little traveler that moves from the ground t",
+      "reference_text_head": "Sure! The water cycle is like a big, never-ending journey that water takes all around the Earth. Imagine water as a little traveler that moves from the ground t",
+      "error": null
+     },
+     {
+      "id": "p09",
+      "text": "Write a Python function that checks whether a string is a palindrome, and explain it.",
+      "prompt_tokens": 46,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 64,
+      "top1_agreement": 1.0,
+      "top1_agreement_strict": 1.0,
+      "top1_agreement_generous": 1.0,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.00288,
+      "logprob_abs_diff_max": 0.03226,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": null,
+      "disagreements": [],
+      "greedy_match_tokens": 64,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 1.0,
+      "greedy_first_mismatch": null,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "Certainly! A palindrome is a word, phrase, number, or other sequences of characters that reads the same backward as forward. For example, \"madam\", \"racecar\", an",
+      "reference_text_head": "Certainly! A palindrome is a word, phrase, number, or other sequences of characters that reads the same backward as forward. For example, \"madam\", \"racecar\", an",
+      "error": null
+     },
+     {
+      "id": "p10",
+      "text": "What is the difference between a virus and a bacterium?",
+      "prompt_tokens": 41,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 64,
+      "top1_agreement": 1.0,
+      "top1_agreement_strict": 1.0,
+      "top1_agreement_generous": 1.0,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.0087,
+      "logprob_abs_diff_max": 0.06904,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": null,
+      "disagreements": [],
+      "greedy_match_tokens": 64,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 1.0,
+      "greedy_first_mismatch": null,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "Viruses and bacteria are both microorganisms, but they differ significantly in their structure, function, and the ways they cause disease. Here’s a detailed com",
+      "reference_text_head": "Viruses and bacteria are both microorganisms, but they differ significantly in their structure, function, and the ways they cause disease. Here’s a detailed com",
+      "error": null
+     },
+     {
+      "id": "p11",
+      "text": "Write a polite email asking a colleague to review a pull request by Friday.",
+      "prompt_tokens": 44,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 64,
+      "top1_agreement": 1.0,
+      "top1_agreement_strict": 1.0,
+      "top1_agreement_generous": 1.0,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.01295,
+      "logprob_abs_diff_max": 0.0911,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": null,
+      "disagreements": [],
+      "greedy_match_tokens": 59,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 0.9219,
+      "greedy_first_mismatch": 59,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "Subject: Request for Review of Pull Request by Friday\n\nHi [Colleague's Name],\n\nI hope this message finds you well. I wanted to reach out to you regarding a pull",
+      "reference_text_head": "Subject: Request for Review of Pull Request by Friday\n\nHi [Colleague's Name],\n\nI hope this message finds you well. I wanted to reach out to you regarding a pull",
+      "error": null
+     },
+     {
+      "id": "p12",
+      "text": "Explain what a GPU is and why it is good at matrix multiplication.",
+      "prompt_tokens": 44,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 64,
+      "top1_agreement": 1.0,
+      "top1_agreement_strict": 1.0,
+      "top1_agreement_generous": 1.0,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.00726,
+      "logprob_abs_diff_max": 0.11879,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": null,
+      "disagreements": [],
+      "greedy_match_tokens": 64,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 1.0,
+      "greedy_first_mismatch": null,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "A GPU, or Graphics Processing Unit, is a specialized electronic circuit designed to rapidly manipulate and alter memory to accelerate the creation of images in ",
+      "reference_text_head": "A GPU, or Graphics Processing Unit, is a specialized electronic circuit designed to rapidly manipulate and alter memory to accelerate the creation of images in ",
+      "error": null
+     },
+     {
+      "id": "p13",
+      "text": "Compare renting and buying a home: give three points for each.",
+      "prompt_tokens": 42,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 64,
+      "top1_agreement": 1.0,
+      "top1_agreement_strict": 1.0,
+      "top1_agreement_generous": 1.0,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.00494,
+      "logprob_abs_diff_max": 0.03681,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": null,
+      "disagreements": [],
+      "greedy_match_tokens": 64,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 1.0,
+      "greedy_first_mismatch": null,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "Certainly! When deciding between renting and buying a home, there are several factors to consider. Here are three key points for each option:\n\n### Renting a Hom",
+      "reference_text_head": "Certainly! When deciding between renting and buying a home, there are several factors to consider. Here are three key points for each option:\n\n### Renting a Hom",
+      "error": null
+     },
+     {
+      "id": "p14",
+      "text": "Write the opening paragraph of a mystery novel set in a lighthouse.",
+      "prompt_tokens": 43,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 62,
+      "top1_agreement": 0.9688,
+      "top1_agreement_strict": 0.9688,
+      "top1_agreement_generous": 0.9688,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.02081,
+      "logprob_abs_diff_max": 0.1273,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": {
+       "position": 14,
+       "reference": " that",
+       "reference_id": 429,
+       "server": "token_id:323",
+       "reference_gap": 0.20461
+      },
+      "disagreements": [
+       {
+        "position": 14,
+        "reference": " that",
+        "reference_id": 429,
+        "server": "token_id:323",
+        "reference_gap": 0.20461
+       },
+       {
+        "position": 22,
+        "reference": ".",
+        "reference_id": 13,
+        "server": "token_id:916",
+        "reference_gap": 0.11017
+       }
+      ],
+      "greedy_match_tokens": 14,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 0.2188,
+      "greedy_first_mismatch": 14,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "The storm had been brewing all day, a relentless churn of gray clouds and angry waves that seemed to lash out at the solitary lighthouse perched on the jagged c",
+      "reference_text_head": "The storm had been brewing all day, a relentless churn of gray clouds that finally unleashed its fury as night fell. Perched on a jagged cliff, the old lighthou",
+      "error": null
+     },
+     {
+      "id": "p15",
+      "text": "How does public-key cryptography work? Keep it simple.",
+      "prompt_tokens": 40,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 64,
+      "top1_agreement": 1.0,
+      "top1_agreement_strict": 1.0,
+      "top1_agreement_generous": 1.0,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.0037,
+      "logprob_abs_diff_max": 0.04938,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": null,
+      "disagreements": [],
+      "greedy_match_tokens": 64,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 1.0,
+      "greedy_first_mismatch": null,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "Sure! Public-key cryptography, also known as asymmetric cryptography, uses a pair of keys to encrypt and decrypt information:\n\n1. **Public Key**: This key is sh",
+      "reference_text_head": "Sure! Public-key cryptography, also known as asymmetric cryptography, uses a pair of keys to encrypt and decrypt information:\n\n1. **Public Key**: This key is sh",
+      "error": null
+     },
+     {
+      "id": "p16",
+      "text": "What is 17 multiplied by 23? Explain the calculation step by step.",
+      "prompt_tokens": 47,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 64,
+      "top1_agreement": 1.0,
+      "top1_agreement_strict": 1.0,
+      "top1_agreement_generous": 1.0,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.00396,
+      "logprob_abs_diff_max": 0.06341,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": null,
+      "disagreements": [],
+      "greedy_match_tokens": 64,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 1.0,
+      "greedy_first_mismatch": null,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "Certainly! To multiply 17 by 23, you can use the standard multiplication method. Here’s how you do it step by step:\n\n1. **Write down the numbers:**\n   ```\n     ",
+      "reference_text_head": "Certainly! To multiply 17 by 23, you can use the standard multiplication method. Here’s how you do it step by step:\n\n1. **Write down the numbers:**\n   ```\n     ",
+      "error": null
+     },
+     {
+      "id": "p17",
+      "text": "Give a short history of the printing press.",
+      "prompt_tokens": 38,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 63,
+      "top1_agreement": 0.9844,
+      "top1_agreement_strict": 0.9844,
+      "top1_agreement_generous": 0.9844,
+      "near_tie_disagreements": 1,
+      "logprob_abs_diff_mean": 0.00924,
+      "logprob_abs_diff_max": 0.09441,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": {
+       "position": 27,
+       "reference": " Printing",
+       "reference_id": 50769,
+       "server": "token_id:7843",
+       "reference_gap": 0.00822
+      },
+      "disagreements": [
+       {
+        "position": 27,
+        "reference": " Printing",
+        "reference_id": 50769,
+        "server": "token_id:7843",
+        "reference_gap": 0.00822
+       }
+      ],
+      "greedy_match_tokens": 27,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 0.4219,
+      "greedy_first_mismatch": 27,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "The history of the printing press is a significant chapter in the development of human communication and technology. Here’s a brief overview:\n\n### Early Develop",
+      "reference_text_head": "The history of the printing press is a significant chapter in the development of human communication and technology. Here’s a brief overview:\n\n### Early Printin",
+      "error": null
+     },
+     {
+      "id": "p18",
+      "text": "Write a SQL query that returns the ten customers with the highest total order value, and explain it.",
+      "prompt_tokens": 49,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 64,
+      "top1_agreement": 1.0,
+      "top1_agreement_strict": 1.0,
+      "top1_agreement_generous": 1.0,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.00205,
+      "logprob_abs_diff_max": 0.05598,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": null,
+      "disagreements": [],
+      "greedy_match_tokens": 64,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 1.0,
+      "greedy_first_mismatch": null,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "Certainly! Below is a SQL query that returns the ten customers with the highest total order value, along with an explanation of each part of the query.\n\n### SQL",
+      "reference_text_head": "Certainly! Below is a SQL query that returns the ten customers with the highest total order value, along with an explanation of each part of the query.\n\n### SQL",
+      "error": null
+     },
+     {
+      "id": "p19",
+      "text": "What are the health benefits of regular exercise?",
+      "prompt_tokens": 38,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 64,
+      "top1_agreement": 1.0,
+      "top1_agreement_strict": 1.0,
+      "top1_agreement_generous": 1.0,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.00987,
+      "logprob_abs_diff_max": 0.07051,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": null,
+      "disagreements": [],
+      "greedy_match_tokens": 64,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 1.0,
+      "greedy_first_mismatch": null,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "Regular exercise offers a wide range of health benefits that can improve both physical and mental well-being. Here are some of the key benefits:\n\n1. **Improves ",
+      "reference_text_head": "Regular exercise offers a wide range of health benefits that can improve both physical and mental well-being. Here are some of the key benefits:\n\n1. **Improves ",
+      "error": null
+     },
+     {
+      "id": "p20",
+      "text": "Explain recursion using the example of computing a factorial.",
+      "prompt_tokens": 40,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 64,
+      "top1_agreement": 1.0,
+      "top1_agreement_strict": 1.0,
+      "top1_agreement_generous": 1.0,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.00668,
+      "logprob_abs_diff_max": 0.068,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": null,
+      "disagreements": [],
+      "greedy_match_tokens": 64,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 1.0,
+      "greedy_first_mismatch": null,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "Certainly! Recursion is a programming technique where a function calls itself to solve a smaller instance of the same problem. This process continues until a ba",
+      "reference_text_head": "Certainly! Recursion is a programming technique where a function calls itself to solve a smaller instance of the same problem. This process continues until a ba",
+      "error": null
+     },
+     {
+      "id": "p21",
+      "text": "Describe three famous paintings and what makes each one special.",
+      "prompt_tokens": 40,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 64,
+      "top1_agreement": 1.0,
+      "top1_agreement_strict": 1.0,
+      "top1_agreement_generous": 1.0,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.0074,
+      "logprob_abs_diff_max": 0.08652,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": null,
+      "disagreements": [],
+      "greedy_match_tokens": 64,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 1.0,
+      "greedy_first_mismatch": null,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "Certainly! Here are three famous paintings, each with a unique significance and artistic value:\n\n1. **Mona Lisa by Leonardo da Vinci (c. 1503-1506)**\n   - **Des",
+      "reference_text_head": "Certainly! Here are three famous paintings, each with a unique significance and artistic value:\n\n1. **Mona Lisa by Leonardo da Vinci (c. 1503-1506)**\n   - **Des",
+      "error": null
+     },
+     {
+      "id": "p22",
+      "text": "Write a haiku about autumn, then explain the syllable structure.",
+      "prompt_tokens": 43,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 63,
+      "top1_agreement": 0.9844,
+      "top1_agreement_strict": 0.9844,
+      "top1_agreement_generous": 0.9844,
+      "near_tie_disagreements": 1,
+      "logprob_abs_diff_mean": 0.00901,
+      "logprob_abs_diff_max": 0.09066,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": {
+       "position": 34,
+       "reference": " form",
+       "reference_id": 1352,
+       "server": "token_id:8606",
+       "reference_gap": 0.00342
+      },
+      "disagreements": [
+       {
+        "position": 34,
+        "reference": " form",
+        "reference_id": 1352,
+        "server": "token_id:8606",
+        "reference_gap": 0.00342
+       }
+      ],
+      "greedy_match_tokens": 34,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 0.5312,
+      "greedy_first_mismatch": 34,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "Leaves whisper, falling,\nCrisp air holds secrets of smoke,\nSunset paints gold paths.\n\n**Syllable Structure Explanation:**\nA haiku is a traditional form of Japan",
+      "reference_text_head": "Leaves whisper, falling,\nCrisp air holds secrets of smoke,\nSunset paints gold paths.\n\n**Syllable Structure Explanation:**\nA haiku is a form of poetry that tradi",
+      "error": null
+     },
+     {
+      "id": "p23",
+      "text": "What should a beginner know before starting to learn the guitar?",
+      "prompt_tokens": 41,
+      "ref_tokens": 64,
+      "ref_eos": false,
+      "positions": 64,
+      "top1_agree": 64,
+      "top1_agreement": 1.0,
+      "top1_agreement_strict": 1.0,
+      "top1_agreement_generous": 1.0,
+      "near_tie_disagreements": 0,
+      "logprob_abs_diff_mean": 0.00732,
+      "logprob_abs_diff_max": 0.07194,
+      "top1_ties": 0,
+      "top1_agree_on_tie": 0,
+      "top1_ties_k_lower_bound": 0,
+      "first_disagreement": null,
+      "disagreements": [],
+      "greedy_match_tokens": 64,
+      "greedy_ref_tokens": 64,
+      "greedy_exact_match": 1.0,
+      "greedy_first_mismatch": null,
+      "greedy_compared_by": "ids",
+      "server_finish_reason": "length",
+      "server_tokens": 64,
+      "server_text_head": "Starting to learn the guitar is an exciting journey, and there are a few key things a beginner should know to make the process smoother and more enjoyable. Here",
+      "reference_text_head": "Starting to learn the guitar is an exciting journey, and there are a few key things a beginner should know to make the process smoother and more enjoyable. Here",
+      "error": null
+     }
+    ]
+   },
+   "performance": {
+    "workload": "short",
+    "input_tokens": 128,
+    "output_tokens": 128,
+    "repeats": 3,
+    "requests_per_point": "max(16, 2 x concurrency)",
+    "sampling": {
+     "temperature": 0.0,
+     "ignore_eos": true,
+     "stream": true
+    },
+    "points": [
+     {
+      "mode": "concurrency",
+      "concurrency": 1,
+      "requested_concurrency": 1,
+      "rate": null,
+      "requested_rate": null,
+      "achieved_concurrency": 1.0,
+      "achieved_rate": null,
+      "repeats": 3,
+      "requests": 48,
+      "completed": 48,
+      "errors": 0,
+      "first_error": null,
+      "short_outputs": 0,
+      "output_tok_s": 47.5,
+      "output_tok_s_ci": [
+       47.45,
+       47.56
+      ],
+      "req_s": 0.371,
+      "ttft_ms": {
+       "p50": 65.872,
+       "p90": 67.724,
+       "p99": 71.928
+      },
+      "tpot_ms": {
+       "p50": 20.688,
+       "p90": 20.696,
+       "p99": 20.813
+      },
+      "itl_ms": {
+       "p50": 20.683,
+       "p90": 20.751,
+       "p99": 20.95
+      },
+      "e2e_ms": {
+       "p50": 2692.913,
+       "p90": 2695.162,
+       "p99": 2710.944
+      },
+      "reps": [
+       {
+        "wall_s": 43.097,
+        "requests": 16,
+        "completed": 16,
+        "errors": 0,
+        "first_error": null,
+        "short_outputs": 0,
+        "output_tokens": 2048,
+        "output_tok_s": 47.521,
+        "req_s": 0.3713,
+        "achieved_concurrency": 1.0,
+        "ttft_ms": {
+         "p50": 65.606,
+         "p90": 67.574,
+         "p99": 72.058
+        },
+        "tpot_ms": {
+         "p50": 20.683,
+         "p90": 20.689,
+         "p99": 20.691
+        },
+        "itl_ms": {
+         "p50": 20.68,
+         "p90": 20.745,
+         "p99": 20.86
+        },
+        "e2e_ms": {
+         "p50": 2692.153,
+         "p90": 2693.275,
+         "p99": 2697.943
+        }
+       },
+       {
+        "wall_s": 43.136,
+        "requests": 16,
+        "completed": 16,
+        "errors": 0,
+        "first_error": null,
+        "short_outputs": 0,
+        "output_tokens": 2048,
+        "output_tok_s": 47.478,
+        "req_s": 0.3709,
+        "achieved_concurrency": 1.0,
+        "ttft_ms": {
+         "p50": 65.518,
+         "p90": 67.131,
+         "p99": 70.611
+        },
+        "tpot_ms": {
+         "p50": 20.69,
+         "p90": 20.701,
+         "p99": 20.879
+        },
+        "itl_ms": {
+         "p50": 20.686,
+         "p90": 20.762,
+         "p99": 21.064
+        },
+        "e2e_ms": {
+         "p50": 2693.157,
+         "p90": 2697.018,
+         "p99": 2718.321
+        }
+       },
+       {
+        "wall_s": 43.107,
+        "requests": 16,
+        "completed": 16,
+        "errors": 0,
+        "first_error": null,
+        "short_outputs": 0,
+        "output_tokens": 2048,
+        "output_tok_s": 47.51,
+        "req_s": 0.3712,
+        "achieved_concurrency": 1.0,
+        "ttft_ms": {
+         "p50": 66.4,
+         "p90": 67.342,
+         "p99": 68.13
+        },
+        "tpot_ms": {
+         "p50": 20.689,
+         "p90": 20.696,
+         "p99": 20.699
+        },
+        "itl_ms": {
+         "p50": 20.682,
+         "p90": 20.747,
+         "p99": 20.96
+        },
+        "e2e_ms": {
+         "p50": 2693.276,
+         "p90": 2694.974,
+         "p99": 2695.196
+        }
+       }
+      ]
+     },
+     {
+      "mode": "concurrency",
+      "concurrency": 8,
+      "requested_concurrency": 8,
+      "rate": null,
+      "requested_rate": null,
+      "achieved_concurrency": 7.99,
+      "achieved_rate": null,
+      "repeats": 3,
+      "requests": 48,
+      "completed": 48,
+      "errors": 0,
+      "first_error": null,
+      "short_outputs": 0,
+      "output_tok_s": 356.47,
+      "output_tok_s_ci": [
+       354.97,
+       357.97
+      ],
+      "req_s": 2.785,
+      "ttft_ms": {
+       "p50": 193.869,
+       "p90": 206.453,
+       "p99": 224.199
+      },
+      "tpot_ms": {
+       "p50": 21.046,
+       "p90": 22.017,
+       "p99": 22.028
+      },
+      "itl_ms": {
+       "p50": 21.01,
+       "p90": 21.122,
+       "p99": 21.986
+      },
+      "e2e_ms": {
+       "p50": 2867.034,
+       "p90": 2880.347,
+       "p99": 2881.721
+      },
+      "reps": [
+       {
+        "wall_s": 5.734,
+        "requests": 16,
+        "completed": 16,
+        "errors": 0,
+        "first_error": null,
+        "short_outputs": 0,
+        "output_tokens": 2048,
+        "output_tok_s": 357.163,
+        "req_s": 2.7903,
+        "achieved_concurrency": 7.99,
+        "ttft_ms": {
+         "p50": 192.985,
+         "p90": 195.582,
+         "p99": 197.026
+        },
+        "tpot_ms": {
+         "p50": 21.037,
+         "p90": 21.526,
+         "p99": 22.004
+        },
+        "itl_ms": {
+         "p50": 21.004,
+         "p90": 21.07,
+         "p99": 21.67
+        },
+        "e2e_ms": {
+         "p50": 2864.424,
+         "p90": 2868.186,
+         "p99": 2870.195
+        }
+       },
+       {
+        "wall_s": 5.749,
+        "requests": 16,
+        "completed": 16,
+        "errors": 0,
+        "first_error": null,
+        "short_outputs": 0,
+        "output_tokens": 2048,
+        "output_tok_s": 356.211,
+        "req_s": 2.7829,
+        "achieved_concurrency": 7.99,
+        "ttft_ms": {
+         "p50": 193.669,
+         "p90": 215.272,
+         "p99": 224.448
+        },
+        "tpot_ms": {
+         "p50": 21.032,
+         "p90": 22.019,
+         "p99": 22.029
+        },
+        "itl_ms": {
+         "p50": 21.016,
+         "p90": 21.091,
+         "p99": 21.96
+        },
+        "e2e_ms": {
+         "p50": 2871.608,
+         "p90": 2880.422,
+         "p99": 2880.611
+        }
+       },
+       {
+        "wall_s": 5.752,
+        "requests": 16,
+        "completed": 16,
+        "errors": 0,
+        "first_error": null,
+        "short_outputs": 0,
+        "output_tokens": 2048,
+        "output_tok_s": 356.042,
+        "req_s": 2.7816,
+        "achieved_concurrency": 7.99,
+        "ttft_ms": {
+         "p50": 194.112,
+         "p90": 206.263,
+         "p99": 209.055
+        },
+        "tpot_ms": {
+         "p50": 21.053,
+         "p90": 22.022,
+         "p99": 22.026
+        },
+        "itl_ms": {
+         "p50": 21.015,
+         "p90": 21.191,
+         "p99": 22.105
+        },
+        "e2e_ms": {
+         "p50": 2872.463,
+         "p90": 2881.238,
+         "p99": 2881.89
+        }
+       }
+      ]
+     },
+     {
+      "mode": "concurrency",
+      "concurrency": 32,
+      "requested_concurrency": 32,
+      "rate": null,
+      "requested_rate": null,
+      "achieved_concurrency": 31.93,
+      "achieved_rate": null,
+      "repeats": 3,
+      "requests": 192,
+      "completed": 192,
+      "errors": 0,
+      "first_error": null,
+      "short_outputs": 0,
+      "output_tok_s": 1183.09,
+      "output_tok_s_ci": [
+       1180.64,
+       1185.54
+      ],
+      "req_s": 9.243,
+      "ttft_ms": {
+       "p50": 599.711,
+       "p90": 613.496,
+       "p99": 621.989
+      },
+      "tpot_ms": {
+       "p50": 22.475,
+       "p90": 24.266,
+       "p99": 26.494
+      },
+      "itl_ms": {
+       "p50": 22.387,
+       "p90": 22.718,
+       "p99": 25.459
+      },
+      "e2e_ms": {
+       "p50": 3455.505,
+       "p90": 3472.299,
+       "p99": 3481.23
+      },
+      "reps": [
+       {
+        "wall_s": 6.92,
+        "requests": 64,
+        "completed": 64,
+        "errors": 0,
+        "first_error": null,
+        "short_outputs": 0,
+        "output_tokens": 8192,
+        "output_tok_s": 1183.733,
+        "req_s": 9.2479,
+        "achieved_concurrency": 31.95,
+        "ttft_ms": {
+         "p50": 603.984,
+         "p90": 608.307,
+         "p99": 614.848
+        },
+        "tpot_ms": {
+         "p50": 22.458,
+         "p90": 22.515,
+         "p99": 26.518
+        },
+        "itl_ms": {
+         "p50": 22.381,
+         "p90": 22.688,
+         "p99": 23.965
+        },
+        "e2e_ms": {
+         "p50": 3453.533,
+         "p90": 3462.985,
+         "p99": 3475.644
+        }
+       },
+       {
+        "wall_s": 6.931,
+        "requests": 64,
+        "completed": 64,
+        "errors": 0,
+        "first_error": null,
+        "short_outputs": 0,
+        "output_tokens": 8192,
+        "output_tok_s": 1181.957,
+        "req_s": 9.234,
+        "achieved_concurrency": 31.94,
+        "ttft_ms": {
+         "p50": 596.104,
+         "p90": 613.318,
+         "p99": 622.835
+        },
+        "tpot_ms": {
+         "p50": 22.463,
+         "p90": 22.69,
+         "p99": 26.464
+        },
+        "itl_ms": {
+         "p50": 22.378,
+         "p90": 22.675,
+         "p99": 23.789
+        },
+        "e2e_ms": {
+         "p50": 3457.729,
+         "p90": 3479.158,
+         "p99": 3481.312
+        }
+       },
+       {
+        "wall_s": 6.921,
+        "requests": 64,
+        "completed": 64,
+        "errors": 0,
+        "first_error": null,
+        "short_outputs": 0,
+        "output_tokens": 8192,
+        "output_tok_s": 1183.58,
+        "req_s": 9.2467,
+        "achieved_concurrency": 31.91,
+        "ttft_ms": {
+         "p50": 570.0,
+         "p90": 614.432,
+         "p99": 621.812
+        },
+        "tpot_ms": {
+         "p50": 22.753,
+         "p90": 24.311,
+         "p99": 26.308
+        },
+        "itl_ms": {
+         "p50": 22.4,
+         "p90": 22.784,
+         "p99": 27.716
+        },
+        "e2e_ms": {
+         "p50": 3452.44,
+         "p90": 3470.705,
+         "p99": 3479.556
+        }
+       }
+      ]
+     }
+    ],
+    "rate_points": [],
+    "prompt_format": "tokens",
+    "tokenizer": true
+   },
+   "memory": {
+    "status": "ok",
+    "source": "prometheus",
+    "samples": 31,
+    "metric_names": {
+     "vllm:kv_cache_usage_perc": "vllm:kv_cache_usage_perc",
+     "vllm:num_preemptions_total": "vllm:num_preemptions_total",
+     "process_resident_memory_bytes": "process_resident_memory_bytes"
+    },
+    "kv_cache_usage_max": 0.0508,
+    "kv_cache_usage_mean_stability": null,
+    "preemptions": 0,
+    "server_rss_mib_start": 116.7,
+    "server_rss_mib_end": 119.0,
+    "server_rss_growth_mib_stability": null,
+    "config_info": {}
+   },
+   "versions": {
+    "observed": {
+     "engine": "fusezap",
+     "engine_version": null,
+     "served_model": "Qwen/Qwen2.5-72B-Instruct",
+     "model_root": null,
+     "max_model_len": 8192,
+     "server_header": "uvicorn",
+     "serving_mode": "exact"
+    },
+    "declared": {
+     "engine": "fusezap",
+     "flags": "--tp 2 --max-model-len 8192 --num-blocks 8192 ",
+     "hardware": "2x H200 141 GB (RunPod)"
+    },
+    "fields": [
+     {
+      "field": "engine",
+      "value": "fusezap",
+      "kind": "observed",
+      "source": "/v1/models, /version, /get_server_info, headers"
+     },
+     {
+      "field": "served_model",
+      "value": "Qwen/Qwen2.5-72B-Instruct",
+      "kind": "observed",
+      "source": "/v1/models, /version, /get_server_info, headers"
+     },
+     {
+      "field": "max_model_len",
+      "value": 8192,
+      "kind": "observed",
+      "source": "/v1/models, /version, /get_server_info, headers"
+     },
+     {
+      "field": "server_header",
+      "value": "uvicorn",
+      "kind": "observed",
+      "source": "/v1/models, /version, /get_server_info, headers"
+     },
+     {
+      "field": "serving_mode",
+      "value": "exact",
+      "kind": "observed",
+      "source": "/v1/models, /version, /get_server_info, headers"
+     },
+     {
+      "field": "engine",
+      "value": "fusezap",
+      "kind": "declared",
+      "source": "config"
+     },
+     {
+      "field": "flags",
+      "value": "--tp 2 --max-model-len 8192 --num-blocks 8192 ",
+      "kind": "declared",
+      "source": "config"
+     },
+     {
+      "field": "hardware",
+      "value": "2x H200 141 GB (RunPod)",
+      "kind": "declared",
+      "source": "config"
+     }
+    ],
+    "models": [
+     {
+      "id": "Qwen/Qwen2.5-72B-Instruct",
+      "object": "model",
+      "owned_by": "fusezap",
+      "max_model_len": 8192,
+      "created": 1793035725,
+      "fusezap_mode": "exact"
+     }
+    ],
+    "headers": {
+     "server": "uvicorn",
+     "content-type": "application/json",
+     "x-fusezap-mode": "exact"
+    },
+    "sources": [
+     "/v1/models"
+    ],
+    "metrics_config_info": {},
+    "flags": []
+   },
+   "requests": {
+    "total": 336,
+    "errors": 0,
+    "error_rate": 0.0,
+    "by_check": {
+     "accuracy": {
+      "total": 48,
+      "errors": 0
+     },
+     "performance": {
+      "total": 288,
+      "errors": 0
+     }
+    }
+   },
+   "checks_completed": [
+    "accuracy",
+    "performance"
+   ]
+  }
+ },
+ "baseline": null,
+ "comparison": {
+  "version_flags": [],
+  "metrics": []
+ },
+ "environment": {
+  "client_python": "3.12.15",
+  "client_os": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+  "server_headers": {
+   "server": "uvicorn",
+   "content-type": "application/json",
+   "x-fusezap-mode": "exact"
+  },
+  "notes": [
+   "report.pdf skipped (--no-pdf)"
+  ]
+ },
+ "not_checked": [
+  {
+   "what": "functional",
+   "reason": "not requested (checks:)"
+  },
+  {
+   "what": "structured",
+   "reason": "not requested (checks:)"
+  },
+  {
+   "what": "stability",
+   "reason": "not requested (checks:)"
+  },
+  {
+   "what": "reliability",
+   "reason": "not requested (checks:)"
+  },
+  {
+   "what": "long_context",
+   "reason": "not requested (checks:)"
+  },
+  {
+   "what": "gate stability.drift",
+   "reason": "the stability check did not run"
+  },
+  {
+   "what": "gate functional",
+   "reason": "the functional check did not run"
+  },
+  {
+   "what": "gate reliability",
+   "reason": "the reliability check did not run"
+  },
+  {
+   "what": "gate structured.json_schema_valid",
+   "reason": "the structured check did not run"
+  },
+  {
+   "what": "gate structured.tool_calls_valid",
+   "reason": "the structured check did not run"
+  },
+  {
+   "what": "gate relative.json_schema_valid",
+   "reason": "the structured check did not run"
+  },
+  {
+   "what": "gate relative.tool_calls_valid",
+   "reason": "the structured check did not run"
+  },
+  {
+   "what": "gate long_context.needle_found",
+   "reason": "the long_context check did not run"
+  },
+  {
+   "what": "gate long_context.top1_agreement",
+   "reason": "the long_context check did not run"
+  },
+  {
+   "what": "gate relative.long_context.needle_found",
+   "reason": "the long_context check did not run"
+  },
+  {
+   "what": "gate relative.long_context.top1_agreement",
+   "reason": "the long_context check did not run"
+  },
+  {
+   "what": "Automatic component-level root cause",
+   "reason": "out of scope for V0 (planned for V1)",
+   "version": "V1"
+  },
+  {
+   "what": "Signed, independent attestation of results",
+   "reason": "out of scope for V0 (planned for V1)",
+   "version": "V1"
+  },
+  {
+   "what": "Cross-customer inference intelligence",
+   "reason": "out of scope for V0 (planned for V1)",
+   "version": "V1"
+  },
+  {
+   "what": "Automated workload routing and rollback",
+   "reason": "out of scope for V0 (planned for V2)",
+   "version": "V2"
+  }
+ ],
+ "evidence": [],
+ "reproduce": {
+  "command": "python -m fusezap validate --config results/qwen2.5-72b-instruct.json",
+  "config_file": "qwen2.5-72b-instruct.json",
+  "config_sha256": "69aa0fa6865e4e77d7cef6646c8b84f6261f5acaf920d3a3b862c52c76dee384",
+  "tool_version": "0.1.0",
+  "tool_commit": "ed08951",
+  "reference_sha256": "ca20f25146f80080b71de752014c54808c344f74d2e9217699da4cbe3e117654",
+  "seed": 0
+ },
+ "errors": [],
+ "future": {
+  "root_cause": null,
+  "attestation": null,
+  "fleet_intelligence": null,
+  "routing": null
+ },
+ "artifacts": {
+  "json": "report.json",
+  "html": "report.html",
+  "pdf": null,
+  "csv": [
+   "performance.csv",
+   "requests.csv",
+   "accuracy.csv",
+   "checks.csv"
+  ],
+  "junit": "junit.xml"
+ },
+ "presentation": {
+  "page_size": "letter",
+  "branding": null
+ }
+}

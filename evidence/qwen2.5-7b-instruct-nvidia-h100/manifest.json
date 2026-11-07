@@ -1,0 +1,76 @@
+{
+ "schema": "fusezap.evidence/v1",
+ "slug": "qwen2.5-7b-instruct-nvidia-h100",
+ "cell": {
+  "model": "Qwen2.5-7B-Instruct",
+  "chip": "nvidia-h100",
+  "chip_name": "NVIDIA H100",
+  "status": "Preview",
+  "verified": "2026-10-26",
+  "metric": "5.57 ms a token"
+ },
+ "source": "The FuseZap engine repository (private). Commits are named by id; references without one were read at the engine’s main on the snapshot day (9b31ca4).",
+ "main_pin": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+ "redaction": "Text files are published as they are in the repository, except that API keys and tokens, IP addresses, private hostnames, instance, pod and container ids, home-directory paths and e-mail addresses are replaced with <redacted>. sha256 is the published file’s; source_sha256, where given, is the original’s.",
+ "files": [
+  {
+   "ref": "2d2f422de25fddd30a00db789fcc4373d0eba7ea:docs/status/h100-7b-2026-10-26/h100_7b_summary.json",
+   "kind": "path",
+   "commit": "2d2f422de25fddd30a00db789fcc4373d0eba7ea",
+   "commit_short": "2d2f422",
+   "commit_date": "2026-10-26",
+   "resolved": null,
+   "path": "docs/status/h100-7b-2026-10-26/h100_7b_summary.json",
+   "source_bytes": 1097,
+   "source_sha256": null,
+   "status": "published",
+   "file": "h100_7b_summary.json",
+   "bytes": 1097,
+   "sha256": "cbc7625f2c2a632daf95602c21a016b19b6202c05264e59f296c1c89152a7d59",
+   "redactions": [],
+   "shows": "FuseZap Core and vLLM back to back on the same H100 pod: Validate verdicts, top-1 agreement, time per output token, throughput and time to first token at three concurrency levels.",
+   "note": null
+  },
+  {
+   "ref": "2d2f422de25fddd30a00db789fcc4373d0eba7ea:docs/status/h100-7b-2026-10-26/logs/validate-fusezap-qwen7b-h100.log",
+   "kind": "path",
+   "commit": "2d2f422de25fddd30a00db789fcc4373d0eba7ea",
+   "commit_short": "2d2f422",
+   "commit_date": "2026-10-26",
+   "resolved": null,
+   "path": "docs/status/h100-7b-2026-10-26/logs/validate-fusezap-qwen7b-h100.log",
+   "source_bytes": 1069,
+   "source_sha256": null,
+   "status": "published",
+   "file": "validate-fusezap-qwen7b-h100.log.txt",
+   "bytes": 1069,
+   "sha256": "1eb58443c6198c4c2036f02c89724f1a4c31f6d6a26aa8f168d6e1c0041733d4",
+   "redactions": [],
+   "shows": "Validate’s log for FuseZap on that pod: the accuracy result, the performance points and the decision.",
+   "note": null
+  },
+  {
+   "ref": "docs/bench-h100.md",
+   "kind": "path",
+   "commit": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+   "commit_short": "9b31ca4",
+   "commit_date": "2026-11-06",
+   "resolved": "No commit in the reference: read at the engine’s main of the snapshot day.",
+   "path": "docs/bench-h100.md",
+   "source_bytes": 46522,
+   "source_sha256": "1aa71111ce556416df339e788109ea803538c4e750fa736d13ecf24644beb02d",
+   "status": "published",
+   "file": "bench-h100.md.txt",
+   "bytes": 46570,
+   "sha256": "222397a7c7079ea38dd9cb35e6897c0a196c5b385ad05f5931bdd370205566b4",
+   "redactions": [
+    {
+     "what": "cost",
+     "count": 16
+    }
+   ],
+   "shows": "The H100 benchmark notes: the method, each measured build against vLLM on the same pod, and what changed between rounds.",
+   "note": null
+  }
+ ]
+}

@@ -1,0 +1,4 @@
+release,workload,mode,concurrency,rate,requests,errors,output_tok_s,output_tok_s_ci_lo,output_tok_s_ci_hi,req_s,achieved_concurrency,achieved_rate,repeats,ttft_p50_ms,ttft_p90_ms,ttft_p99_ms,tpot_p50_ms,tpot_p90_ms,tpot_p99_ms,itl_p50_ms,itl_p90_ms,itl_p99_ms,e2e_p50_ms,e2e_p99_ms,short_outputs
+candidate,short,concurrency,1,,48,0,33.83,33.82,33.84,0.264,1.0,,3,70.43,71.207,74.622,29.23,29.235,29.238,29.257,29.38,29.57,3782.567,3786.997,0
+candidate,short,concurrency,8,,48,0,258.19,258.08,258.3,2.017,8.0,,3,135.778,201.081,202.724,29.897,29.927,30.882,29.908,30.051,30.333,3963.672,3998.616,0
+candidate,short,concurrency,32,,192,0,889.7,888.37,891.02,6.951,31.97,,3,591.341,599.941,604.053,31.613,34.848,35.462,31.484,31.699,33.302,4598.959,4615.762,0

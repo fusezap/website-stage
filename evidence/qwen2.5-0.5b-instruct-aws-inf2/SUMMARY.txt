@@ -1,0 +1,192 @@
+================ NKI-N6 on inf2.xlarge <redacted> (Deep Learning AMI Neuron (Ubuntu 24.04) SDK 2.33.0 20261020) ================
+wall 42 min of 108
+--- phases (name, result, seconds)
+env	TIMEOUT after 120s	120
+setup	exit 0	111
+numerics	exit 0	52
+kernels	exit 0	206
+v_n5	exit 0	145
+v_ctx	exit 0	62
+v_ctx_kt	exit 0	55
+v_fused	exit 0	76
+serve	exit 0	524
+validate	exit 0	364
+vllm	exit 0	503
+v_fused4	exit 0	45
+tokens	exit 0	280
+nprof	exit 0	0
+venv-nki: nki 0.6.0+31049202112.g85070674 neuronx-cc 2.27.5334.0+f702b353
+venv-nrt: nrtpy 2.35.30+d2725ccb numpy 2.5.4
+http stack: uvicorn 0.54.0 starlette 1.8.0
+NEURON tier up: NEURONDevice neuron-nrt-0.6.0+31049202112.g85070674-2.35.30+d2725ccb NeuronNeffProgram NeuronAllocator
+/opt/aws_neuronx_venv_pytorch_inference_vllm_0_29_0_1_2_0: neuronx-cc=2.28.7631.0+8f7b0cf5 transformers=5.17.0 vllm=0.29.0 vllm-neuron=0.29.0.1.2.0 
+--- numerics (exact path; sqrt_wide and rmsnorm_rows check the N6 range-reduced sqrt)
+numerics exp                        bitwise==sim 100.00%  normwise rel err vs f64 6.32e-08 (sim 6.32e-08), max ulp vs sim 0  nan/inf mismatches 0/0  elementwise rel 8.98e-08
+numerics exp2                       bitwise==sim 100.00%  normwise rel err vs f64 5.33e-08 (sim 5.33e-08), max ulp vs sim 0  nan/inf mismatches 0/0  elementwise rel 8.77e-08
+numerics log2                       bitwise==sim 100.00%  normwise rel err vs f64 3.89e-08 (sim 3.89e-08), max ulp vs sim 0  nan/inf mismatches 0/0  elementwise rel 4.34e-08
+numerics exp2_wide                  bitwise==sim 100.00%  normwise rel err vs f64 5.14e-08 (sim 5.14e-08), max ulp vs sim 0  nan/inf mismatches 0/1840  elementwise rel 8.53e-08
+numerics exp2_special               bitwise==sim 100.00%  normwise rel err vs f64 2.20e-08 (sim 2.20e-08), max ulp vs sim 0  nan/inf mismatches 0/32  elementwise rel 2.20e-08
+numerics exp_wide                   bitwise==sim 100.00%  normwise rel err vs f64 5.23e-08 (sim 5.23e-08), max ulp vs sim 0  nan/inf mismatches 0/0  elementwise rel 9.07e-08
+numerics sqrt_wide                  bitwise==sim  90.00%  normwise rel err vs f64 7.96e-08 (sim 7.96e-08), max ulp vs sim 1  nan/inf mismatches 0/0  elementwise rel 1.03e-07
+numerics rmsnorm_rows               bitwise==sim  46.85%  normwise rel err vs f64 3.09e-07 (sim 1.68e-07), max ulp vs sim 6  nan/inf mismatches 0/0  elementwise rel 3.49e-07
+numerics sqrt                       bitwise==sim  89.28%  normwise rel err vs f64 7.33e-08 (sim 7.33e-08), max ulp vs sim 2  nan/inf mismatches 0/0  elementwise rel 1.02e-07
+numerics reciprocal                 bitwise==sim 100.00%  normwise rel err vs f64 2.17e-08 (sim 2.17e-08), max ulp vs sim 0  nan/inf mismatches 0/0  elementwise rel 5.96e-08
+numerics softmax_rows               bitwise==sim   9.81%  normwise rel err vs f64 4.19e-07 (sim 1.58e-07), max ulp vs sim 9  nan/inf mismatches 0/0  elementwise rel 2.47e-06
+numerics attention_gqa_causal       bitwise==sim  18.58%  normwise rel err vs f64 1.50e-07 (sim 1.23e-07), max ulp vs sim 53300  nan/inf mismatches 0/0  elementwise rel 3.94e-03
+--- kernels on NEURON:
+tests/test_neuron_serve.py::test_kv_write_kernel_is_an_exact_scatter PASSED
+tests/test_neuron_serve.py::test_rmsnorm_kernel_matches_the_composed_kernels[True] PASSED
+tests/test_neuron_serve.py::test_rmsnorm_kernel_matches_the_composed_kernels[False] PASSED
+tests/test_neuron_serve.py::test_attention_keyrange_two_level_rows PASSED
+PASSED
+PASSED
+PASSED
+tests/test_neuron_serve.py::test_engine_tokens_match_cpu[roomy-0] PASSED
+tests/test_neuron_serve.py::test_engine_tokens_match_cpu[roomy-1] PASSED
+tests/test_neuron_serve.py::test_engine_tokens_match_cpu[preempting-1] PASSED
+PASSED
+tests/test_neuron_serve.py::test_llama_prefill_decode_match_cpu PASSED
+tests/test_neuron_serve.py::test_engine_on_the_persistent_path SKIPPED
+tests/test_neuron_serve.py::test_profile_and_unfusable_fallback SKIPPED
+tests/test_neuron_serve.py::test_qwen_tokens_match_the_f32_reference SKIPPED
+tests/test_neuron_serve.py::test_transposed_operand_loads_give_the_same_bits[two_row_blocks] matmul Aᵀ by rows 130x520x300 on NEURON: 1.000000 of the outputs bitwise equal, max |diff| 0
+attention kᵀ by rows on NEURON: 1.000000 of the outputs bitwise equal, max |diff| 0
+tests/test_neuron_serve.py::test_transposed_operand_loads_give_the_same_bits[A_reloaded_per_tile] matmul Aᵀ by rows 128x520x16640 on NEURON: 1.000000 of the outputs bitwise equal, max |diff| 0
+attention kᵀ by rows on NEURON: 1.000000 of the outputs bitwise equal, max |diff| 0
+tests/test_neuron_serve.py::test_transposed_operand_loads_give_the_same_bits[decode_row] matmul Aᵀ by rows 1x520x896 on NEURON: 1.000000 of the outputs bitwise equal, max |diff| 0
+attention kᵀ by rows on NEURON: 1.000000 of the outputs bitwise equal, max |diff| 0
+tests/test_neuron_serve.py::test_fused_forward_is_bit_identical fused vs unfused on NEURON: 1.0000 of the logits bitwise equal, max |diff| 0
+fused vs unfused on NEURON: 1.0000 of the logits bitwise equal, max |diff| 0
+fused vs unfused on NEURON: 1.0000 of the logits bitwise equal, max |diff| 0
+fused vs unfused on NEURON: 1.0000 of the logits bitwise equal, max |diff| 0
+fused vs unfused on NEURON: 1.0000 of the logits bitwise equal, max |diff| 0
+fused vs unfused on NEURON: 1.0000 of the logits bitwise equal, max |diff| 0
+=========== 12 passed, 3 skipped, 4 deselected in 205.00s (0:03:24) ============
+--- variants (c1, c4, launches, per-token breakdown; each adds one change)
+[n5] device NEURON  switches {'FZ_NEURON_FUSE': '0', 'FZ_NEURON_CTX': '0', 'FZ_NEURON_KT': '0', 'FZ_NEURON_AT_ROWS': '0'}  load 43.5 s  engine {'decode_sizes': [1, 2, 4], 'prefill_sizes': [128], 'pool_slots': 4096, 'ctx_buckets': [4096]}
+[n5] launches decode_1         245 per token ({'rmsnorm': 49, 'kernel': 51, 'matmul': 97, 'kv': 24, 'attention': 24})
+[n5] c1 TTFT 42.638 s  TPOT median 165.38 ms (p10 164.07, p90 167.01)  first steps [25.272, 0.274, 0.171] s  greedy prefix 40/40  worker {'write': 161, 'read': 40, 'exec': 9803, 'load': 32, 'batches': 70}
+[n5] c4 TPOT median 170.48 ms, 23.5 tok/s decoding (23 steps)
+[n5] per token: step 166.519 ms = host 5.725 + worker 2.998 + runtime 125.115 + device 32.681 ms; 245.0 launches, executes 157.796 ms
+[n5]   fz_attention_keyrange_2_7_4096_64_64           24.0/tok  execute    4.508 ms  device 0.6974925000000001 ms
+[n5]   fz_rmsnorm_add_1_896                           48.0/tok  execute    0.182 ms  device 0.022257 ms
+[n5]   fz_matmul_1_1_9728_896                         24.0/tok  execute    0.316 ms  device 0.1569335 ms
+[n5]   fz_matmul_1_1_896_4864                         24.0/tok  execute    0.250 ms  device 0.1050655 ms
+[n5]   E_19_2_32                                      24.0/tok  execute    0.232 ms  device 0.019462 ms
+[n5]   fz_kv_write_4096_1_256                         24.0/tok  execute    0.220 ms  device 0.07765649999999999 ms
+[n5]   fz_matmul_1_1_1152_896                         24.0/tok  execute    0.184 ms  device 0.0314025 ms
+[n5]   fz_matmul_1_1_896_896                          24.0/tok  execute    0.181 ms  device 0.028072 ms
+[n5]   E_4864                                         24.0/tok  execute    0.139 ms  device 0.017869 ms
+[n5]   fz_matmul_1_1_151936_896                        1.0/tok  execute    2.382 ms  device 2.2289265 ms
+[n5]   r_151936                                        2.0/tok  execute    0.822 ms  device 1.063269 ms
+[n5]   fz_rmsnorm_1_896                                1.0/tok  execute    0.182 ms  device 0.019853 ms
+[n5] neff {'compiles': 48, 'hits': 0, 'compile_s': 97.31498047799994}; runtime worker calls {'write': 439, 'read': 66, 'exec': 16300, 'load': 48, 'batches': 112}
+[ctx] device NEURON  switches {'FZ_NEURON_FUSE': '0', 'FZ_NEURON_KT': '0', 'FZ_NEURON_AT_ROWS': '0'}  load 35.5 s  engine {'decode_sizes': [1, 2, 4], 'prefill_sizes': [128], 'pool_slots': 4096, 'ctx_buckets': [512, 1024, 2048, 4096]}
+[ctx] launches decode_1_ctx512  245 per token ({'rmsnorm': 49, 'kernel': 51, 'matmul': 97, 'kv': 24, 'attention': 24})
+[ctx] c1 TTFT 7.031 s  TPOT median 72.12 ms (p10 71.23, p90 73.35)  first steps [4.679, 0.179, 0.076] s  greedy prefix 40/40  worker {'write': 161, 'read': 40, 'exec': 9803, 'load': 32, 'batches': 70}
+[ctx] c4 TPOT median 78.46 ms, 51.0 tok/s decoding (23 steps)
+[ctx] per token: step 73.585 ms = host 5.324 + worker 2.759 + runtime 48.113 + device 17.389 ms; 245.0 launches, executes 65.502 ms
+[ctx]   fz_attention_keyrange_2_7_512_64_64            24.0/tok  execute    0.774 ms  device 0.121351 ms
+[ctx]   fz_rmsnorm_add_1_896                           48.0/tok  execute    0.174 ms  device 0.0222825 ms
+[ctx]   fz_matmul_1_1_9728_896                         24.0/tok  execute    0.308 ms  device 0.1569145 ms
+[ctx]   fz_matmul_1_1_896_4864                         24.0/tok  execute    0.245 ms  device 0.1049035 ms
+[ctx]   E_19_2_32                                      24.0/tok  execute    0.226 ms  device 0.0193975 ms
+[ctx]   fz_matmul_1_1_1152_896                         24.0/tok  execute    0.182 ms  device 0.031176000000000002 ms
+[ctx]   fz_matmul_1_1_896_896                          24.0/tok  execute    0.171 ms  device 0.028581000000000002 ms
+[ctx]   fz_kv_write_512_1_256                          24.0/tok  execute    0.157 ms  device 0.0170265 ms
+[ctx]   E_4864                                         24.0/tok  execute    0.135 ms  device 0.017869000000000003 ms
+[ctx]   fz_matmul_1_1_151936_896                        1.0/tok  execute    2.384 ms  device 2.2285459999999997 ms
+[ctx]   r_151936                                        2.0/tok  execute    0.818 ms  device 1.0632715 ms
+[ctx]   fz_rmsnorm_1_896                                1.0/tok  execute    0.186 ms  device 0.019828 ms
+[ctx] neff {'compiles': 9, 'hits': 39, 'compile_s': 14.893206195000062}; runtime worker calls {'write': 439, 'read': 66, 'exec': 16300, 'load': 48, 'batches': 112}
+[ctx_kt] device NEURON  switches {'FZ_NEURON_FUSE': '0'}  load 32.2 s  engine {'decode_sizes': [1, 2, 4], 'prefill_sizes': [128], 'pool_slots': 4096, 'ctx_buckets': [512, 1024, 2048, 4096]}
+[ctx_kt] launches decode_1_ctx512  245 per token ({'rmsnorm': 49, 'kernel': 51, 'matmul': 97, 'kv': 24, 'attention': 24})
+[ctx_kt] c1 TTFT 10.011 s  TPOT median 61.16 ms (p10 60.62, p90 61.88)  first steps [1.83, 0.169, 0.065] s  greedy prefix 40/40  worker {'write': 161, 'read': 40, 'exec': 9803, 'load': 32, 'batches': 70}
+[ctx_kt] c4 TPOT median 64.8 ms, 61.7 tok/s decoding (23 steps)
+[ctx_kt] per token: step 61.793 ms = host 5.306 + worker 2.766 + runtime 37.192 + device 16.529 ms; 245.0 launches, executes 53.721 ms
+[ctx_kt]   fz_rmsnorm_add_1_896                           48.0/tok  execute    0.177 ms  device 0.0223135 ms
+[ctx_kt]   fz_matmul_1_1_9728_896                         24.0/tok  execute    0.309 ms  device 0.15669850000000002 ms
+[ctx_kt]   fz_attention_keyrange_2_7_512_64_64            24.0/tok  execute    0.264 ms  device 0.08477499999999999 ms
+[ctx_kt]   fz_matmul_1_1_896_4864                         24.0/tok  execute    0.248 ms  device 0.1050995 ms
+[ctx_kt]   E_19_2_32                                      24.0/tok  execute    0.232 ms  device 0.019646999999999998 ms
+[ctx_kt]   fz_matmul_1_1_1152_896                         24.0/tok  execute    0.183 ms  device 0.031395 ms
+[ctx_kt]   fz_matmul_1_1_896_896                          24.0/tok  execute    0.171 ms  device 0.028573 ms
+[ctx_kt]   fz_kv_write_512_1_256                          24.0/tok  execute    0.161 ms  device 0.017202000000000002 ms
+[ctx_kt]   E_4864                                         24.0/tok  execute    0.135 ms  device 0.017882 ms
+[ctx_kt]   fz_matmul_1_1_151936_896                        1.0/tok  execute    2.383 ms  device 2.228844 ms
+[ctx_kt]   r_151936                                        2.0/tok  execute    0.821 ms  device 1.063226 ms
+[ctx_kt]   fz_rmsnorm_1_896                                1.0/tok  execute    0.179 ms  device 0.019970500000000002 ms
+[ctx_kt] neff {'compiles': 7, 'hits': 41, 'compile_s': 12.580577213000083}; runtime worker calls {'write': 439, 'read': 66, 'exec': 16300, 'load': 48, 'batches': 112}
+[fused] device NEURON  switches {'FZ_NEURON_FUSE': '1'}  load 32.5 s  engine {'decode_sizes': [1, 2, 4], 'prefill_sizes': [128], 'pool_slots': 4096, 'ctx_buckets': [512, 1024, 2048, 4096]}
+[fused] launches decode_1_ctx512  25 per token ({'fused11': 1, 'fused10': 23, 'fused4': 1})
+[fused] c1 TTFT 0.447 s  TPOT median 26.21 ms (p10 25.96, p90 26.58)  first steps [0.311, 0.171, 10.783] s  greedy prefix 40/40  worker {'write': 161, 'read': 40, 'exec': 1663, 'load': 35, 'batches': 72}
+[fused] c4 TPOT median 29.92 ms, 133.7 tok/s decoding (23 steps)
+[fused] per token: step 26.082 ms = host 6.272 + worker 0.487 + runtime 5.937 + device 13.386 ms; 25.0 launches, executes 19.323 ms
+[fused]   fz_fused10_87d487227e                          23.0/tok  execute    0.652 ms  device 0.4105535 ms
+[fused]   fz_fused4_1aa9bf94af                            1.0/tok  execute    3.697 ms  device 3.530976 ms
+[fused]   fz_fused11_c0a36d7589                           1.0/tok  execute    0.633 ms  device 0.41274 ms
+[fused] neff {'compiles': 9, 'hits': 48, 'compile_s': 36.94534280800008}; runtime worker calls {'write': 439, 'read': 66, 'exec': 3097, 'load': 57, 'batches': 118}
+[fused4] device NEURON  switches {'FZ_NEURON_FUSE': '4'}  load 31.2 s  engine {'decode_sizes': [1, 2, 4], 'prefill_sizes': [128], 'pool_slots': 4096, 'ctx_buckets': [512, 1024, 2048, 4096]}
+[fused4] launches decode_1_ctx512  7 per token ({'fused41': 1, 'fused40': 5, 'fused4': 1})
+[fused4] c1 TTFT 0.46 s  TPOT median 22.29 ms (p10 21.87, p90 22.74)  first steps [0.317, 0.173, 9.377] s  greedy prefix 40/40  worker {'write': 161, 'read': 40, 'exec': 997, 'load': 35, 'batches': 72}
+[fused4] per token: step 22.121 ms = host 6.318 + worker 0.31 + runtime 2.278 + device 13.215 ms; 7.0 launches, executes 15.493 ms
+[fused4]   fz_fused40_bc47e6ead5                           5.0/tok  execute    1.967 ms  device 1.615071 ms
+[fused4]   fz_fused4_1aa9bf94af                            1.0/tok  execute    3.710 ms  device 3.5309735 ms
+[fused4]   fz_fused41_2d22f24c9e                           1.0/tok  execute    1.948 ms  device 1.6087215 ms
+[fused4] neff {'compiles': 2, 'hits': 39, 'compile_s': 8.863354027999776}; runtime worker calls {'write': 335, 'read': 40, 'exec': 1118, 'load': 41, 'batches': 78}
+variant   launch/tok c1 TPOT ms c4 TPOT ms c4 tok/s  TTFT s  device runtime  worker    host
+n5               245     165.38     170.48     23.5  42.638  32.681 125.115   2.998   5.725
+ctx              245      72.12      78.46     51.0   7.031  17.389  48.113   2.759   5.324
+ctx_kt           245      61.16       64.8     61.7  10.011  16.529  37.192   2.766   5.306
+fused             25      26.21      29.92    133.7   0.447  13.386   5.937   0.487   6.272
+fused4             7      22.29          -        -    0.46  13.215   2.278    0.31   6.318
+default           25      26.21      30.21    132.4   0.457  13.391   6.066   0.495   6.494
+--- serve (default)
+[default] launches decode_1_ctx512  25 per token ({'fused11': 1, 'fused10': 23, 'fused4': 1})
+[default] c1 TTFT 0.457 s  TPOT median 26.21 ms (p10 25.89, p90 26.7)  first steps [0.314, 0.172, 0.218] s  greedy prefix 40/40  worker {'write': 161, 'read': 40, 'exec': 1663, 'load': 35, 'batches': 72}
+[default] c4 TPOT median 30.21 ms, 132.4 tok/s decoding (23 steps)
+[default] per token: step 26.446 ms = host 6.494 + worker 0.495 + runtime 6.066 + device 13.391 ms; 25.0 launches, executes 19.457 ms
+[default] greedy 24/24 prompts exact, 1441/1441 tokens (47.7 s)
+[default] top1 1.0 (462/462), |logprob err| mean 4.2425350888416524e-06 max 2.7157135009669986e-05
+--- fusezap validate through HTTP (config: )
+  validate_accuracy: verdict PASS: every gate passed.
+    .top1_agreement = 1.0
+    .top1_agreement_strict = 1.0
+    .top1_agreement_generous = 1.0
+    .greedy_exact_match_mean = 1.0
+    .greedy_match_tokens_mean = 60.12
+    .logprob_abs_diff_mean = 0.0
+    .logprob_abs_diff_max = 3e-05
+  validate_perf: verdict PASS: every gate passed.
+results/nki_n6/server.log:fusezap: loaded Qwen/Qwen2.5-0.5B-Instruct on NEURON (float32) in 33.2s
+results/nki_n6/server.log:fusezap: warm-up 6.4s (first run on a cold ~/.cache/fusezap also tunes kernels: minutes)
+results/nki_n6/validate.log:+ echo 'server ready after 45s'
+results/nki_n6/validate.log:server ready after 45s
+results/nki_n6/validate.log:fusezap: loaded Qwen/Qwen2.5-0.5B-Instruct on NEURON (float32) in 33.2s
+--- vLLM-Neuron (same workload, same instance) vs FuseZap
+######## vLLM-Neuron tp2_bf16: /opt/aws_neuronx_venv_pytorch_inference_vllm_0_29_0_1_2_0/bin/vllm serve Qwen/Qwen2.5-0.5B-Instruct --tensor-parallel-size 2 --dtype bfloat16 --max-model-len 1024 --max-num-seqs 4 --no-enable-prefix-caching
+vLLM tp2_bf16 died after 160s
+######## vLLM-Neuron tp2_bf16_b32: /opt/aws_neuronx_venv_pytorch_inference_vllm_0_29_0_1_2_0/bin/vllm serve Qwen/Qwen2.5-0.5B-Instruct --tensor-parallel-size 2 --dtype bfloat16 --max-model-len 1024 --max-num-seqs 4 --no-enable-prefix-caching --block-size 32 --num-gpu-blocks-override 256
+vLLM tp2_bf16_b32 died after 50s
+######## vLLM-Neuron tp1_fp32: /opt/aws_neuronx_venv_pytorch_inference_vllm_0_29_0_1_2_0/bin/vllm serve Qwen/Qwen2.5-0.5B-Instruct --tensor-parallel-size 1 --dtype float32 --max-model-len 1024 --max-num-seqs 4 --no-enable-prefix-caching
+vLLM tp1_fp32 died after 40s
+######## vLLM-Neuron tp1_fp32_b32: /opt/aws_neuronx_venv_pytorch_inference_vllm_0_29_0_1_2_0/bin/vllm serve Qwen/Qwen2.5-0.5B-Instruct --tensor-parallel-size 1 --dtype float32 --max-model-len 1024 --max-num-seqs 4 --no-enable-prefix-caching --block-size 32 --num-gpu-blocks-override 256
+vLLM tp1_fp32_b32 died after 40s
+FuseZap (NEURON, float32, 1 NeuronCore):
+  c1: TPOT p50 27.124 ms  TTFT p50 51.291 ms  36.63 tok/s  (8 ok, 0 errors)
+  c4: TPOT p50 70.646 ms  TTFT p50 939.417 ms  32.15 tok/s  (8 ok, 0 errors)
+--- tokens on NEURON:
+tests/test_serve_model.py::test_greedy_64_tokens_match_hf PASSED         [ 33%]
+tests/test_serve_model.py::test_decode_logits_teacher_forced PASSED      [ 66%]
+tests/test_serve_model.py::test_chunked_and_continued_prefill PASSED     [100%]
+--- neuron-profile
+######## neuron-profile "kernel": "fz_fused10_e75a0551d1" (<redacted>/.cache/fusezap/neff/00dfdbc388d7cbd2c0a38910b9f7b441)
+║  To migrate, replace 'neuron-profile' with 'neuron-explorer'    ║
+║  in your commands. For example:                                 ║
+║                                                                 ║
+--
+######## neuron-profile "kernel": "fz_fused4_30ddf94dfd" (<redacted>/.cache/fusezap/neff/1d63db3aa231aa86e77a28dadd13d4a9)
+║  To migrate, replace 'neuron-profile' with 'neuron-explorer'    ║
+║  in your commands. For example:                                 ║
+║                                                                 ║
+--- NEFF cache: 358 NEFFs

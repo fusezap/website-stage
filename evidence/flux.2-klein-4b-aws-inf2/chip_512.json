@@ -1,0 +1,22 @@
+{
+ "device": "NEURON",
+ "dtype": "bfloat16",
+ "bars": {
+  "G3": 0.15146540807682313,
+  "G4": 0.3090482972225826,
+  "G6_psnr_db": 17.047492715809664
+ },
+ "cases": [],
+ "pass": true,
+ "load_s": 40.7,
+ "after_load": {
+  "held_gib": 7.219,
+  "cached_gib": 0.0,
+  "peak_gib": 7.219,
+  "neffs_loaded": 0,
+  "neff_mib": 0.0,
+  "neff_compiles": 0,
+  "neff_hits": 0,
+  "neff_compile_s": 0.0
+ }
+}

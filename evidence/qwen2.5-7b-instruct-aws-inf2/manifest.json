@@ -1,0 +1,63 @@
+{
+ "schema": "fusezap.evidence/v1",
+ "slug": "qwen2.5-7b-instruct-aws-inf2",
+ "cell": {
+  "model": "Qwen2.5-7B-Instruct",
+  "chip": "aws-inf2",
+  "chip_name": "AWS Inferentia2",
+  "status": "Preview",
+  "verified": "2026-11-01",
+  "metric": "38.8 ms a token"
+ },
+ "source": "The FuseZap engine repository (private). Commits are named by id; references without one were read at the engine’s main on the snapshot day (9b31ca4).",
+ "main_pin": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+ "redaction": "Text files are published as they are in the repository, except that API keys and tokens, IP addresses, private hostnames, instance, pod and container ids, home-directory paths and e-mail addresses are replaced with <redacted>. sha256 is the published file’s; source_sha256, where given, is the original’s.",
+ "files": [
+  {
+   "ref": "6e8ce58535b5dd49ba56a015aee452550cda51c0:docs/status/nki-n8-pfk2-confirm-inf2/README.md",
+   "kind": "path",
+   "commit": "6e8ce58535b5dd49ba56a015aee452550cda51c0",
+   "commit_short": "6e8ce58",
+   "commit_date": "2026-11-01",
+   "resolved": null,
+   "path": "docs/status/nki-n8-pfk2-confirm-inf2/README.md",
+   "source_bytes": 1440,
+   "source_sha256": "58905f45aa6be261ee7197e7fa4eeaa4493e7c5b87d87ea5872d0be657163f07",
+   "status": "published",
+   "file": "README.md.txt",
+   "bytes": 1445,
+   "sha256": "f5d81ce3441af6d3c5771082bbeb63648f9530919d2152be4bde3ab803ddf8d9",
+   "redactions": [
+    {
+     "what": "cost",
+     "count": 1
+    }
+   ],
+   "shows": "Notes on the confirmation run of Qwen2.5-7B in bf16 on both NeuronCores: time to first token by prompt length, time per output token and the Validate verdicts.",
+   "note": null
+  },
+  {
+   "ref": "6e8ce58535b5dd49ba56a015aee452550cda51c0:docs/status/nki-n8-pfk2-confirm-inf2/nki_n8_pfk2/SUMMARY.txt",
+   "kind": "path",
+   "commit": "6e8ce58535b5dd49ba56a015aee452550cda51c0",
+   "commit_short": "6e8ce58",
+   "commit_date": "2026-11-01",
+   "resolved": null,
+   "path": "docs/status/nki-n8-pfk2-confirm-inf2/nki_n8_pfk2/SUMMARY.txt",
+   "source_bytes": 14339,
+   "source_sha256": "5f8e107df49ddd82729464ac199e11018ca1d040d7eaca4a671cb92bb23e4dc9",
+   "status": "published",
+   "file": "SUMMARY.txt",
+   "bytes": 14330,
+   "sha256": "48d2c5440a6d68bab4d0f2ddb827fcfa968224ae211acc1f8d8c1f2187545475",
+   "redactions": [
+    {
+     "what": "EC2 instance id",
+     "count": 1
+    }
+   ],
+   "shows": "The job summary: the bf16 accuracy bar, the served Validate runs, the in-process timings, the chunked-prefill bit check and the comparison with AWS NxD Inference on the same instance.",
+   "note": null
+  }
+ ]
+}

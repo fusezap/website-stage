@@ -1,0 +1,40 @@
+{
+ "schema": "fusezap.evidence/v1",
+ "slug": "qwen2.5-0.5b-instruct-aws-trn1",
+ "cell": {
+  "model": "Qwen2.5-0.5B-Instruct",
+  "chip": "aws-trn1",
+  "chip_name": "AWS Trainium1",
+  "status": "Preview",
+  "verified": "2026-10-27",
+  "metric": "14.9 ms a token"
+ },
+ "source": "The FuseZap engine repository (private). Commits are named by id; references without one were read at the engine’s main on the snapshot day (9b31ca4).",
+ "main_pin": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+ "redaction": "Text files are published as they are in the repository, except that API keys and tokens, IP addresses, private hostnames, instance, pod and container ids, home-directory paths and e-mail addresses are replaced with <redacted>. sha256 is the published file’s; source_sha256, where given, is the original’s.",
+ "files": [
+  {
+   "ref": "6e8ce58535b5dd49ba56a015aee452550cda51c0:docs/status/nki-n7-serve-trn1/README.md",
+   "kind": "path",
+   "commit": "6e8ce58535b5dd49ba56a015aee452550cda51c0",
+   "commit_short": "6e8ce58",
+   "commit_date": "2026-11-01",
+   "resolved": null,
+   "path": "docs/status/nki-n7-serve-trn1/README.md",
+   "source_bytes": 1135,
+   "source_sha256": "6526f5e29d608a97d0b093391b2f0a9efe51db7ec09f6a58d62d341840f72bb8",
+   "status": "published",
+   "file": "README.md.txt",
+   "bytes": 1140,
+   "sha256": "fefce646113b906acfd60d3bf92426fab30c6d55a687bf291fc1f99ebca23504",
+   "redactions": [
+    {
+     "what": "cost",
+     "count": 1
+    }
+   ],
+   "shows": "Notes on the served run on Trainium1: time per output token and throughput before and after the serving changes, beside AWS vLLM with vllm-neuron.",
+   "note": null
+  }
+ ]
+}

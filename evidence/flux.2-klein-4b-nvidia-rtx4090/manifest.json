@@ -1,0 +1,35 @@
+{
+ "schema": "fusezap.evidence/v1",
+ "slug": "flux.2-klein-4b-nvidia-rtx4090",
+ "cell": {
+  "model": "FLUX.2-klein-4B",
+  "chip": "nvidia-rtx4090",
+  "chip_name": "NVIDIA RTX 4090",
+  "status": "Preview",
+  "verified": "2026-11-04",
+  "metric": "3.1 s per 1024×1024 image (diffusers: 1.4 s)"
+ },
+ "source": "The FuseZap engine repository (private). Commits are named by id; references without one were read at the engine’s main on the snapshot day (9b31ca4).",
+ "main_pin": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+ "redaction": "Text files are published as they are in the repository, except that API keys and tokens, IP addresses, private hostnames, instance, pod and container ids, home-directory paths and e-mail addresses are replaced with <redacted>. sha256 is the published file’s; source_sha256, where given, is the original’s.",
+ "files": [
+  {
+   "ref": "docs/status/i95-flux2-klein-cuda/README.md",
+   "kind": "path",
+   "commit": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+   "commit_short": "9b31ca4",
+   "commit_date": "2026-11-06",
+   "resolved": "No commit in the reference: read at the engine’s main of the snapshot day.",
+   "path": "docs/status/i95-flux2-klein-cuda/README.md",
+   "source_bytes": 5023,
+   "source_sha256": null,
+   "status": "published",
+   "file": "README.md.txt",
+   "bytes": 5023,
+   "sha256": "1bfe55de87b0328f4f038965051a7a96f43ed38b315d4588e69cf11ea9e503fe",
+   "redactions": [],
+   "shows": "Notes on FLUX.2 [klein] on three NVIDIA GPUs: closeness to the float32 reference, time per image and memory, beside diffusers on the same GPU, and the bugs fixed on the way.",
+   "note": null
+  }
+ ]
+}

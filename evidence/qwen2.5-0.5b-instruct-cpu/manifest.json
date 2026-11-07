@@ -1,0 +1,44 @@
+{
+ "schema": "fusezap.evidence/v1",
+ "slug": "qwen2.5-0.5b-instruct-cpu",
+ "cell": {
+  "model": "Qwen2.5-0.5B-Instruct",
+  "chip": "cpu",
+  "chip_name": "CPU",
+  "status": "Preview",
+  "verified": "2026-10-25",
+  "metric": "Tensor-parallel tests pass"
+ },
+ "source": "The FuseZap engine repository (private). Commits are named by id; references without one were read at the engine’s main on the snapshot day (9b31ca4).",
+ "main_pin": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+ "redaction": "Text files are published as they are in the repository, except that API keys and tokens, IP addresses, private hostnames, instance, pod and container ids, home-directory paths and e-mail addresses are replaced with <redacted>. sha256 is the published file’s; source_sha256, where given, is the original’s.",
+ "files": [
+  {
+   "ref": "docs/STATUS.md",
+   "kind": "path",
+   "commit": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+   "commit_short": "9b31ca4",
+   "commit_date": "2026-11-06",
+   "resolved": "No commit in the reference: read at the engine’s main of the snapshot day.",
+   "path": "docs/STATUS.md",
+   "source_bytes": 39991,
+   "source_sha256": "bd9f19482f566adddf1bb422991a33bc34377d8f27df5e9f357a31b536d8515d",
+   "status": "published",
+   "file": "STATUS.md.txt",
+   "bytes": 40068,
+   "sha256": "121933f16b7ee9a471f329effd2ad0b825a85dac3099f8bef76a179d100ab483",
+   "redactions": [
+    {
+     "what": "cost",
+     "count": 16
+    },
+    {
+     "what": "internal wording",
+     "count": 1
+    }
+   ],
+   "shows": "The engine’s status log: each work package with its gate and result. The Apple silicon round (Run B, Mac half) and the tensor-parallel tests (I57 M1) are in it.",
+   "note": null
+  }
+ ]
+}

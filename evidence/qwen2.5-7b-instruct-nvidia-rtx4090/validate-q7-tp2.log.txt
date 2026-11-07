@@ -1,0 +1,6 @@
+validate: mode single; checks accuracy, performance; 1 performance repeats
+validate: FuseZap serve --tp 2 (candidate): http://<host>:18003 serves ['Qwen/Qwen2.5-7B-Instruct']; engine fusezap; metrics yes
+accuracy FuseZap serve --tp 2: logprobs (echo): top-1 0.998 (ties split; strict 0.998, generous 0.998, 0 ties), greedy exact match 0.9115, errors 0
+performance FuseZap serve --tp 2: short c=1: 61.5 tok/s over 1 repeats, TTFT p99 81.755 ms, TPOT p50 15.671 ms, errors 0
+performance FuseZap serve --tp 2: short c=8: 436.0 tok/s over 1 repeats, TTFT p99 260.593 ms, TPOT p50 16.461 ms, errors 0
+validate: PASS, decision PROMOTE (2 passed, 0 failed, 0 inconclusive, 0 error, 16 skipped); exit 0; wrote /workspace/fusezap/results/validate/q7-tp2

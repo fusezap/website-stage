@@ -224,6 +224,8 @@ ul, ol { list-style: none; }
 .phero-bare .hero-grid { inset: 0; height: 100%; }
 .phero-bare .hero-glow { bottom: -240px; }
 .phero-meta { margin: 20px auto 0; font-family: var(--mono); font-size: var(--fs-mono); letter-spacing: .02em; color: var(--d-mute); }
+.hero-note { margin: 16px auto 0; max-width: 560px; font-size: var(--fs-small, 14px); line-height: 1.5; color: var(--d-mute); text-wrap: pretty; }
+.hero-note a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 
 .doors { margin: 40px auto 0; max-width: 760px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
 .door { position: relative; display: flex; flex-direction: column; padding: 18px 20px 16px; border-radius: 14px; border: 1px solid var(--d-line); background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.01)); transition: border-color .25s var(--ease), background .25s var(--ease), transform .25s var(--ease); }
@@ -850,6 +852,58 @@ a.app:hover .feat-go i { transform: translateX(3px); }
 .mfc-you h3 { color: var(--violet); border: 0; padding: 0; }
 .mfc-you p { margin-top: 8px; font-size: var(--fs-ui); color: var(--ink-mute); }
 .mfc-you a { display: inline-block; margin-top: 10px; color: var(--violet); font-weight: 500; }
+/* the evidence link in every cell (evidence/<slug>/index.html, written by _build/evidence.py + build.py) */
+.mf-ev { margin-top: 6px; color: var(--violet); font-weight: 500; font-size: var(--fs-micro); }
+.mf-ev:hover { color: var(--violet-deep); }
+/* the filter bar over the full matrix (components._mf_filter; partials/scripts.html shows it and runs it).
+   Without JavaScript it stays hidden and the table reads in full. */
+.mf-filter { display: flex; flex-wrap: wrap; align-items: end; gap: var(--sp-4) var(--sp-6); margin-bottom: var(--sp-5); padding: var(--sp-4) var(--sp-5); border: 1px solid var(--line); border-radius: 14px; background: var(--plate); }
+.mf-filter[hidden], .mf-none[hidden] { display: none; }
+.mf-fg { display: grid; gap: 6px; min-width: 0; }
+.mf-fl { font-family: var(--mono); font-size: var(--fs-mono-sm); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-dim); }
+.mf-fbs { display: flex; flex-wrap: wrap; gap: 6px; }
+.mf-fb, .mf-sel { height: 34px; padding: 0 12px; border: 1px solid var(--line-2); border-radius: 8px; background: #fff; color: var(--ink-2); font: 500 var(--fs-small)/1 var(--sans); cursor: pointer; transition: border-color .2s var(--ease), background .2s var(--ease), color .2s var(--ease); }
+.mf-sel { max-width: 100%; padding-right: 30px; appearance: none; -webkit-appearance: none; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%235F5967' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 12px center; }
+.mf-fb:hover, .mf-sel:hover { border-color: rgba(108,59,255,.45); }
+.mf-fb[aria-pressed="true"] { border-color: var(--violet); background: rgba(108,59,255,.07); color: var(--violet-deep); }
+.mf-fn { margin-left: 4px; font-family: var(--mono); font-size: var(--fs-mono-sm); font-weight: 400; color: var(--ink-dim); }
+.mf-fb[aria-pressed="true"] .mf-fn { color: var(--violet-deep); }
+.mf-count { margin-left: auto; align-self: center; font-size: var(--fs-small); color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+.mf-none { margin: 0 0 var(--sp-5); padding: var(--sp-5); border: 1px dashed var(--line-2); border-radius: 14px; font-size: var(--fs-ui); color: var(--ink-mute); }
+.mf td.mf-out > * { opacity: .28; }
+.mf-filterable .scroll-box { margin-top: 0; }
+/* evidence pages (evidence/<slug>/index.html): the cell beside its files */
+.ev-grid { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: var(--sp-7); align-items: start; }
+.ev-cell { position: sticky; top: 96px; display: grid; gap: var(--sp-3); }
+.ev-k { font-family: var(--mono); font-size: var(--fs-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-dim); }
+.ev-how { font-size: var(--fs-small); line-height: 1.55; color: var(--ink-mute); }
+.ev-how code { display: inline-block; margin-top: 4px; font-size: var(--fs-mono); overflow-wrap: anywhere; }
+.ev-files { display: grid; gap: var(--sp-4); counter-reset: ev; }
+.ev-file { padding: var(--sp-5); border: 1px solid var(--line); border-radius: 14px; background: var(--plate); }
+.ev-h { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.ev-name { font-family: var(--mono); font-size: var(--fs-small); font-weight: 500; color: var(--ink); overflow-wrap: anywhere; }
+a.ev-name { color: var(--violet); }
+a.ev-name:hover { color: var(--violet-deep); }
+.ev-shows { margin-top: var(--sp-2); font-size: var(--fs-ui); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
+.ev-meta { display: grid; gap: 6px; margin-top: var(--sp-4); padding-top: var(--sp-3); border-top: 1px solid var(--line); font-size: var(--fs-small); line-height: 1.5; }
+.ev-meta > div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; }
+.ev-meta dt { font-family: var(--mono); font-size: var(--fs-mono-sm); letter-spacing: .04em; text-transform: uppercase; color: var(--ink-dim); padding-top: 2px; }
+.ev-meta dd { margin: 0; color: var(--ink-mute); min-width: 0; }
+.ev-meta dd small { display: block; margin-top: 2px; font-size: var(--fs-micro); color: var(--ink-dim); }
+.ev-meta code, .ev-how code { font-family: var(--mono); }
+.ev-meta code { font-size: var(--fs-mono); color: var(--ink-2); overflow-wrap: anywhere; }
+.ev-sha { word-break: break-all; }
+@media (max-width: 900px) {
+  .ev-grid { grid-template-columns: 1fr; }
+  .ev-cell { position: static; }
+}
+@media (max-width: 640px) {
+  .mf-filter { padding: var(--sp-4); gap: var(--sp-4); }
+  .mf-count { margin-left: 0; }
+  .mf-fg, .mf-sel { width: 100%; }
+  .ev-file { padding: var(--sp-4); }
+  .ev-meta > div { grid-template-columns: 1fr; gap: 2px; }
+}
 /* the status table */
 .scroll-box table.st-tbl { min-width: 780px; }
 .st-tbl td:first-child { font-weight: 500; width: 30%; }

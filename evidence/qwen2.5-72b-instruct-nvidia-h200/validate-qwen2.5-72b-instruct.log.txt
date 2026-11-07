@@ -1,0 +1,10 @@
+validate: mode single; checks accuracy, functional, structured, performance, stability; 3 performance repeats
+validate: FuseZap serve --tp 2 (candidate): http://<host>:18004 serves ['Qwen/Qwen2.5-72B-Instruct']; engine fusezap; metrics yes
+accuracy FuseZap serve --tp 2: logprobs (echo): top-1 0.9933 (ties split; strict 0.9933, generous 0.9933, 0 ties), greedy exact match 0.8125, errors 0
+functional FuseZap serve --tp 2: 9 passed, 0 failed, 0 skipped
+structured FuseZap serve --tp 2: JSON schema-valid 1.0 of 50 (json_schema); wrong_value 1; tool calls valid 0.9892 of 101 (auto; named 1.0, parallel 1.0); no_tool_call 1
+stability FuseZap serve --tp 2: 976 requests, 0 errors, tok/s 409.44 -> 416.39 (drift 1.7%), TTFT p99 1089.37 -> 1096.81 ms
+performance FuseZap serve --tp 2: short c=1: 33.8 tok/s [33.82, 33.84] over 3 repeats, TTFT p99 74.622 ms, TPOT p50 29.23 ms, errors 0
+performance FuseZap serve --tp 2: short c=8: 258.2 tok/s [258.08, 258.3] over 3 repeats, TTFT p99 202.724 ms, TPOT p50 29.897 ms, errors 0
+performance FuseZap serve --tp 2: short c=32: 889.7 tok/s [888.37, 891.02] over 3 repeats, TTFT p99 604.053 ms, TPOT p50 31.613 ms, errors 0
+validate: PASS, decision PROMOTE (14 passed, 0 failed, 0 inconclusive, 0 error, 13 skipped); exit 0; wrote /workspace/fusezap/results/validate/qwen2.5-72b-instruct

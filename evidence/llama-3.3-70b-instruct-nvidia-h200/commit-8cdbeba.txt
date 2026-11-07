@@ -1,0 +1,29 @@
+commit 8cdbeba9934d49476cf64c180fda53ab56265fe4
+date   2026-10-26T09:47:35-07:00
+
+I60 confirmed on 2x H200 (<redacted>): FuseZap Core TP=2 serves Llama-3.3-70B bf16 at TPOT 20.12 / 20.56 / 21.99 ms (c1/8/32) = 103% / 99% / 104% of vLLM 0.32 TP=2 (19.48 / 20.74 / 21.18), top-1 0.9993, every Validate gate passed; custom all-reduce + fused add/RMSNorm on; load 70.6 GB per rank in 33 s with peak host RSS 6.6 GB; ready in 64 s (vLLM ~180 s); stop 2 s
+
+files changed:
+ docs/gpu_spend.csv                                                     |    1 +
+ docs/status/tp-m6-h200/llama-3.3-70b-instruct.json                     |    6 +
+ docs/status/tp-m6-h200/logs/ensure.log                                 |    3 +
+ docs/status/tp-m6-h200/logs/fetch.pid                                  |    1 +
+ docs/status/tp-m6-h200/logs/fz.log                                     |   52 +
+ docs/status/tp-m6-h200/logs/gpu.csv                                    |  172 +
+ docs/status/tp-m6-h200/logs/host.csv                                   |   85 +
+ docs/status/tp-m6-h200/logs/m5.log                                     |   87 +
+ docs/status/tp-m6-h200/logs/path                                       |    1 +
+ docs/status/tp-m6-h200/logs/sync.log                                   |  143 +
+ docs/status/tp-m6-h200/logs/tests.log                                  |   63 +
+ docs/status/tp-m6-h200/logs/validate.log                               |    7 +
+ docs/status/tp-m6-h200/tpprof-llama-3.3-70b-instruct.json              |  191 +
+ docs/status/tp-m6-h200/tpprof-llama-3.3-70b-instruct/rank0.jsonl       | 8014 ++++++++++++++++++++
+ docs/status/tp-m6-h200/tpprof-llama-3.3-70b-instruct/rank1.jsonl       | 8014 ++++++++++++++++++++
+ docs/status/tp-m6-h200/validate/llama-3.3-70b-instruct/accuracy.csv    |   25 +
+ docs/status/tp-m6-h200/validate/llama-3.3-70b-instruct/checks.csv      |    1 +
+ docs/status/tp-m6-h200/validate/llama-3.3-70b-instruct/junit.xml       |   68 +
+ docs/status/tp-m6-h200/validate/llama-3.3-70b-instruct/performance.csv |    4 +
+ docs/status/tp-m6-h200/validate/llama-3.3-70b-instruct/report.html     |  431 ++
+ docs/status/tp-m6-h200/validate/llama-3.3-70b-instruct/report.json     | 3529 +++++++++
+ docs/status/tp-m6-h200/validate/llama-3.3-70b-instruct/requests.csv    |  337 +
+ 22 files changed, 21235 insertions(+)

@@ -1,0 +1,6 @@
+env	exit 0	8
+setup	exit 0	192
+neff	exit 0	0
+precompile	exit 0	3
+chip_512	TIMEOUT after 1200s	1200
+chip_1024	exit 0	515

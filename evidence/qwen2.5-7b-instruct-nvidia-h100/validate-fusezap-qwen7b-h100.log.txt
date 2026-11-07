@@ -1,0 +1,8 @@
+validate: mode single; checks accuracy, performance; 3 performance repeats
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+validate: FuseZap Core 323463f (candidate): http://<host>:18003 serves ['Qwen/Qwen2.5-7B-Instruct']; engine fusezap; metrics yes
+accuracy FuseZap Core 323463f: logprobs (echo): top-1 0.996 (ties split; strict 0.996, generous 0.996, 0 ties), greedy exact match 0.8197, errors 0
+performance FuseZap Core 323463f: short c=1: 177.5 tok/s [177.49, 177.59] over 3 repeats, TTFT p99 15.49 ms, TPOT p50 5.574 ms, errors 0
+performance FuseZap Core 323463f: short c=8: 1343.3 tok/s [1342.0, 1344.69] over 3 repeats, TTFT p99 41.852 ms, TPOT p50 5.7 ms, errors 0
+performance FuseZap Core 323463f: short c=32: 4410.9 tok/s [4358.3, 4463.57] over 3 repeats, TTFT p99 137.481 ms, TPOT p50 6.282 ms, errors 0
+validate: PASS, decision PROMOTE (2 passed, 0 failed, 0 inconclusive, 0 error, 17 skipped); exit 0; wrote /workspace/fusezap/results/validate/fusezap-qwen7b-h100

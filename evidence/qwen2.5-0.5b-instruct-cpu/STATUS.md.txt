@@ -1,0 +1,334 @@
+# Work package status
+
+Updated when a package passes its gate (commit + push). Launches skip packages marked `done`.
+Last integration: B2-INT (run B GPU half, Phases 3-4 on CUDA, plus Phase C N0-N1), 2026-10-20; see "Run B (GPU half)"
+below. Before that: B1-INT (run B Mac half, Phase 4), 2026-10-16.
+Previous: P2-INT (run A, Phase 2), 2026-10-16. Full suite on all tiers (interp, NPY, CPU, METAL):
+`5597 passed, 144 skipped in 729.37s` (`uv run pytest -n 6`). The 144 skips are test_ops' own "axis out of range" cases.
+
+| Package | Run | Status | Commit | Gate | Result / bench |
+|---|---|---|---|---|---|
+| Phase 0 spec + skeleton | — | done | — | — | |
+| WP1 shapes + symbolic | A | done | 9f82768 | `pytest tests/test_symbolic.py tests/test_view.py tests/test_skeleton.py` | 59 passed |
+| WP2 tensor frontend | A | done | 10ccee5 | `FZ_TEST_TIERS=interp pytest tests/test_ops.py tests/test_skeleton.py` | 1423 passed, 48 skipped |
+| WP3 scheduler | A | done | 8e8073c | `FZ_TEST_TIERS=NPY pytest tests/test_ops.py tests/test_schedule.py tests/test_skeleton.py` | 1453 passed, 48 skipped |
+| WP4a C-style renderer + CPU | A | done | 68949ff | `pytest tests/test_cstyle_cpu.py tests/test_skeleton.py` | 50 passed |
+| WP4b lowering + compiled run | A | done | fdde44e | `FZ_TEST_TIERS=CPU pytest tests/test_ops.py tests/test_codegen.py tests/test_skeleton.py` | 1441 passed, 48 skipped |
+| WP5 Metal renderer + device | A | done | 3005fad | `pytest tests/test_metal.py tests/test_skeleton.py` | 65 passed |
+| WP6 nn / optim / GPT | A | done | 99be140 | `FZ_TEST_TIERS=interp pytest tests/test_nn.py tests/test_gpt_parity.py tests/test_skeleton.py` | 37 passed; GPT parity within 1e-4 on every tier |
+| WP7 op suite + bench_ops | A | done | 92facf5 | collect test_ops + parse bench_ops | passes |
+| A-INT Phase 1 integration | A | done | d3ca9b5 | `pytest` (all tiers) | 5342 passed, 144 skipped |
+| P2-JIT kernel replay | A | done | 36aaf8c | `pytest tests/test_jit.py && python bench/bench_jit.py` | 39 passed; METAL decode overhead 9.950 -> 0.843 ms/step (11.8x, target >= 5x), outputs match |
+| P2-OPT Opts + FZ_BEAM | A | done | f2690d1 | `pytest tests/test_opts.py && FZ_DEVICE=METAL python bench/bench_opt.py` | 37 passed; GATE PASS: matmul 1024^3 3.8x (6.1 TFLOP/s), 2048^3 4.3x, sum(-1) 512x32768 8.5x, sum() 2^24 51.1x |
+| P2-CUSTOM custom kernels | A | done | 876c3a0 | `pytest tests/test_custom.py tests/test_ops.py` | 5013 passed, 144 skipped |
+| P2-MTL Metal matmul + flash attention | A | done | 4649043 | `pytest tests/test_metal_kernels.py && python bench/bench_metal.py` | 108 passed; f32 matmul 4096^2 10.53 vs 12.44 TFLOPS MPS = 0.85x (gate >= 0.60) PASS |
+| P2-INT Phase 2 integration | A | done | see git log `P2-INT:` | full suite (all tiers) + the three P2 benches | 5597 passed, 144 skipped; all three benches exit 0 |
+
+## Open performance gaps (not gated)
+- Metal f16/bf16 matmul runs at 0.13-0.27x of MPS (best 11.6 TFLOPS f16 at 4096^2); flash attention at 0.08-0.22x of MPS.
+- bench_opt `sum() 2^24` passes its 3x gate (51x) but reaches only ~12 GB/s: the full reduce to one scalar is still a
+  single-threadgroup kernel.
+
+## Run B (Mac half): Phase 4 inference server on METAL (Apple M5 Max)
+
+Integration B1-INT, 2026-10-16. Full suite on all tiers (interp, NPY, CPU, METAL) including the slow tests:
+`FZ_SLOW=1 uv run pytest -n 6` -> `5739 passed, 144 skipped in 588.68s`. End to end: `uv run fusezap serve Qwen/Qwen2.5-0.5B-Instruct --device METAL
+--port <free>` answers a streaming chat request from the official `openai` client (also `python -m fusezap serve ...`);
+this is `tests/test_cli_e2e.py`.
+
+**Running the tests.** `uv run pytest -n 6` is the default suite (~10 min). Tests marked `@pytest.mark.slow` are skipped
+unless `FZ_SLOW=1` or `-m slow`: the LLMEngine scheduler tests, the uvicorn server tests (tests/test_api_server.py) and the
+CLI end-to-end processes. With a warm kernel cache they add under a minute; on a cold `~/.cache/fusezap` (or a new
+`FZ_CACHE_DIR`) the decode BEAM tuning makes them take ~9 min. Run only them with `uv run pytest -m slow -n 6`. Model tests
+skip when Qwen/Qwen2.5-0.5B-Instruct (or WikiText-2) is not in the HF cache.
+
+| Package | Run | Status | Commit | Gate | Result / bench |
+|---|---|---|---|---|---|
+| P4-MODEL Llama-arch model, weights, tokenizer, sampling | B | done | 35fde3c | `pytest tests/test_serve_model.py && python bench/bench_decode.py` | 34 passed; Qwen2.5-0.5B token-identical to HF for 64 tokens (f32); chat templates match HF for 6 tokenizers |
+| P4-SERVE paged KV cache + continuous batching | B | done | 8a55843 | `pytest tests/test_kv_cache.py tests/test_scheduler.py tests/test_serve_model.py && python bench/bench_batch.py` | 60 passed; 32 concurrent requests all equal to alone-greedy, none starve; batch 32 == batch 1 |
+| P4-QUANT int8 / int4 / fp8, AWQ/GPTQ import | B | done | a1d182d | `pytest tests/test_quant.py && python bench/bench_ppl.py` | 66 passed; int8 ppl -0.22% vs f16 (limit +1%): PASS |
+| P4-API OpenAI-compatible server + CLI | B | done | 5d33a84 | `pytest tests/test_api_server.py` | 14 passed; official openai client, streaming included |
+| B1-INT Run B Mac integration | B | done | see git log `B1-INT:` | full suite (all tiers, FZ_SLOW=1) + CLI e2e | `5739 passed, 144 skipped in 588.68s` |
+| B-REMOTE RunPod remote GPU runner (`scripts/remote.sh`, docs/REMOTE.md) | B | done | see git log `B-REMOTE:` | `pytest tests/test_remote.py` (mocked RunPod API, no network) | 24 passed; pod terminated on success/error/Ctrl-C/wall clock, cost guard, key redaction; not yet run against a live pod |
+| B-REMOTE review fixes (valid bootstrap shell, self-stop in the create start command, lost-create recovery by unique name, O_EXCL state lock, grace + GPU count in the cost guard, ledger correction rows) | B | done | see git log `B-REMOTE: fix review` | `pytest tests/test_remote.py` (mocked RunPod API; bash -n / sh -n on every remote script; watchdog + start command executed with a stub runpodctl) | 37 passed; not yet run against a live pod |
+| B-BENCH FuseZap-vs-vLLM serving harness (`bench/bench_vs_vllm.py`, `bench/workloads.py`, docs/BENCH_METHOD.md) | B | done | see git log `B-BENCH:` | `pytest tests/test_bench_vs_vllm.py` (fake OpenAI server, no GPU/network) + `python bench/bench_vs_vllm.py --engine fusezap --model Qwen/Qwen2.5-0.5B-Instruct --device METAL --quick` | 18 passed, 1 skipped (slow real-server test passes with FZ_SLOW=1); Mac dry run (0.5B f16, harness check only): short c1 23.9 / c4 90.1 tok/s, gate c1 22.5 / c4 79.1 tok/s, 0 errors; vLLM side and the 7B gate wait for the H100 |
+| B-BENCH review fixes (prompts seeded per point+rep: no prompt re-sent across points, so no vLLM prefix-cache hits; FuseZap batch-1 points on a --max-num-seqs 1 server; --compare exits 3 INVALID on mismatched/quick/incomplete runs or gate errors/short outputs; results rewritten after every point + --time-limit + SIGTERM handling; documented H100 jobs split gate-first and bounded inside --max-hours; rate sweep capped at --max-concurrency 32; secrets redacted in meta/printed cmd/server log) | B | done | see git log `B-BENCH: fix review` | `pytest tests/test_bench_vs_vllm.py` (fake OpenAI server, no GPU/network) + `FZ_SLOW=1 pytest -k real -m slow` + `python bench/bench_vs_vllm.py --engine fusezap --model Qwen/Qwen2.5-0.5B-Instruct --device METAL --quick` | 28 passed, 1 skipped (slow real-server test passes with FZ_SLOW=1); Mac dry run (0.5B f16, harness check only): short c1 33.9 / c4 91.3 tok/s, gate c1 31.2 / c4 80.9 tok/s (c1 TPOT 29-31 ms on the 1-row server, was ~44 ms on the 32-row one), 0 errors; vLLM side and the 7B gate wait for the H100 |
+
+Measured at integration (B1-INT, Qwen2.5-0.5B-Instruct, METAL, decode BEAM 4, quiet GPU):
+
+| bench | float32 | float16 |
+|---|---|---|
+| decode, batch 1 (bench_decode, 128-token prompt, 128 steps) | 137.4 tok/s (p50 7.28 ms) | 149.2 tok/s (p50 6.67 ms) |
+| prefill 128 / 512 tokens | 2954 / 4821 tok/s | 2956 / 5323 tok/s |
+
+| bench_batch (f32, prompt 128, gen 128) | batch 1 | batch 8 | batch 32 |
+|---|---|---|---|
+| aggregate tok/s (prefill included) | 51.4 | 384.1 | 1140.8 |
+| decode-only tok/s | 51.8 | 409.0 | 1426.7 |
+
+The package gate runs measured lower numbers on a shared GPU (P4-MODEL decode f32 83.7 / f16 104.7 tok/s; P4-SERVE
+batch 1/8/32 20.5 / 146.7 / 457.6 tok/s). bench_batch's batch 1 is slower than bench_decode because the engine's ragged
+step carries paged attention, metadata and row selection for up to 32 rows.
+
+WikiText-2 perplexity (P4-QUANT, bench_ppl: first 32768 predictions, ctx 1024, stride 512, f16 activations):
+
+| weights | ppl | vs f16 |
+|---|---|---|
+| float16 | 13.2014 | — |
+| int8 per-channel | 13.1729 | -0.22% |
+| fp8 e4m3 per-tensor (weight-only) | 13.2692 | +0.51% |
+| int4 asym g128 (RTN) | 15.7149 | +19.04% |
+| int4 sym g128 (RTN) | 17.6320 | +33.56% |
+
+Interface changes at B1-INT: `fusezap` console script (pyproject `[project.scripts]`); `jinja2>=3.1` in the `serve` extra;
+pytest `addopts = "-q"` removed (gates no longer lose the summary line); public `fusezap.jit.run_item` /
+`current_var_vals` hooks for out-of-tree kernels (kv_cache no longer patches `dev.run` or touches `jit._state`); SPEC
+§11.3 updated (FP8 as built, the hooks, engine/tokenizer modules, the slow marker).
+
+### Open gaps (Mac half, not gated)
+- One Metal command buffer per launch dominates decode wall time; no in-place scatter store in the IR (kv writes are custom kernels).
+- No native float8 dtypes / scale operand on CAST yet (FP8 is uint8 codes + bitcast decode).
+- Act-order GPTQ scale/zero lookup is a one-hot gather; a core gather/indexed-load op would make it as fast as contiguous groups.
+- `import_checkpoint` builds the Llama with placeholder weights and swaps in QuantLinear (wants a `Llama.from_weights` hook).
+- No calibrated AWQ/GPTQ checkpoint was tested (none cached; downloads not allowed); int4 ppl above is data-free RTN.
+
+### Waiting for H100 (Run B, remote half)
+Done in the GPU half: see "Run B (GPU half)" below. Native float8 dtypes with a scale operand on CAST are still not
+built; FP8 on CUDA is W8A8 through uint8 e4m3 codes and the e4m3 tensor-core GEMM.
+
+## Run B (GPU half): Phase 3 CUDA backend + Phase 4 on GPU (NVIDIA H100 80GB HBM3, RunPod)
+
+Integration B2-INT, 2026-10-20 (round 1 of 3). Details: docs/status/B2-INT.md.
+- **Mac** (all tiers: interp, NPY, CPU, METAL): `uv run pytest -n 6` gives `8126 passed, 609 skipped in 738.10s`.
+- **H100** (driver 595.91.07, via `scripts/remote.sh job --gpu h100`): `FZ_TEST_TIERS=CUDA uv run pytest -n 8` gives
+  `4510 passed, 405 skipped in 2905.90s`. The pod needs `apt-get install -y clang` for the CPU tests.
+- **Serving on the H100:** `fusezap serve Qwen/Qwen2.5-0.5B-Instruct --device CUDA` answers a streaming chat request from
+  the official `openai` client (`FZ_SLOW=1 FZ_DEVICE=CUDA pytest tests/test_cli_e2e.py`: 2 passed).
+
+**GPU spend for the run: <redacted>** over 19.2 pod-hours (every row of docs/gpu_spend.csv; RunPod on-demand, H100 SXM at
+<redacted>).
+
+| Package | Run | Status | Commit | Gate | Result (GPU) | GPU $ |
+|---|---|---|---|---|---|---|
+| B-REMOTE live check | B | done | see git log `B-REMOTE:` | first real pods | 5 cheap-GPU smoke jobs (RTX 4090, L4, RTX 3090) on 2026-10-19; create / SSH / terminate verified, every pod logged | 0.06 |
+| P3-CUDA CUDA device + renderer (NVRTC, driver API via cuda-bindings) | B | done | fb06812, f60c045 | `FZ_TEST_TIERS=CUDA pytest` (op suite on CUDA) | L4 and H100: `1421 passed, 49 skipped` (48 test_ops axis cases + the 2-GPU test); context switching across ordinals / foreign contexts fixed in review | 0.36 |
+| P3-GEMM tensor-core GEMM (3xTF32, mma.sync f16/bf16/fp8, sm_90a WGMMA+TMA) | B | done | 19c7006, 90542a5 | `pytest tests/test_cuda_gemm.py && python bench/bench_cuda_gemm.py` (≥ 0.60x cuBLAS bf16 4096²) | H100: Tensor bf16 `a @ b` 594 vs 737 TFLOPS = **0.81x** cuBLAS (raw kernel 0.90x, f16 0.86x); RTX 4090 0.77x; `122 passed` | 0.77 |
+| P3-ATTN flash attention (tensor-core prefill, SIMT hook kernel, split-K paged decode) | B | done | 6be4a5d, 16657ff | `pytest tests/test_cuda_attn.py && python bench/bench_cuda_attn.py` (≥ 0.50x FA2) | H100: prefill **0.91-1.25x** torch SDPA FlashAttention-2; paged decode batch 32 ctx 4096 0.225 ms (1191 GB/s); `109 passed` | 0.75 |
+| P4-CUDA-SERVE serving on CUDA (KV kernels, tensor-core linears, flash/paged dispatch, FP8 W8A8) | B | done | 0357c61, 6d90806 | serve suites with `FZ_DEVICE=CUDA FZ_SLOW=1` + FZ_7B smoke | H100 `86 passed, 9 skipped`; Qwen2.5-0.5B f32 token-identical to HF (64 tokens); **7B bf16 top-1 vs HF f32 0.9932** (SPEC ≥ 0.99, 1024 positions); 7B serves bf16 + fp8 over the openai client; 7B WikiText-2 ppl bf16 6.6216, int8 6.6276 (+0.09%), fp8 W8A8 6.6811 (+0.90%) | 4.79 |
+| P4-BENCH FuseZap vs vLLM 0.32.0, Qwen2.5-7B bf16, 512 in / 128 out | B | **done (gate PASS, one pod)** | e5b05d3 (+ round notes 1a68611); engine a761b7e | SPEC §0 item 4: ≥ 50% of vLLM at c1 and c32 | **Latest (speed run 3 final, c7b891b, one H100 pod, 2026-10-22): VALID, `GATE: PASS`: c1 135.4 vs 164.6 tok/s = 82.2% PASS, c32 2620.2 vs 3252.6 = 80.6% PASS, stretch (80%) met at both** (the sweep's rerun of the gate points on the same pod gave 81.9% / 77.0%, so c32 is about 80%; same-pod sweep 71-86% of vLLM; TTFT p99 at c32 0.53 vs 0.45 s; fp8 65.4% / 58.8%, and fp8 is slower than bf16 at c32; see docs/bench-h100.md and docs/status/SPEED.md). Before: speed run 2 final, a761b7e: c1 69.6%, c32 52.8%, PASS. SPEED run final, 861ffb3: c1 72.2% PASS, c32 44.0% FAIL. Earlier: measurement VALID, threshold FAIL. Package run (6d90806): 2.7% / 1.4%. **B2-INT rerun (one H100 pod): c1 30.3 vs 164.1 tok/s = 18.5%, c32 414.3 vs 3213.3 = 12.9%.** RTX 4090, FuseZap only: 40.3 / 347.7 tok/s (64% / 32% of P4-BENCH's 4090 vLLM). Full sweep, power, tok/$, 30-min stability in docs/bench-h100.md | 50.59 |
+| B2-INT integration | B | done | see git log `B2-INT:` | Mac `pytest -n 6`; H100 `FZ_TEST_TIERS=CUDA pytest -n 8` + `fusezap serve ... --device CUDA` with the openai client | 8126 passed (Mac); 4510 passed (H100); CLI e2e 2 passed | 4.32 |
+
+The remaining <redacted> in docs/gpu_spend.csv is untagged probe and driver-check pods from the packages' debugging, plus
+C-N0's CPU pods (<redacted>).
+
+**Update after the SPEED run (2026-10-20).** Six engine steps (280aa24 CUDA-graph replay, ce0c4b0 split-K decode
+GEMMs, c45150e fused residual + RMSNorm, 012d6a1 on-device argmax, 093a3b0 prefill wgmma tiles, f02201c paged prefill
+flash attention) took the gate from 18.5% / 12.9% to **72.2% / 44.0%** (same pod, committed build 861ffb3). Batch 1
+passes; batch 32 needs about 14% more (TPOT 18.4 vs 7.2 ms). The B2-INT guess below that decode was host launch-bound
+turned out wrong: the profile in docs/status/SPEED.md step 1 shows GPU time dominated. P4-BENCH stays BLOCKED on c32.
+
+**Update after speed run 2 (2026-10-20).** bc1144f raised the CUDA prefill budget to 2048 tokens per step with prefill
+forwards of 256 / 512 / 1024 / 2048 rows; c235e28 fixed its review issues (memory on 24 GB cards, batch-independent
+split-K sums). The official same-pod H100 measurement of a761b7e gives **69.6% / 52.8%: `GATE: PASS`**, VALID. The c32
+margin is 2.8 points on one pod (pods differ by about 5%), and decode TPOT at c32 is still 15.7 vs 6.8 ms. P4-BENCH's
+gate is met; the stretch goal (80%) is not.
+
+**Update after speed run 3 (2026-10-22).** Four engine steps (e59c84d swap-AB wgmma decode GEMM on sm_90, 0e62f94 the
+engine in its own process under `fusezap serve` on CUDA, 43eda37 refit sm_90 GEMM config rules, 79cc1e2 fused SiLU*mul
+and qkv bias + RoPE kernels) and one review fix (c7b891b, a dead engine process now fails /health with 503 and exits
+the server). The official same-pod H100 measurement of c7b891b gives **82.2% / 80.6%: `GATE: PASS`**, VALID, with the
+80% stretch met at both points in the gate pair. The same pod's sweep reran the gate points at 81.9% / 77.0%, so c32 is
+about 80%, not clearly above it. TPOT p50 at c32 is 10.1 vs 7.1 ms. FP8 is 65.4% / 58.8% of vLLM fp8 and slower than
+FuseZap bf16 at c32, because the swap-AB kernel is 16-bit only. Qwen2.5-32B on one H100 (measured before steps 1-4):
+bf16 78.3% / 59.1%, fp8 68.0% / 52.0% (docs/status/H100-32B.md). Run 3 GPU spend: <redacted>.
+
+**Why P4-BENCH was still blocked after B2-INT (measured).** B2-INT fixed both root causes P4-BENCH found:
+- group-for-reduce now runs on CUDA (warp shuffles), so RMSNorm no longer runs on one thread per row;
+- M ≤ 64 GEMMs use short tiles that fill every SM, instead of 14-18 CTAs.
+
+That made decode 7x faster at c1 and 10x faster at c32. A bf16 7B step reads 15.2 GB, about 4.5 ms of H100 bandwidth,
+but the step still takes 32.6 ms (TPOT p50). The RTX 4090 is faster at batch 1 (23.6 ms), so decode is now bound by the
+host-side cost of about 700 kernel launches per step. Next: CUDA-graph replay of jitted steps (fusezap/jit.py + the CUDA
+device), then the c32 per-row kernels and paged decode. One H100 rerun of the gate pair costs about <redacted>.
+
+### Open gaps (GPU half, not gated)
+- Multi-GPU (`CUDA:1`) is unverified on hardware: RunPod offered no 2-GPU instances.
+- 16-bit `a @ b` reaches the tensor cores through P3-GEMM's stopgap matcher (`_match16` replaces
+  `schedule._match_custom`). The output f32 -> 16-bit CAST is a separate kernel, about 10% of a 4096³ GEMM.
+- Split-K paged-decode scratch is per layer under fz.jit (about 8 MB of acc each at hd 128); there is no shared workspace yet.
+- vLLM ran with `VLLM_USE_FLASHINFER_SAMPLER=0` (the image's nvcc 12.4). Llama-3.1-8B needs an HF token and was not run.
+
+## Phase C: AWS Inferentia (NKI backend; design in docs/NKI_BACKEND.md)
+
+| Package | Status | Commit | Gate | Result | $ |
+|---|---|---|---|---|---|
+| C-N0 RunPod CPU pods (`remote.sh --cpu <flavor> --vcpus N`) for compile-only / simulator work | done | 083029b | `pytest tests/test_remote.py` + one live CPU job | 48 passed; live cpu3c job (x86_64, 2 vCPU, Python 3.12.3) ran, terminated and was logged; <redacted> at 2 vCPU | 0.08 (about <redacted> of it in untracked probe pods) |
+| C-N1 NKI renderer (elementwise + reduce) + NKISHIM numpy shim | done | 6205006, e804448 | `pytest tests/test_nki.py` (+ op suite through NKISHIM) | `2288 passed, 176 skipped`; through the real nki 0.6.0 CPU simulator (ephemeral env): 2265 passed, 0 failed. Review fixes: tile source for predicated copy, exact int32 SUM tree, Cody-Waite SIN reduction (≤ 2.1e-7 error to ±65536) | 0 |
+| NEURON N0-N3 (NKI-N0..N3, NKI-final): CPU pods, renderer + NKISHIM, NKISIM simulator tier + inf2 NEFF compile, TensorE matmul + flash-attention kernels | **done (simulator only)** | 57fd799, 593981b, 8139418, d5ce827, NKI-final | op suite on NKISIM; test_custom.py on NKISIM; Qwen 0.5B/7B shapes in the simulator + inf2 compile | op suite on NKISIM 1386 passed, 0 failed (= NKISHIM, 0 bitwise shim/sim differences); 1272/1272 kernels compile for inf2; Qwen shapes 42/42 within tolerance. NKI-final fixed a review finding (flipped-row bool mask now stays composed). IDIV/MOD/pow have no inf2 lowering (reported NKIUnsupported). See docs/status/NKI-N0-N3.md | ≈ 0.2 (CPU pods) |
+| NEURON N4+ (op suite and launch overhead on a real inf2, serving, bench) | **waiting** | — | — | waiting on the AWS Inferentia (inf2) service quota | — |
+
+Known NKI gaps: SIN meets tolerance only for |x| up to about 1e5. The int32 adds assume native GpSimd int math, as in the
+0.6 simulator, which is unverified on hardware. No AWS was used in this run.
+
+## I57 M1: tensor parallelism in Core (`fusezap serve --tensor-parallel-size N`)
+
+| Package | Status | Commit | Gate | Result |
+|---|---|---|---|---|
+| TP-M1 runtime + model + engine (Mac proof; CUDA script written, not run) | done (Mac) | see git log `I57 M1` | `pytest tests/test_tp.py` (`FZ_SLOW=1` for 0.5B + serve) and the full suite | 12 passed, 2 skipped (CUDA-only) on METAL; also on CPU; full suite 8348 passed, 746 skipped |
+| TP-M1 on CUDA (2x RTX 4090, <redacted>; logs docs/status/tp-m1/) | done | 83a7752 | NCCL all-reduce in CUDA graphs; Validate TP=2 vs TP=1 | NCCL 2.30.7, 196 us per 32x8192 bf16 all-reduce (PCIe, P2P off); 0.5B top-1 0.9965 (TP=1 0.9917), 7B 0.998 (0.996), both PASS; 7B 9.4 GiB per GPU vs 16 GiB. pytest hung after the last test (teardown): fixed below |
+| TP-M2 prep: bounded TP shutdown + scripts/tp_m2_70b.sh (not run) | done (Mac) | commits `I57 M2` | `pytest tests/test_tp.py` and the full suite | shutdown via ncclCommAbort, every step bounded (FZ_TP_CLOSE_TIMEOUT 10 s), FZ_TP_DEBUG=1 timestamps each step; serve --tp 2 stops in ~0.35 s on SIGTERM / Ctrl-C (METAL) |
+
+Design (fusezap/serve/dist.py): one process per device, Megatron sharding. Rank 0 runs the API, tokenizer, scheduler
+and sampling; every model call it makes (an LLMEngine forward with its host arrays, Llama.prefill / decode / reset, the
+logprobs scorer, the allocator release) is sent to the workers first (`TPGroup.spmd`), which run the same call on their
+shards; workers have no scheduler. q/k/v (+ biases) and gate/up are column-parallel by head group / intermediate dim,
+o_proj and down_proj row-parallel followed by an all-reduce (then the bias once); norms, embedding and lm_head are
+replicated (a worker's logits equal rank 0's, so CUDA lookahead feeds each rank its own device argmax). Each rank reads
+only its slices from the mmap'd safetensors. The all-reduce is a kind="custom" ScheduleItem (`AllReduceCall`) through
+`fz.jit.run_item`, so the jitted forwards record and replay it like the serve kernels; on CUDA ncclAllReduce runs on
+the device's current stream, so the CUDA-graph capture of a step captures the NCCL kernels too (full graphs with TP,
+nothing segment-wise). Backends: NCCL via ctypes (CUDA), host sockets (any device; the Mac proof). A worker that exits,
+or a mirrored call that fails on rank 0, stops rank 0 (exit 1) instead of hanging it.
+
+Mac evidence (METAL, host backend, 2 processes): tiny random Qwen2 (4/2 heads, q/k/v + o biases) TP=2 prefill and
+decode logits == TP=1 within 1e-4, engine tokens identical; Qwen2.5-0.5B f32 TP=2 greedy 32 tokens x 3 prompts ==
+TP=1; `fusezap serve --tp 2`: chat, streaming, echo logprobs, cancel (running gauge back to 0), killed worker -> the
+server exits 1 within seconds. On CUDA: `scripts/tp_m1_cuda.sh` (one 2x RTX 4090 pod, NCCL_P2P_DISABLE=1).
+
+The M1 CUDA hang: TPGroup.close sent "quit", then waited 30 s for the worker before releasing its own communicator; the
+worker, on "quit", called ncclCommDestroy, which since NCCL 2.18 is an intra-node collective that waits for every rank
+to destroy too. So the worker waited for rank 0, rank 0 waited for the worker, killed it after 30 s, then called
+ncclCommDestroy itself and waited forever for the dead peer (pytest exit 124 after the 1200 s timeout). Now both ranks
+use ncclCommAbort (local, as torch's ProcessGroupNCCL.shutdown), rank 0 aborts before it waits for the workers, every
+step (send quit, synchronize, abort, wait, kill) is bounded, and a worker leaves with os._exit. The engine process
+closes the group and exits right after its last message. Not yet confirmed on GPUs: tp_m2_70b.sh runs the CUDA TP tests
+first (`-v`, faulthandler_timeout, pytest-timeout, FZ_TP_DEBUG=1).
+
+### I57 M3 prep: TP speed (Mac; scripts/tp_m3_70b.sh written, not run)
+
+M2 measured 28.9 / 29.4 / 32.5 ms TPOT at c1 / 8 / 32 on Llama-3.3-70B (vLLM TP=2: 19.5 / 20.7 / 21.2). With lookahead
+the next decode is enqueued (rank 0 and, through the control message, the worker) while the previous one runs, so in
+steady decode the step is GPU-bound and the gap is GPU time: a rank reads ~70.6 GB per step (68.5 GB of shards + the
+replicated 2.1 GB lm_head; vLLM 69.5 GB) = 2.4 TB/s effective vs vLLM's 3.6; 160 NCCL all-reduces (M2's tests: 28 us
+each at 32 x 8192 bf16 in a graph, so ~4.5 ms per c32 step; ~10 us at one row, ~1.6 ms); ~1000 kernel boundaries.
+Inferred split of the c1 gap (to be measured by the M3 run): decode GEMMs on H200 below H100's ~85% of peak (tuned for
+H100's 3.35 TB/s; a rank's qkv, N = 5120, runs 80 CTAs on 132 SMs) ~4-6 ms, all-reduces ~1-1.5 ms, the replicated
+lm_head ~0.3 ms, the rest (norm/rope/attention launches) ~1 ms. M2's 12% Llama drift was not a slowdown: per-request
+TPOT is flat (34.0-34.8 ms over the 120 s) and the 16 requests run in lockstep waves of 5.07 s; the 10% windows
+(11.5 s) hold 2 or 3 of the waves' 0.7 s prefill gaps, so they differ by up to ~14% (Qwen's 5.2 s waves: 5%).
+
+| Change | Where | Expected | Check |
+|---|---|---|---|
+| one-shot custom all-reduce over CUDA IPC + NVLink P2P (double-buffered slots, per-block counters, rank-order f32 sums: NCCL's bits for 2 ranks), up to FZ_TP_AR_MAX_MB (8; the script lowers it to where it beats NCCL), NCCL above / without P2P | fusezap/serve/custom_ar.py, dist.TPComm | -1 to -1.5 ms at c1, -2 to -3 ms at c32 | tests/test_custom_ar.py (clang parse of every variant, routing, a numpy model of the slot/counter protocol that catches single buffering; CUDA: bits vs NCCL eager and in graphs, latency) |
+| all-reduce fused with the residual add + RMSNorm (render_rmsnorm's exact per-row code: same bits) on <= 64 rows | dist.all_reduce_add_norm, Llama.forward_tokens | -0.3 to -0.5 ms (160 fewer kernels) | test_tp (emulated path == TP=1 tokens), CUDA selftest bits |
+| shared-memory control ring (workers spin 50 ms, then sleep with a socket wake-up; big payloads by socket) | fusezap/serve/shmchan.py | tens of us per step; matters off lookahead and for TTFT | tests/test_shmchan.py (2 processes, wrap, big, wake) |
+| FZ_TP_PROFILE per-forward timeline per rank, tpprof.kernel_breakdown, bench/tp_step.py A/B (fuse / car / nccl / skip, GEMM rules FZ_WG_SWAP_S / FZ_WG_SWAP_FILL) | fusezap/serve/tpprof.py, bench/tp_step.py | measurement | test_tp (timeline over the host backend), tp_step dry run on METAL |
+| NCCL abort waited 1 s (FZ_TP_ABORT_WAIT) instead of 10 s | dist.NcclComm.close | stop in ~2-3 s (M2: 14 s) | the M3 script times SIGTERM -> exit |
+| weight wipe: blob link count logged, hf_xet's cache deleted too, chunk cache off for downloads | scripts/tp_m3_70b.sh | the disk comes back | the script logs freed GB |
+
+### I57 M3 first run (2x H200, <redacted>, no Validate result) and M3b fixes (branch core-tp-m3b; Mac; rerun not yet done)
+
+Results: ~/.cache/fusezap/remote/results/20261026-003848-FZ-BENCH-GIT-COMMIT-79fe293-bash/logs. What failed and why:
+
+| Failure | Root cause | Fix (M3b) | Check |
+|---|---|---|---|
+| custom all-reduce setup: `CUDA error 1 in cuIpcOpenMemHandle(rank 1)` on every rank, so NCCL only | the handle struct's field was `c_char * 64`; ctypes reads such a field as bytes cut at the first NUL, so each rank sent a few-byte prefix of its 64-byte handle (rank 0 then memmoved 64 bytes from that short bytes object: garbage); the buffer itself was already a dedicated cuMemAlloc and the context was current | `c_ubyte * 64`, the handle read with string_at (all 64 bytes), a length check on open, argtypes for the by-value struct | tests/test_custom_ar.py::test_ipc_handle_keeps_all_64_bytes (a fake libcuda whose handles contain NULs; the old code fails it) |
+| the script's peer check: `CUDA error 3 in cuDeviceGet` | no cuInit in a fresh process | can_access_peer calls cuInit | same test |
+| test_tiny_engine_fused_add_norm_path | not the custom all-reduce (that test uses the host backend): it asserted 8 decode rows, but CUDA runs the decode buckets 1, 2, 4, 8 (3 prompts decode at 4) | asserts the rows are one of the engine's decode buckets | runs on METAL / CPU / CUDA |
+| Llama load starved: tp_step hit 15 min, serve `no reply to 'load' in 600 s`; rank 0 loaded 68 GB in ~2.5 min, rank 1 stalled at 50-56 GB, then 0.5-2 GB/min (both ranks slow for their last GBs) | the second model's download (136 GB in 2 min) started as the first model's load did; its writes evicted the freshly downloaded first model from the page cache, and the loader's cold mmap page faults (one readahead window at a time) ran at 10-30 MB/s on the pod's overlay disk. The download itself was over by 00:47; the serve load at 01:00 still read cold pages. M2 downloaded at ~0.3 GB/s and loaded right after (57 s, hot cache) | serial downloads (the next model only after the previous server stopped and its weights are wiped); the loader reads ahead: posix_fadvise(WILLNEED) on each tensor's file range FZ_PREFETCH_LAYERS (2) layers ahead, then lm_head (many reads in flight instead of one fault at a time); FZ_TP_DEBUG prints each rank's load progress every 10 s and rank 0's wait at a barrier every 30 s; the load barrier waits max(600 s, a rank's checkpoint share at 100 MB/s) = 660 s for 70B; tp_step is off by default (SKIP_STEP=1) and exits 3 after --load-timeout 300 s | tests/test_tp.py::test_load_prefetches_ahead_and_logs_progress (fadvise calls per tensor span, progress line, timeout) |
+| the wipe freed 0 GB (268 GB of HF cache left) | hf_xet stores the bytes in shared hub/blobs/<2 hex>/<sha> files outside the models--org--name dir; the snapshot files are symlinks to them (and /proc/*/maps shows the blob paths, so the "still mapped" check never matched) | delete the snapshot's symlink targets (realpath) that no other model's snapshot links to, then the repo dir; kill processes mapping hub blobs; log the GB | dry run on a fake cache layout (blob deleted, a blob shared with another model kept) |
+
+Per-shape decode GEMM configs (fusezap/device/cuda_kernels/gemm_table.py). The run's sweep (logs/gemm_sweep.log, one
+TP=2 rank of Llama-3.3-70B, M = 1 / 8 / 32): one forward's linears take 31.0 / 48.9 / 63.9 ms with the swap-AB rule
+(what serve runs on sm_90) vs 19.9 / 31.4 / 37.8 ms with the best config per shape; the rule's worst cases: qkv at M = 32
+145 us (SK 1, 0.58 TB/s) vs 34 us (SK 3), down 202 / 247 us (SK 1) vs 76 / 143 us (SK 2-3), lm_head 909 / 1207 vs
+589 / 886 us. The table holds (NC, SK) per (GPU, SMs, kind, N, K) and the depth S per BX (= M rounded up to 8): SK and NC
+never vary with M, so a row's sum stays batch-independent (the decode buckets, redo_split_k and
+test_wg_swap_rows_independent's guarantee hold); S never changes a sum (test_gemm_table_configs_keep_row_bits checks S,
+NC and the rows on sm_90). Filled at engine start (LLMEngine -> autotune_gemms, before any forward binds a config) for
+each linear shape without a disk entry: two stages timed on the model's own weights at every decode BX (SK at NC 1, then
+NC x S at that SK; kernels compiled in a thread pool first; budget FZ_GEMM_AUTOTUNE_S 240 s), stored in
+~/.cache/fusezap/cuda_gemm_table.json first-writer-wins (TP ranks agree; later starts reuse it: deterministic once
+cached). Shipped: the H200 entries of the 70B rank shapes from the sweep's M = 1 / 32 data (its M = 8 block timed
+identical kernels 2-5x slower than at M = 1, so it is not used), under the constraint of one SK per shape: ~20.0 / ~41.7
+ms per forward at M = 1 / 32 by the sweep's own times (-35%); the sweep's absolute times exceed M2's whole 28.9 ms TPOT,
+so the rerun's autotune log (chosen vs rule us per shape, on the real weights) is the measurement. Precedence: disk >
+shipped > rule; FZ_GEMM_TABLE=0 the rule only, FZ_GEMM_AUTOTUNE=0 no tuning, FZ_ONE_K=1 bypasses it. Prefill GEMMs keep
+cuBLASLt's pinned plans (qkv / o / gate_up) and wg_pick's tiles (bit-identical across tiles), as before. Mac:
+tests/test_gemm_table.py (choice, precedence, first writer wins, wg_swap_default per shape, autotune driver, the two-stage
+search over a modelled time).
+
+Rerun: scripts/tp_m3_70b.sh, same command as M3 (~55 min, cap 1.1 h / <redacted>): tests (custom all-reduce self-test and
+latency now expected to run), sweep (with the table's config per shape), then per model serial download -> serve
+(load progress, autotune lines) -> Validate (accuracy, functional, structured tools auto / named / named_strict + json,
+performance short c1 / 8 / 32 x 3, stability 300 s c16) -> speed vs vLLM TP=2 -> stop -> wipe.
+
+### I60 (I57 M4): where the 70B TP=2 decode step's ~9 ms go (branch core-tp-m4; Mac; scripts/tp_m4_profile.sh written, not run)
+
+M3: Llama-3.3-70B TP=2 TPOT 28.4-31.6 ms vs vLLM 19.5-21.5; GPU-bound (graph 28.47 ms per rank at 1 row, idle 0.003 ms).
+Accounted for at 1 row: the linears 17.86 ms (autotune times on the real weights, 16 layers rotated: qkv 27 / o 21 /
+gate_up 116 / down 59 us per layer, i.e. 3.1 / 3.2 / 4.1 / 4.0 TB/s) + lm_head 0.49 + NCCL 160 x 8.5 us = 1.36, and
+~28 us per layer of small kernels like vLLM's (2 norms ~4 us, RoPE 3.5, kv_write 3, attention partial ~6-8 + combine 3,
+SiLU*mul 3.5: ~2.2 ms) = ~22 ms. **~6.5 ms (~80 us per layer, ~6 us per kernel boundary of ~1040) is unexplained by
+any per-kernel time measured so far.** Estimated split of the 9 ms gap to vLLM (to be replaced by the profile):
+
+| Class | FuseZap (est.) | vLLM-like | Gap | Notes |
+|---|---|---|---|---|
+| decode GEMMs (qkv / o: one-wave shapes) | 17.9 ms | ~16.5-17 | ~1-1.5 | qkv 84 MB at 3.1 TB/s, o 67 MB at 3.2 TB/s; gate_up / down ~4.0-4.1 |
+| all-reduce (NCCL, custom AR off in M3) | 1.36 | ~0.8 | ~0.5 | custom AR measured equal to NCCL (8.8 vs 8.5 us at 1 row); the fused AR + add + RMSNorm never ran |
+| small kernels (7 per layer) | ~2.2 | ~2.2 | ~0 | same kernel count per layer as vLLM (13) |
+| **unexplained (in-graph)** | **~6.5** | - | **~6.5** | H1: GEMMs slower inside the graph than alone (cache state, split-K scratch, ramp after a tiny kernel); H2: per-node cost of the graph (L1 / shared-memory carveout switches between ~200 KB-smem GEMMs and smem-free kernels); H3: NCCL kernels in the real graph slower than the chain benchmark (rank skew per layer) |
+
+Changes (each with a switch; tokens bit-identical):
+- RoPE + KV-cache write in one kernel at every row count (`FZ_ROPE_KVW`, default 1; 0 = M3's composed decode RoPE +
+  kv_write): `cuda.rope_qkv(kvw=kv_cache.KVDest)` stores the k / v heads into the paged pool at the row's slot (padding
+  rows skipped), `PagedKVCache.attend(written=True)` skips kv_write: one launch per layer fewer (80 per step), ~0.25-0.35 ms.
+- `FZ_FUSE_ROWS` (default 128): the row count from which forward_tokens uses the fused SiLU*mul (and, with FZ_ROPE_KVW=0,
+  RoPE) kernels; 1 = at decode rows too (H100 7B: 3.7 vs 3.4 us per launch at 32 rows; A/B only).
+- `FZ_CUDA_CARVEOUT=<0..100>` (default unset): every kernel loaded asks for that L1 / shared split (tests H2).
+- bench/decode_kernels.py: one decode step's kernels timed one by one in graph order on ONE GPU, random weights at a TP
+  rank's exact shapes (presets llama70b-tp2, qwen72b-tp2, ...; `--ar copy` puts a device copy at each all-reduce point),
+  class table with count, ms, %, TB/s, ideal ms at 4.8 TB/s and a vLLM-like expectation, graph ms vs sum of items
+  (gaps), one layer in launch order, env variants in one process. Mac: tests/test_prof_tools.py (classes, ideal bytes,
+  a METAL dry run); CUDA: tests/test_serve_cuda.py (rope_qkv kvw == rope_qkv + kv_write eager and in graphs; engine
+  tokens FZ_ROPE_KVW=0 / 1 / FZ_FUSE_ROWS=1 identical, kv_write launches L -> 0).
+- scripts/tp_m4_profile.sh: one H200 (~22 min, ~<redacted>; cap 0.5 h / <redacted>): CUDA tests, the breakdown at 1 / 8 / 32 rows
+  ctx 512 for old / old_ar (old + copies at the all-reduces) / kvw / rows1 / kpt (FZ_PAGED_TC=0), ctx 2048, and
+  FZ_CUDA_CARVEOUT=100. Reading it: M3's 28.47 ms minus the `old_ar` graph ms is what NCCL really costs in the graph (vs
+  1.36 ms: H3); per-GEMM TB/s in the table vs the autotune's is H1; graph ms vs the sum of items, and the carveout run, H2.
+
+### I60 M5 prep: the all-reduces in the real two-GPU graph (branch core-tp-m5; Mac; scripts/tp_m5_ar.sh written, not run)
+
+The M4 profile (1x H200, <redacted>): one 70B TP=2 rank's decode graph with the 160 all-reduces replaced by device copies is
+19.7 / 20.2 / 22.0 ms at 1 / 8 / 32 rows (vLLM TP=2's whole TPOT: 19.5 / 20.7 / 21.2); the real TP=2 step is 28.5 ms per
+rank, GPU-bound. So ~8.8 ms per token (~55 us per all-reduce) is spent at the all-reduces inside the real graph, against
+8.5 us per NCCL call back to back (M3's CAR_BENCH; with a 0.5x kernel between calls, test_tp's TP_BENCH: 22.8 vs 11.4 us
+at 32 rows). Also found: **M3 never ran the custom all-reduce in the 70B graph**: the script looked for CAR_SELFTEST at
+the start of a line, but pytest -v prints the test name first, so a passing bit self-test read as failed and the script
+set FZ_TP_CUSTOM_AR=0 (and test_custom_latency_vs_nccl asserted custom < NCCL at one row: 8.78 vs 8.47 us).
+
+| Change | Where | Why |
+|---|---|---|
+| all-reduce stamps: FZ_TP_AR_STAMP=1 puts a 1-thread %globaltimer kernel before / after every all-reduce and at each forward's start (a 16-forward ring on the device, no host wait, in graphs and launch by launch); stamp_stats lines the ranks up (clock offset from the all-reduce ends): per all-reduce the latest arriver's duration (intrinsic in-graph cost) vs the earliest rank's wait (rank skew), the late rank at the o_proj / down_proj all-reduces, compute per rank, graph-start skew | fusezap/serve/tpprof.py, dist.all_reduce / all_reduce_add_norm, Llama.forward_tokens | splits the 55 us into hypothesis (a) rank skew vs (b, c) NCCL slower inside the graph |
+| random-weight TP models: every rank builds its slices of a random model at a checkpoint's exact shapes (presets llama70b / qwen72b full, -tp2 local); tp_step --random, dist.Worker.op_load {"random": shapes} | fusezap/serve/models/random_weights.py (decode_kernels uses it too) | an A/B process in ~1 min instead of a 70B load |
+| tp_step: --env-ab mode=<mode>, per-rank graph ms per replay (tpprof.graph_ms), stamped variants last, --prefix, --ar-chain both (interleaved all-reduce latency), JSON after every variant, a table with % of vLLM | bench/tp_step.py | |
+| the script's custom all-reduce verdict reads CAR_SELFTEST anywhere in the line; only failed bits turn it off (FZ_TP_CUSTOM_AR=force: never); latency never lowers its slot; the latency test fails only at 1.5x NCCL | scripts/tp_m5_ar.sh, tests/test_custom_ar.py | the fused path finally measured at 70B |
+| TPComm skip mode off CUDA copies through the host | dist.TPComm | Mac dry runs |
+
+scripts/tp_m5_ar.sh (one 2x H200 pod, ~30 min, ~<redacted>; cap 0.75 h / <redacted>): CUDA tests; one random-weight A/B process at
+the Llama-3.3-70B shapes: fuse / car / nccl / skip, nccl_eager (FZ_GRAPH=0) and stamped nccl / fuse / skip / nccl_eager at
+1 / 8 / 32 rows; NCCL settings one process each while time allows (GRAPH_MIXING_SUPPORT=0 + GRAPH_REGISTER=0, PROTO
+LL128 / LL, MAX_NCHANNELS=2, custom all-reduce with 8 blocks, NTHREADS=128, MIN_NCHANNELS=16); the best unstamped
+variant serves the real model once (Validate accuracy + performance short c1 / 8 / 32 x 3 vs vLLM TP=2); summary table.
+Reading it: skip vs 19.7 ms = any two-process cost without communication; nccl_st's intrinsic vs wait = NCCL in the
+graph vs rank skew; nccl_eager_st's intrinsic = NCCL outside a graph; fuse vs nccl = the custom path's gain.
+
+### Open gaps (TP, not gated)
+- M2 (70B on 2x H200, scripts/tp_m2_70b.sh) not run yet. Llama 3.x tool calls are not parsed by fusezap serve (Hermes and
+  Mistral only): tools requests get 400 and Validate skips the tool modes for Llama. Since I61 (branch serve-llama-tools)
+  fusezap serve speaks vLLM's llama3_json format (fusezap/serve/tools.py: detected from `<|python_tag|>` + a tools chat
+  template, rendered by the model's own template, parsed into tool_calls, live streams; tests/test_serve_llama_tools.py
+  runs Validate's tools-v1 against it with a fake Llama-format model); not yet run on Llama-3.3-70B itself.
+- An error inside a mirrored call is fatal for the server (the ranks may be mid-collective); a MemoryError retry in the
+  logprobs scorer therefore stops a TP server. `--quant` with TP is refused. lm_head is replicated (2.1 GB per rank for
+  70B; vocab-parallel + gather would save it). The host backend is for tests (a socket round trip per all-reduce).

@@ -1,0 +1,53 @@
+{
+ "schema": "fusezap.evidence/v1",
+ "slug": "qwen2.5-7b-instruct-nvidia-rtx4090",
+ "cell": {
+  "model": "Qwen2.5-7B-Instruct",
+  "chip": "nvidia-rtx4090",
+  "chip_name": "NVIDIA RTX 4090",
+  "status": "Preview",
+  "verified": "2026-10-25",
+  "metric": "16.6 ms a token"
+ },
+ "source": "The FuseZap engine repository (private). Commits are named by id; references without one were read at the engine’s main on the snapshot day (9b31ca4).",
+ "main_pin": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+ "redaction": "Text files are published as they are in the repository, except that API keys and tokens, IP addresses, private hostnames, instance, pod and container ids, home-directory paths and e-mail addresses are replaced with <redacted>. sha256 is the published file’s; source_sha256, where given, is the original’s.",
+ "files": [
+  {
+   "ref": "docs/status/tp-m1/logs/validate-q7-tp1.log",
+   "kind": "path",
+   "commit": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+   "commit_short": "9b31ca4",
+   "commit_date": "2026-11-06",
+   "resolved": "No commit in the reference: read at the engine’s main of the snapshot day.",
+   "path": "docs/status/tp-m1/logs/validate-q7-tp1.log",
+   "source_bytes": 882,
+   "source_sha256": null,
+   "status": "published",
+   "file": "validate-q7-tp1.log.txt",
+   "bytes": 882,
+   "sha256": "e03e0dc5cefc8cbd114db9ca64b4d838fc56869847b8399dc1a80541bf0318ad",
+   "redactions": [],
+   "shows": null,
+   "note": null
+  },
+  {
+   "ref": "docs/status/tp-m1/logs/validate-q7-tp2.log",
+   "kind": "path",
+   "commit": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+   "commit_short": "9b31ca4",
+   "commit_date": "2026-11-06",
+   "resolved": "No commit in the reference: read at the engine’s main of the snapshot day.",
+   "path": "docs/status/tp-m1/logs/validate-q7-tp2.log",
+   "source_bytes": 745,
+   "source_sha256": null,
+   "status": "published",
+   "file": "validate-q7-tp2.log.txt",
+   "bytes": 745,
+   "sha256": "69301eeb8d2575ac6b1708b0b44afff40af23cff14fbcd92706e3e2b5f3fb7d4",
+   "redactions": [],
+   "shows": null,
+   "note": null
+  }
+ ]
+}

@@ -1,0 +1,56 @@
+{
+ "schema": "fusezap.evidence/v1",
+ "slug": "llama-3.3-70b-instruct-nvidia-h200",
+ "cell": {
+  "model": "Llama-3.3-70B-Instruct",
+  "chip": "nvidia-h200",
+  "chip_name": "NVIDIA H200",
+  "status": "Preview",
+  "verified": "2026-10-26",
+  "metric": "20.1 ms a token"
+ },
+ "source": "The FuseZap engine repository (private). Commits are named by id; references without one were read at the engine’s main on the snapshot day (9b31ca4).",
+ "main_pin": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+ "redaction": "Text files are published as they are in the repository, except that API keys and tokens, IP addresses, private hostnames, instance, pod and container ids, home-directory paths and e-mail addresses are replaced with <redacted>. sha256 is the published file’s; source_sha256, where given, is the original’s.",
+ "files": [
+  {
+   "ref": "docs/status/tp-m6-h200/validate/llama-3.3-70b-instruct/performance.csv",
+   "kind": "path",
+   "commit": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+   "commit_short": "9b31ca4",
+   "commit_date": "2026-11-06",
+   "resolved": "No commit in the reference: read at the engine’s main of the snapshot day.",
+   "path": "docs/status/tp-m6-h200/validate/llama-3.3-70b-instruct/performance.csv",
+   "source_bytes": 765,
+   "source_sha256": null,
+   "status": "published",
+   "file": "performance.csv",
+   "bytes": 765,
+   "sha256": "05e5e07b2af9aef91f59ca4a102228001dc95cf23b75337df6ce85685ce09991",
+   "redactions": [],
+   "shows": "Validate’s performance points for Llama-3.3-70B-Instruct on two H200s, one row per concurrency level.",
+   "note": null
+  },
+  {
+   "ref": "8cdbeba9934d49476cf64c180fda53ab56265fe4",
+   "kind": "commit",
+   "commit": "8cdbeba9934d49476cf64c180fda53ab56265fe4",
+   "commit_short": "8cdbeba",
+   "commit_date": "2026-10-26",
+   "path": null,
+   "status": "published",
+   "file": "commit-8cdbeba.txt",
+   "bytes": 2334,
+   "sha256": "bddae2bac8634b6532058b956e8889c156ee69d5a685fce557d47881eabdb10f",
+   "source_sha256": "fc9ff1965f212e6c7aa5f40f1e2d3cba0de633134d7cdaf23a3c72f22a624556",
+   "redactions": [
+    {
+     "what": "cost",
+     "count": 1
+    }
+   ],
+   "shows": "The commit that recorded the Llama-3.3-70B-Instruct run on two H200s: its message and the files it added.",
+   "note": "The commit’s message and file list, as text (author and trailers left out)."
+  }
+ ]
+}

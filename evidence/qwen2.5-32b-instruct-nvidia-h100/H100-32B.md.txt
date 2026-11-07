@@ -1,0 +1,169 @@
+# H100-32B: Qwen2.5-32B-Instruct on one H100 80GB
+
+**Status: done** (2026-10-21). FuseZap loads and serves Qwen2.5-32B-Instruct on one H100 80GB through the existing
+Qwen path, in bf16 and fp8. Two general fixes came out of it, neither special-cased to 32B. Same-pod numbers against
+vLLM 0.32.0, gate workload (512 in / 128 out):
+
+| | FuseZap tok/s | vLLM tok/s | FuseZap / vLLM |
+|---|---:|---:|---:|
+| bf16 gate/c1 | 31.4 | 40.1 | **78.3%** |
+| bf16 gate/c32 | 476.1 | 805.3 | **59.1%** |
+| fp8 gate/c1 | 47.4 | 69.8 | 68.0% |
+| fp8 gate/c32 | 633.2 | 1216.9 | 52.0% |
+
+The top-1 agreement with HF float32 is **0.9941** in bf16, the same as HF transformers' own bf16 on these positions.
+In fp8 W8A8 it is **0.9746**.
+
+## 1. Loading: what had to change
+
+**Loading needed no change.** `load_model("Qwen/Qwen2.5-32B-Instruct")` (`fusezap/serve/weights.py`,
+`fusezap/serve/models/llama.py`) reads the 17 safetensors shards and builds the 64-layer model as is. That covers 40 query /
+8 KV heads, head_dim 128, intermediate 27648, an untied lm_head and the q/k/v biases. On the H100 the load takes 40 s
+from a warm page cache, and the device weights take 59.6 GiB. bf16 serving, the OpenAI smoke test and the top-1 test
+ran on the unchanged loader.
+
+Two fixes, each a real bug that only showed at this size:
+
+| file | lines | what and why |
+|---|---|---|
+| `fusezap/serve/models/llama.py` | +8 / -2 | `ContiguousKVCache` allocates its tensors on first use rather than in `Llama.__init__`. Under `LLMEngine` the model's own contiguous cache is never used (the engine has its paged cache), but it was allocated anyway: (max_len + 128) × 256 KiB at 32B, which is **8.6 GB at a 32k context**, 0.56 GB at the default 2048. With it, a 32k single sequence does not fit next to the weights. METAL and the other tiers behave as before: the first `state()`/`update()` allocates the same zeros. `reset()` now drops the tensors (the next use reallocates them, as before). |
+| `fusezap/serve/engine.py` | +8 / -3 | `prefill_row_bytes` (the default CUDA prefill budget, from free memory) now counts the fp8 W8A8 linears' extra activations: each keeps the e4m3 input row (K bytes) and the GEMM's float32 output (4 N bytes) next to the cast output. That is about 2.1× the bf16 bytes per row (38.5 vs 18.1 MiB at 32B). With the bf16 estimate, `fusezap serve --quant fp8` picked a 2048-row prefill (about 77 GiB of capture activations) and **ran out of memory at warm-up** on the H100 (the fp8 OpenAI smoke test failed, and the c32 fp8 bench server did not start). With the fix it picks 1024 rows for the bench's fp8 servers (about 41 GiB free after the KV pool), and they serve. 7B on the H100 still gets 2048 in bf16 and fp8. `tests/test_scheduler.py::test_prefill_budget` covers it. |
+
+Harness and tests: `bench/mem_fit.py` is new (the memory probe below). `tests/test_serve_cuda.py`'s SPEC top-1 test
+runs on any model with `FZ_MODEL7=<hf id>` (MODEL2's switch for every FZ_7B test). It now gets an f32 reference
+that fits (see §2) and also prints the fp8 W8A8 score from that reference. The benchmark method and harness were not changed.
+
+## Memory (H100 80GB HBM3, bf16)
+
+`python bench/mem_fit.py Qwen/Qwen2.5-32B-Instruct` loads the model as `fusezap serve` does. It then builds an engine
+whose KV pool fills the free memory minus a reserve, warms it up, and runs two loads that use the whole pool: 32
+sequences at once, and one sequence as long as the pool allows (up to the model's 32768 positions).
+
+| | |
+|---|---|
+| device weights | 59.59 GiB (linears + lm_head + norms/biases/RoPE; the embedding table stays an mmap on the host) |
+| free after load | 19.07 GiB |
+| KV per token | 256 KiB (64 layers × 2 × 8 KV heads × 128 × 2 bytes) |
+| largest pool that served | **2833 blocks = 45,328 tokens = 11.07 GiB** (8 GiB reserve; 5 and 6.5 GiB ran out of memory at warm-up) |
+| prefill budget | 256 rows (the default; see "Honest gaps") |
+| longest context | **32,768 tokens** (the model's maximum), one sequence: 15.2 s for the 32,760-token prompt + 8 tokens |
+| full batch | 32 sequences × 1,345 tokens at once (95% of the pool): 14.8 s |
+| sequences that fit at a context of | 768: 59 · 2048: 22 · 4096: 11 · 8192: 5 · 32768: 1 |
+
+The bench's c32 server (`--max-model-len 768 --num-blocks 1600`, 25,600 tokens, 6.25 GiB) fits easily. vLLM 0.32.0 on
+the same pod reported 7.76 GiB of KV cache (31,792 tokens, "maximum concurrency 41.4x" at 768 tokens), so **c32 fits
+in bf16 for both engines** and no concurrency had to be lowered.
+
+fp8: the weights take 30.5 GiB, which leaves 47.95 GiB free after load. The probe ran on the first H100 pod before the
+fp8 budget fix, and every reserve ran out of memory at warm-up. Each failure matches the old under-estimate: the budget
+it picked needed about 2× what it reserved. The rerun on the second pod (after the fix) got no output in its 10-minute
+slot, because the cold page cache made the load slow. So the fp8 pool size is not measured. With about 48 GiB free and
+about 10 GiB for the 256-row prefill, roughly 140k tokens should fit. The fp8 smoke test and the fp8 c32 bench server
+both serve after the fix.
+
+## 2. Correctness: top-1 agreement with HF float32
+
+**Method: the one behind the 7B 0.9932** (P4-CUDA-SERVE, `test_7b_bf16_top1_vs_hf_spec`), with the same 8 chat prompts.
+HF in float32 greedily continues each prompt by 128 tokens (`min_new_tokens` = 128). FuseZap bf16 runs each full
+sequence teacher-forced in one forward. Its argmax is compared with the f32 argmax at all 8 × 128 = 1,024 continuation
+positions.
+
+**One change: the f32 reference does not fit one GPU at 32B** (131 GB of f32 weights). The test keeps the linear
+weights in bf16 and widens each one exactly to f32 inside its forward (`_f32_linear`). Embeddings, norms and RoPE are
+float32, so every activation and every GEMM is float32, on the same f32 values HF's f32 model loads (bf16 to f32 is
+exact). It is chosen automatically when 2× the checkpoint exceeds 85% of the GPU (`FZ_TOP1_REF=f32c` forces it). Checks
+that it equals HF f32:
+- Mac CPU, 0.5B: identical greedy continuation and max |Δlogit| = 0.0 against real HF f32.
+- RTX 4090, 0.5B, the full test both ways: fusezap bf16 0.9902, fp8 0.9502, HF bf16 0.9844, per prompt identical under
+  `f32` and `f32c`.
+
+Result on the H100 (`FZ_7B=1 FZ_MODEL7=Qwen/Qwen2.5-32B-Instruct pytest tests/test_serve_cuda.py -k
+top1_vs_hf_spec -s`, 1 passed in 255 s):
+
+| | top-1 vs HF f32 (1,024 positions) | per prompt |
+|---|---:|---|
+| FuseZap bf16 | **0.9941** (6 mismatches) | 0.984 / 0.992 / 1.000 / 0.992 / 1.000 / 1.000 / 0.984 / 1.000 |
+| HF transformers bf16 | 0.9941 | |
+| FuseZap fp8 W8A8 | **0.9746** | 0.922 / 0.984 / 0.992 / 0.969 / 0.992 / 0.992 / 0.961 / 0.984 |
+
+The SPEC §0 bar (≥ 0.99) holds at 32B with a wider margin than at 7B (0.9932, 7 mismatches): 5 more flips would fail it
+(at 7B, 3). FuseZap's bf16 matches HF's own bf16 exactly in score. fp8 is outside the gate. Its 0.9746 is above
+the 0.5B fp8 (0.950).
+
+**Serving smoke** (`-k serves_openai_chat`, the official `openai` client): bf16 was up in 44 s (load 40.0 s, warm-up
+3.1 s) and answered "Paris". The stream returned "...red, green, and blue...". fp8 failed on the first pod (out of
+memory at warm-up, the bug above). After the fix it passed on the second pod: up in 159 s (load and quantize 151.7 s
+from a cold page cache, warm-up 6.5 s), with the same answers.
+
+**CUDA test file**: on the first H100 pod (`FZ_TEST_TIERS=CUDA pytest -n 8 tests/test_serve_cuda.py`, build 2745c5c),
+61 passed and 4 were skipped. On the RTX 4090 with 4 workers, 3 tests ran out of memory because the workers share 24 GB
+(one worker held 13.5 GB). On the H100 the same tests pass.
+
+## 3. Speed: same pod, FuseZap vs vLLM 0.32.0
+
+Per docs/BENCH_METHOD.md, unchanged: gate workload 512 in / 128 out, greedy, `ignore_eos`, 3 repetitions plus a warm-up
+wave, unique prompts, `--max-model-len 768` for both. FuseZap ran a 1-row server for c1 and a 32-row server for c32
+(`--num-blocks 1600`). vLLM ran at its defaults with `VLLM_USE_FLASHINFER_SAMPLER=0`. Both engines ran back to back on
+one pod per pair. `--compare` was VALID for both pairs, with no warnings. The commit printed by `--compare` is the
+measured build. The measured commits 2745c5c and 9170ff2 were rebased onto main before the push, where they are d2b2634
+and 7f75cfe. fusezap/serve, fusezap/device/cuda*, fusezap/jit.py and bench/ are byte-identical; only the parallel NKI
+files differ. At the time of the runs the test switch was named `FZ_BIG_MODEL`; on main it is MODEL2's `FZ_MODEL7`.
+
+**bf16** (pod `<redacted>`, H100 80GB HBM3 SXM, Xeon Platinum 8480+, driver 595.91.07, <redacted>; build 2745c5c):
+
+| point | FuseZap tok/s (3 reps) | vLLM tok/s (3 reps) | ratio | TTFT p50 / p99 ms (FZ · vLLM) | TPOT p50 ms (FZ · vLLM) |
+|---|---|---|---:|---|---|
+| gate/c1 | **31.4** (31.6 / 31.4 / 31.4) | 40.1 (40.1 / 40.1 / 40.1) | **78.3%** | 74.7 / 78.2 · 65.2 / 67.9 | 31.4 · 24.6 |
+| gate/c32 | **476.1** (478.6 / 476.1 / 473.7) | 805.3 (805.3 / 804.5 / 806.9) | **59.1%** | 241.7 / 3533 · 1057 / 1679 | 60.2 · 31.4 |
+
+**fp8 W8A8, both `--quant fp8`** (pod `<redacted>`, H100 80GB HBM3 SXM, Xeon Platinum 8470, <redacted>; build 9170ff2,
+which has the fp8 budget fix):
+
+| point | FuseZap tok/s | vLLM tok/s | ratio | TTFT p50 ms (FZ · vLLM) | TPOT p50 ms (FZ · vLLM) |
+|---|---:|---:|---:|---|---|
+| gate/c1 | 47.4 | 69.8 | 68.0% | 72.2 · 57.5 | 20.6 · 14.0 |
+| gate/c32 | 633.2 | 1216.9 | 52.0% | 310.9 · 823.9 | 46.4 · 20.0 |
+
+Energy (GPU board power over the measured reps): bf16 J/token 16.4 vs 11.8 at c1 and 1.19 vs 0.75 at c32 (FuseZap vs
+vLLM). fp8 J/token 9.9 vs 6.5 at c1 and 0.83 vs 0.48 at c32.
+
+**Reading it.**
+- In bf16 at c1, the 32B ratio (78%) is higher than 7B's (69.6%). At c32 it is 59% vs 7B's 52.8%. Per-token compute
+  is larger at 32B, so FuseZap's fixed per-step overheads matter less.
+- Both 32B pairs pass the SPEC §0 50% bar. The gate itself is defined on 7B bf16, so these are context, not the gate.
+- vLLM's c32 TTFT p50 (1.06 s) is far above FuseZap's (0.24 s), while its TPOT is about half of FuseZap's. vLLM batches
+  more prefill into each step, which costs time to first token but keeps decode rows full. FuseZap's tail is worse:
+  TTFT p99 3.5 s vs 1.7 s (see the prefill budget below).
+- The first bf16 pod also ran the fp8 pair with the old budget. FuseZap c1 gave 46.9 tok/s and vLLM 69.6 / 1223.5,
+  within 1% of the second pod. c32 did not start (the bug). Those numbers are not used.
+
+## GPU spend
+
+**<redacted>** of the <redacted> cap: 5 pods, the docs/gpu_spend.csv rows from 2026-10-21T16:15Z whose job is `jobs-tmp-*`. The
+sum of the `--max-usd` caps passed was <redacted>.
+
+| pod | what ran | cost |
+|---|---|---|
+| RTX 4090 | the f32c reference vs HF f32 on 0.5B, mem_fit on 0.5B, test_serve_cuda | <redacted> |
+| H100 | rsync to the pod failed right after bootstrap (its apt index fetch also returned 503), no work | <redacted> |
+| H100 | the job script was not executable, no work | <redacted> |
+| H100 | download (35 s, 62 GB), memory probe, top-1, smoke, bf16 pair (+ the fp8 pair that hit the bug), test_serve_cuda | <redacted> |
+| H100 | fp8 smoke + fp8 pair after the fix | <redacted> |
+
+After the jobs, `scripts/remote.sh status --all` listed no pod from this package. The two pods it did list belong to
+other jobs (`fz-manual-…` and a `model2-job`).
+
+## Honest gaps
+
+- **Prefill budget is 256 at 32B bf16.** Tracing or capturing a prefill forward keeps every intermediate alive, about
+  18 MiB per row at 32B. After the weights and the KV pool, only the 256-row forward fits (7B on the H100 gets 2048). The
+  c32 wave of 32 × 512 prompt tokens takes 64 prefill steps, which is the 3.5 s TTFT p99. The fix is to free
+  intermediates during capture (the Jit plan already shares them after capture). That is engine work, not a 32B change.
+- **Decode is the gap**, as at 7B. TPOT at c32 is 60.2 ms vs 31.4 ms in bf16, and 46.4 vs 20.0 in fp8.
+- **fp8 pool size not measured** (see Memory). fp8's first load on a cold page cache took 152 s.
+- The 32B pairs ran on two different pods, one pair per pod. Each ratio is same-pod; comparisons between the bf16 and
+  fp8 rows cross pods.
+- The job scripts (`jobs_tmp/*.sh`, untracked, synced to the pod) only call the documented commands. They are not
+  part of the measured build, and `FZ_BENCH_GIT_COMMIT` names the committed build. Raw JSON and logs are under
+  `~/.cache/fusezap/remote/results/20261021-161901-jobs-tmp-h100-sh/` and `.../20261021-170102-jobs-tmp-fp8-sh/` on
+  the machine that ran the jobs. They are not committed.

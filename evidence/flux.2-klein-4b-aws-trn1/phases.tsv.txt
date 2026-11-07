@@ -1,0 +1,6 @@
+env	exit 0	9
+setup	exit 0	247
+neff	exit 0	0
+precompile	exit 0	2
+chip_512	exit 0	195
+chip_1024	exit 0	539

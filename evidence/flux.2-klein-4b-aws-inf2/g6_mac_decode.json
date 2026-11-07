@@ -1,0 +1,27 @@
+{
+ "decoder": "FuseZap VAE, float32, Apple METAL (M5 Max), on latents produced by the transformer on Inferentia2 (W7, 5 Nov 2026)",
+ "bar_G6_psnr_db": 17.0,
+ "cases": [
+  {
+   "size": 512,
+   "prompt": 0,
+   "G6_psnr_db": 43.7,
+   "pass": true,
+   "decode_s": 1.3
+  },
+  {
+   "size": 1024,
+   "prompt": 0,
+   "G6_psnr_db": 35.04,
+   "pass": true,
+   "decode_s": 3.3
+  },
+  {
+   "size": 1024,
+   "prompt": 1,
+   "G6_psnr_db": 35.3,
+   "pass": true,
+   "decode_s": 3.1
+  }
+ ]
+}

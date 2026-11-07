@@ -1,0 +1,43 @@
+================ I96: klein transformer bf16 on inf2.8xlarge <redacted> (Deep Learning AMI Neuron (Ubuntu 24.04) SDK 2.33.0 20261020) ================
+instance-type: inf2.8xlarge
+| NEURON | NEURON |  NEURON  | NEURON |     PCI      |   CPU    | NUMA |
+| 0      | 2      | 0-1      | 32 GB  | 0000:00:1f.0 | 0-31     | -1   |
+venv-nki: nki 0.6.0+31049202112.g85070674 neuronx-cc 2.27.5334.0+f702b353
+NEURON tier up: NEURONDevice neuron-nrt-0.6.0+31049202112.g85070674-2.35.30+d2725ccb NEFF target inf2
+klein at <redacted>/klein-4b
+NEFF target inf2, cache <redacted>/.cache/fusezap/neff
+unpacked 150 NEFF entries from .scratch/i96/neff_inf2.tar
+--- precompile (launches per step, distinct NEFFs, device memory, compile hits / seconds / failures)
+klein step 512^2 bfloat16: 772 launches, 95 distinct NEFFs, 0 copies (recorded in 0.6 s)
+device memory (W3): weights 7.22 GiB, peak in use 7.80 GiB (step transient 0.58 GiB), peak held incl. free list 8.00 GiB; one inf2 core allocates 15.00 GiB (FZ_NEURON_HBM_GB default 15.25)
+compile inf2: 95/95 ok, 95 cache hits, 0 s wall at 8 jobs, 0 s summed, NEFFs 18 MiB
+klein step 1024^2 bfloat16: 772 launches, 95 distinct NEFFs, 0 copies (recorded in 0.6 s)
+device memory (W3): weights 7.22 GiB, peak in use 8.93 GiB (step transient 1.71 GiB), peak held incl. free list 9.84 GiB; one inf2 core allocates 15.00 GiB (FZ_NEURON_HBM_GB default 15.25)
+compile inf2: 95/95 ok, 95 cache hits, 0 s wall at 8 jobs, 0 s summed, NEFFs 70 MiB
+--- on the chip (G3 per step, G4, s/step, launches, HBM)
+transformer bfloat16 on NEURON: loaded in 37.4 s, kmajor=True, {'held_gib': 7.219, 'cached_gib': 0.0, 'peak_gib': 7.219, 'neffs_loaded': 0, 'neff_mib': 0.0, 'neff_compiles': 0, 'neff_hits': 0, 'neff_compile_s': 0.0}
+1024^2 p0 step 0: G3 rel-L2 2.453e-02 (bar 0.151), 45.89 s, 772 launches, {'held_gib': 7.4, 'cached_gib': 0.16, 'peak_gib': 9.148, 'neffs_loaded': 95, 'neff_mib': 69.7, 'neff_compiles': 0, 'neff_hits': 95, 'neff_compile_s': 0.0}
+1024^2 p0 step 1: G3 rel-L2 3.469e-02 (bar 0.151), 28.51 s, 772 launches, {'held_gib': 7.4, 'cached_gib': 0.16, 'peak_gib': 9.148, 'neffs_loaded': 95, 'neff_mib': 69.7, 'neff_compiles': 0, 'neff_hits': 95, 'neff_compile_s': 0.0}
+1024^2 p0 step 2: G3 rel-L2 2.212e-02 (bar 0.151), 28.45 s, 772 launches, {'held_gib': 7.4, 'cached_gib': 0.16, 'peak_gib': 9.148, 'neffs_loaded': 95, 'neff_mib': 69.7, 'neff_compiles': 0, 'neff_hits': 95, 'neff_compile_s': 0.0}
+1024^2 p0 step 3: G3 rel-L2 3.412e-02 (bar 0.151), 28.22 s, 772 launches, {'held_gib': 7.4, 'cached_gib': 0.16, 'peak_gib': 9.148, 'neffs_loaded': 95, 'neff_mib': 69.7, 'neff_compiles': 0, 'neff_hits': 95, 'neff_compile_s': 0.0}
+1024^2 p0: G4 final latent rel-L2 1.015e-01 (bar 0.309), 4 steps 120.3 s
+1024^2 p1 step 0: G3 rel-L2 1.472e-02 (bar 0.151), 28.48 s, 772 launches, {'held_gib': 7.401, 'cached_gib': 0.162, 'peak_gib': 9.15, 'neffs_loaded': 99, 'neff_mib': 69.8, 'neff_compiles': 4, 'neff_hits': 95, 'neff_compile_s': 6.1}
+1024^2 p1 step 1: G3 rel-L2 3.641e-02 (bar 0.151), 28.24 s, 772 launches, {'held_gib': 7.4, 'cached_gib': 0.16, 'peak_gib': 9.15, 'neffs_loaded': 99, 'neff_mib': 69.8, 'neff_compiles': 4, 'neff_hits': 95, 'neff_compile_s': 6.1}
+1024^2 p1 step 2: G3 rel-L2 1.928e-02 (bar 0.151), 28.42 s, 772 launches, {'held_gib': 7.4, 'cached_gib': 0.16, 'peak_gib': 9.15, 'neffs_loaded': 99, 'neff_mib': 69.8, 'neff_compiles': 4, 'neff_hits': 95, 'neff_compile_s': 6.1}
+1024^2 p1 step 3: G3 rel-L2 3.282e-02 (bar 0.151), 28.22 s, 772 launches, {'held_gib': 7.4, 'cached_gib': 0.16, 'peak_gib': 9.15, 'neffs_loaded': 99, 'neff_mib': 69.8, 'neff_compiles': 4, 'neff_hits': 95, 'neff_compile_s': 6.1}
+1024^2 p1: G4 final latent rel-L2 7.765e-02 (bar 0.309), 4 steps 112.1 s
+I96 klein on NEURON bfloat16: PASS (2 cases; worst G3 3.641e-02)
+transformer bfloat16 on NEURON: loaded in 40.7 s, kmajor=True, {'held_gib': 7.219, 'cached_gib': 0.0, 'peak_gib': 7.219, 'neffs_loaded': 0, 'neff_mib': 0.0, 'neff_compiles': 0, 'neff_hits': 0, 'neff_compile_s': 0.0}
+512^2 p0 step 0: G3 rel-L2 1.589e-02 (bar 0.151), 14.1 s, 772 launches, {'held_gib': 7.366, 'cached_gib': 0.13, 'peak_gib': 7.936, 'neffs_loaded': 95, 'neff_mib': 17.6, 'neff_compiles': 0, 'neff_hits': 95, 'neff_compile_s': 0.0}
+512^2 p0 step 1: G3 rel-L2 4.614e-02 (bar 0.151), 8.66 s, 772 launches, {'held_gib': 7.366, 'cached_gib': 0.13, 'peak_gib': 7.936, 'neffs_loaded': 95, 'neff_mib': 17.6, 'neff_compiles': 0, 'neff_hits': 95, 'neff_compile_s': 0.0}
+512^2 p0 step 2: G3 rel-L2 2.278e-02 (bar 0.151), 8.66 s, 772 launches, {'held_gib': 7.366, 'cached_gib': 0.13, 'peak_gib': 7.936, 'neffs_loaded': 95, 'neff_mib': 17.6, 'neff_compiles': 0, 'neff_hits': 95, 'neff_compile_s': 0.0}
+512^2 p0 step 3: G3 rel-L2 2.494e-02 (bar 0.151), 8.56 s, 772 launches, {'held_gib': 7.366, 'cached_gib': 0.13, 'peak_gib': 7.936, 'neffs_loaded': 95, 'neff_mib': 17.6, 'neff_compiles': 0, 'neff_hits': 95, 'neff_compile_s': 0.0}
+512^2 p0: G4 final latent rel-L2 4.852e-02 (bar 0.309), 4 steps 41.4 s
+wall 32 min of 85
+--- phases (name, result, seconds)
+env	exit 0	8
+setup	exit 0	192
+neff	exit 0	0
+precompile	exit 0	3
+chip_512	TIMEOUT after 1200s	1200
+chip_1024	exit 0	515

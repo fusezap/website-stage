@@ -1,0 +1,128 @@
+================ I77 follow-up (pfk2): Qwen2.5-7B bf16 TP=2, prefill sizes by cost, inf2.8xlarge <redacted> (Deep Learning AMI Neuron (Ubuntu 24.04) SDK 2.33.0 20261020) ================
+instance-type: inf2.8xlarge
+| NEURON | NEURON |  NEURON  | NEURON |     PCI      |   CPU    | NUMA |
+| 0      | 2      | 0-1      | 32 GB  | 0000:00:1f.0 | 0-31     | -1   |
+[pfk2_b] fusezap: NEURON HBM after prewarm: held 9.918 GiB of budget 15.250 (peak 11.029): weights+constants 7.142, KV pool 0.055, forwards [decode_4 0.005, prefill_128 1.384, prefill_512 1.103], scorer 0.000, cached free 0.230; NEFFs 64 (82.0 MiB, outside the budget); runtime worker holds 9.918
+[pfk2_v1] fusezap: NEURON HBM after prewarm: held 10.814 GiB of budget 15.250 (peak 11.406): weights+constants 7.113, KV pool 0.055, forwards [decode_4 0.005, prefill_128 3.399], scorer 0.000, cached free 0.243; NEFFs 38 (42.8 MiB, outside the budget); runtime worker holds 10.814
+fusezap: prefill kernels (FZ_NEURON_PREFILL_KERNEL=v2) on, knobs {'banks': 8, 'wn': 4096, 'exp': 'exact', 'evict': 'vector'}
+fusezap: prefill kernels (FZ_NEURON_PREFILL_KERNEL=v2) self-test on rank 0: passed (16.2 s)
+fusezap: prefill kernels (FZ_NEURON_PREFILL_KERNEL=v2) self-test on rank 0: passed (3.2 s)
+fusezap: prefill kernels (FZ_NEURON_PREFILL_KERNEL=v2) self-test on rank 0: passed (5.2 s)
+fusezap: prefill sizes [128, 512] chosen by estimated forward ms {128: 53.0, 512: 195.0} (FZ_NEURON_PREFILL_COST_MS)
+fusezap: prewarm 104.0 s: capture 4.6 s, parallel compile 91.8 s (0 compiled, 28 cache hits, 0 failed; 4 jobs per rank), loads 7.6 s; 8 forwards x prefixes, 0 left lazy
+fusezap: prewarm 318.5 s: capture 17.6 s, parallel compile 293.4 s (8 compiled, 2 cache hits, 0 failed; 4 jobs per rank), loads 7.5 s; 5 forwards x prefixes, 0 left lazy
+fusezap: prewarm 33.3 s: capture 1.9 s, parallel compile 28.6 s (0 compiled, 10 cache hits, 0 failed; 4 jobs per rank), loads 2.8 s; 5 forwards x prefixes, 0 left lazy
+fusezap: prewarm 662.4 s: capture 99.6 s, parallel compile 555.2 s (23 compiled, 5 cache hits, 0 failed; 4 jobs per rank), loads 7.6 s; 8 forwards x prefixes, 0 left lazy
+results/nki_n8_pfk2/fzhttp_pfk2_a.log:fusezap serve 7B bf16 TP=2 ready after 160s (FZ_REQ_TRACE=results/nki_n8_pfk2/trace_pfk2_a)
+results/nki_n8_pfk2/fzhttp_pfk2_a.log:prewarm probe: PASS: every first request within 2.0x its steady TTFT + 50.0 ms
+results/nki_n8_pfk2/fzhttp_pfk2_b.log:fusezap serve 7B bf16 TP=2 ready after 230s (FZ_REQ_TRACE=results/nki_n8_pfk2/trace_pfk2_b FZ_NEURON_PREFILL_SIZES=128,512)
+results/nki_n8_pfk2/fzhttp_pfk2_b.log:prewarm probe: PASS: every first request within 2.0x its steady TTFT + 50.0 ms
+--- bf16 accuracy, served config (a) (its own bar)
+==== bf16 correctness bar (Qwen/Qwen2.5-7B-Instruct): top-1 >= 0.98 (teacher-forced), greedy exact >= 0.7 (per-model default (qwen2.5-7b*, reduced): Qwen2.5-7B bf16 vs float32: 0.79 in the V0 proof run (vLLM 0.32.0))
+fusezap_bf16_inprocess       vs f32 reference: greedy exact 23/24 = 0.958 (bar >= 0.7), 1462/1486 tokens before the first difference
+aws_bf16_nxdi                vs f32 reference: greedy exact 8/12 = 0.667 (bar >= 0.7), 311/366 tokens before the first difference
+fusezap_bf16_http            validate accuracy: {'method': 'logprobs', 'top1_agreement': 0.9987, 'greedy_exact_match_mean': 0.9668, 'logprob_abs_diff_mean': 0.00198}
+fusezap bf16 vs aws_bf16_nxdi        token by token: 1/12 prompts identical, mean common prefix 26.0 of ~32 tokens
+bf16 bar: greedy PASS, http top-1 PASS, greedy vs AWS bf16 (>= -0.05) PASS
+--- bf16 accuracy, served config (b) (its own bar)
+==== bf16 correctness bar (Qwen/Qwen2.5-7B-Instruct): top-1 >= 0.98 (teacher-forced), greedy exact >= 0.7 (per-model default (qwen2.5-7b*, reduced): Qwen2.5-7B bf16 vs float32: 0.79 in the V0 proof run (vLLM 0.32.0))
+fusezap_bf16_inprocess       vs f32 reference: greedy exact 23/24 = 0.958 (bar >= 0.7), 1462/1486 tokens before the first difference
+aws_bf16_nxdi                vs f32 reference: greedy exact 8/12 = 0.667 (bar >= 0.7), 311/366 tokens before the first difference
+fusezap_bf16_http            validate accuracy: {'method': 'logprobs', 'top1_agreement': 0.9987, 'greedy_exact_match_mean': 0.9668, 'logprob_abs_diff_mean': 0.00198}
+fusezap bf16 vs aws_bf16_nxdi        token by token: 1/12 prompts identical, mean common prefix 26.0 of ~32 tokens
+bf16 bar: greedy PASS, http top-1 PASS, greedy vs AWS bf16 (>= -0.05) PASS
+--- served (fusezap serve --tp 2; Validate perf; a = main's defaults, 128-row prefill; b = 128,512 chosen by cost; ms)
+config profile  conc  TTFT p50  TTFT p99  TPOT p50   tok/s errors
+a      p200        1     110.9     112.7      39.2    24.7      0
+a      p200        4     302.1     505.1      42.7    83.9      0
+a      p512        1     226.6     229.1      38.4    24.2      0
+a      short       1      54.7      54.9      38.9    25.6      0
+a      short       4     141.5     237.9      39.7    98.7      0
+a      short40     1      54.1      61.5      38.9    25.6      0
+a      short40     4      86.4     114.8      39.3   100.7      0
+b      p200        1     109.7     113.1      38.4    25.1      0
+b      p200        4     296.2     494.7      42.4    84.5      0
+b      p512        1     199.3     200.6      38.6    24.3      0
+b      short       1      55.4      57.4      38.8    25.7      0
+b      short       4     141.9     230.3      39.5    99.3      0
+b      short40     1      55.1      55.5      38.7    25.8      0
+b      short40     4      87.4     114.4      39.0   101.5      0
+  (a) short c1 TTFT p99 54.942 vs I75 confirm 92.7; c1 TTFT p50 54.679 vs NxDI 50.6; TPOT c1 38.894 vs NxDI 40.6; c4 98.69 tok/s vs NxDI 81.7
+  (b) short c1 TTFT p99 57.423 vs I75 confirm 92.7; c1 TTFT p50 55.358 vs NxDI 50.6; TPOT c1 38.79 vs NxDI 40.6; c4 99.28 tok/s vs NxDI 81.7
+--- in process (b): each prefill forward at each pool prefix, wall to the token (min of the replays, ms)
+  128@128    49.34 ms (128 tokens, 49.3 ms per 128 rows)
+  128@256    52.3 ms (128 tokens, 52.3 ms per 128 rows)
+  128@512    57.78 ms (128 tokens, 57.8 ms per 128 rows)
+  128@1024   69.34 ms (128 tokens, 69.3 ms per 128 rows)
+  512@256    172.63 ms (256 tokens, 43.2 ms per 128 rows)
+  512@512    193.56 ms (512 tokens, 48.4 ms per 128 rows)
+  512@1024   239.78 ms (512 tokens, 59.9 ms per 128 rows)
+  cost table in effect {'128': 53.0, '512': 195.0}; measured: FZ_NEURON_PREFILL_COST_MS=128:52,512:194
+  TTFT in process, 40-token prompts: c1 p50 51.73 / p99 52.54, c4 burst p50 55.52 / p99 119.73
+  TTFT in process, 128-token prompts: c1 p50 50.6 / p99 51.26, c4 burst p50 136.79 / p99 227.61
+  TTFT in process, 200-token prompts: c1 p50 104.98 / p99 106.95, c4 burst p50 281.09 / p99 501.61
+  TTFT in process, 512-token prompts: c1 p50 194.97 / p99 197.33, c4 burst p50 673.23 / p99 1392.3
+  greedy 23/24 (1462/1486 tokens); TPOT c1 38.83 c4 38.98 ms
+--- chunk check: each prompt alone, the forwards per schedule, TTFT (ms per rep) and the last prompt token's logits bits
+   200 tokens (b) auto : forwards [128, 128], TTFT [109.18, 107.35], logits 4af8dc1a87049c0b (stable True)
+   200 tokens (b) small: forwards [128, 128], TTFT [107.77, 106.91], logits 4af8dc1a87049c0b (stable True)
+   200 tokens (b) large: forwards [512], TTFT [176.7, 177.63], logits 4af8dc1a87049c0b (stable True)
+   200 tokens v1      : forwards [128, 128], TTFT [177.65, 177.73], logits 4af8dc1a87049c0b
+   200 tokens: bits equal across b/auto, b/small, b/large, v1: True
+   400 tokens (b) auto : forwards [512], TTFT [198.04, 199.57], logits 3873d6458abab1fc (stable True)
+   400 tokens (b) small: forwards [128, 128, 128, 128], TTFT [226.02, 226.72], logits 3873d6458abab1fc (stable True)
+   400 tokens (b) large: forwards [512], TTFT [197.33, 195.89], logits 3873d6458abab1fc (stable True)
+   400 tokens v1      : forwards [128, 128, 128, 128], TTFT [362.79, 374.15], logits 3873d6458abab1fc
+   400 tokens: bits equal across b/auto, b/small, b/large, v1: True
+   512 tokens (b) auto : forwards [512], TTFT [198.19, 198.16], logits 95b91552d9ea4918 (stable True)
+   512 tokens (b) small: forwards [128, 128, 128, 128], TTFT [223.9, 227.76], logits 95b91552d9ea4918 (stable True)
+   512 tokens (b) large: forwards [512], TTFT [198.34, 199.49], logits 95b91552d9ea4918 (stable True)
+   512 tokens v1      : forwards [128, 128, 128, 128], TTFT [363.48, 362.86], logits 95b91552d9ea4918
+   512 tokens: bits equal across b/auto, b/small, b/large, v1: True
+--- recommendation checks: short c1 TTFT p99 <= a + 3: True; p200 c1 TTFT p50 <= a + 5: True; a gain: short c4 TTFT p99 <= 0.95 a or p512 c1 TTFT p50 <= 0.9 a: True; TPOT p50 <= a + 1.0 everywhere: True; tok/s >= 0.97 a everywhere: True; no request errors: True; bits equal where checked: True; bf16 accuracy bar (b): True
+I77 follow-up: FZ_NEURON_PREFILL_SIZES=128,512 (cost-chosen) as the default: RECOMMEND; set FZ_NEURON_PREFILL_COST_MS=128:52,512:194 (measured) if it differs from the table in effect
+wall 47 min of 60
+--- phases (name, result, seconds)
+env	exit 0	7
+setup	exit 0	243
+fz_pfk2_b	exit 0	760
+pfk_bench	exit 0	182
+fzhttp_pfk2_a	exit 0	702
+fzhttp_pfk2_b	exit 0	494
+fz_pfk2_v1	exit 0	443
+venv-nki: nki 0.6.0+31049202112.g85070674 neuronx-cc 2.27.5334.0+f702b353
+venv-nrt: nrtpy 2.35.30+d2725ccb numpy 2.5.4
+http stack: uvicorn 0.54.0 starlette 1.8.0
+NEURON tier up: NEURONDevice neuron-nrt-0.6.0+31049202112.g85070674-2.35.30+d2725ccb NEFF target inf2
+/opt/aws_neuronx_venv_jax_0_10: jax-0.10.0 neuronx_cc-2.28.7631.0+8f7b0cf5 
+/opt/aws_neuronx_venv_pytorch_inference_vllm_0_29_0_1_2_0: neuronx_cc-2.28.7631.0+8f7b0cf5 torch-2.13.0 transformers-5.17.0 vllm-0.29.0 vllm_neuron-0.29.0.1.2.0 
+/opt/aws_neuronx_venv_pytorch_inference_vllm_omni_0_29_0_0_2_0: neuronx_cc-2.28.7631.0+8f7b0cf5 torch-2.13.0 transformers-5.14.1 vllm-0.29.0 vllm_neuron-0.29.0.1.2.0 
+/opt/aws_neuronx_venv_torch_neuronx_2_14_0: neuronx_cc-2.28.7631.0+8f7b0cf5 torch-2.14.0 torch_neuronx-2.14.3.0.1+b1b6c66 
+--- FuseZap in process (scripts/nki_n6_serve.py, prewarmed)
+[pfk2_b] device NEURON  switches {'FZ_NEURON_DTYPE': 'bf16', 'FZ_NEURON_CTX': '0', 'FZ_NEURON_HEAD': 'v3', 'FZ_NEURON_LAYER': 'v2', 'FZ_NEURON_LAYER_HEADS': 'stack', 'FZ_NEURON_LAYER_EARLY': '1', 'FZ_NEURON_LAYER_TILE': '1', 'FZ_NEURON_PREFILL_SIZES': '128,512
+[pfk2_b] c1 TTFT 0.051 s  TPOT median 38.83 ms (p10 38.65, p90 39.35)  first steps [0.04, 0.039, 0.039] s  greedy prefix 16/16  worker {'write': 64, 'read': 16, 'exec': 16, 'load': 0, 'batches': 16, 'ar': 0}
+[pfk2_b] c4 TPOT median 38.98 ms, 102.6 tok/s decoding (11 steps)
+[pfk2_b] TTFT in process (prompts 40): c1 p50 51.73 p99 52.54 ms (4 prompts); c4 burst p50 55.52 p99 119.73 ms (8 requests: [54.95, 54.95, 54.95, 109.28, 55.52, 55.52, 55.52, 120.52])
+[pfk2_b] TTFT in process (prompts 128): c1 p50 50.6 p99 51.26 ms (4 prompts); c4 burst p50 136.79 p99 227.61 ms (8 requests: [51.97, 106.97, 167.55, 227.8, 51.52, 106.23, 166.61, 225.04])
+[pfk2_b] TTFT in process (prompts 200): c1 p50 104.98 p99 106.95 ms (4 prompts); c4 burst p50 281.09 p99 501.61 ms (8 requests: [110.64, 250.78, 322.13, 502.32, 112.82, 241.27, 311.39, 492.25])
+[pfk2_b] TTFT in process (prompts 512): c1 p50 194.97 p99 197.33 ms (4 prompts); c4 burst p50 673.23 p99 1392.3 ms (8 requests: [194.52, 437.63, 917.16, 1392.74, 195.03, 435.54, 908.83, 1386.54])
+[pfk2_b] chunk check 200 tokens [auto]: forwards [128, 128], TTFT [109.18, 107.35] ms, logits 4af8dc1a87049c0b (stable True)
+[pfk2_b] chunk check 200 tokens [small]: forwards [128, 128], TTFT [107.77, 106.91] ms, logits 4af8dc1a87049c0b (stable True)
+[pfk2_b] chunk check 200 tokens [large]: forwards [512], TTFT [176.7, 177.63] ms, logits 4af8dc1a87049c0b (stable True)
+[pfk2_b] greedy 23/24 prompts exact, 1462/1486 tokens (15.3 s)
+[pfk2_b] neff {'compiles': 36, 'hits': 50, 'compile_s': 1388.578580731}; runtime worker calls {'write': 3786, 'read': 883, 'exec': 4026, 'load': 64, 'batches': 1032, 'ar': 73}
+[pfk2_v1] device NEURON  switches {'FZ_NEURON_DTYPE': 'bf16', 'FZ_NEURON_CTX': '0', 'FZ_NEURON_HEAD': 'v3', 'FZ_NEURON_LAYER': 'v2', 'FZ_NEURON_LAYER_HEADS': 'stack', 'FZ_NEURON_LAYER_EARLY': '1', 'FZ_NEURON_LAYER_TILE': '1', 'FZ_NEURON_PREFILL_KERNEL': 'v1'} 
+[pfk2_v1] c1 TTFT 0.088 s  TPOT median 38.95 ms (p10 38.73, p90 38.96)  first steps [0.04, 0.04, 0.039] s  greedy prefix 8/8  worker {'write': 32, 'read': 8, 'exec': 8, 'load': 0, 'batches': 8, 'ar': 0}
+[pfk2_v1] chunk check 200 tokens [auto]: forwards [128, 128], TTFT [177.65, 177.73] ms, logits 4af8dc1a87049c0b (stable True)
+[pfk2_v1] neff {'compiles': 5, 'hits': 38, 'compile_s': 998.2248783519999}; runtime worker calls {'write': 768, 'read': 136, 'exec': 3040, 'load': 38, 'batches': 252, 'ar': 73}
+--- fusezap serve: fusezap serve 7B bf16 TP=2 ready after 160s (FZ_REQ_TRACE=results/nki_n8_pfk2/trace_pfk2_a) fusezap serve 7B bf16 TP=2 ready after 230s (FZ_REQ_TRACE=results/nki_n8_pfk2/trace_pfk2_b FZ_NEURON_PREFILL_SIZES=128,512) 
+--- AWS library: servers
+--- FuseZap vs AWS (same instance; workload short: 128 in / 128 out, greedy; TPOT/TTFT p50 ms; tok/s = output tokens/s)
+system                                       source         dtype     par      TPOT c1  TTFT c1 tok/s c1  TPOT c4 tok/s c4  accuracy vs f32 ref
+FuseZap pfk2_b                               in process     bfloat16  TP=2       38.83     51.0        -    38.98    102.6  greedy 23/24 prompts, 1462/1486 tokens
+FuseZap pfk2_v1                              in process     bfloat16  TP=2       38.95     88.0        -        -        -  -
+FuseZap tp2_bf16_7b_pfk2_a                   HTTP validate  bfloat16  TP=2      38.894   54.679    25.64   39.726    98.69  logprobs: greedy exact 0.9668 (59.83 tok/prompt), top-1 0.9987, |dlogprob| 0.00198
+FuseZap tp2_bf16_7b_pfk2_a_long              HTTP validate  bfloat16  TP=2      38.391  226.563    24.18        -        -  -
+FuseZap tp2_bf16_7b_pfk2_b                   HTTP validate  bfloat16  TP=2       38.79   55.358    25.71   39.484    99.28  logprobs: greedy exact 0.9668 (59.83 tok/prompt), top-1 0.9987, |dlogprob| 0.00198
+FuseZap tp2_bf16_7b_pfk2_b_long              HTTP validate  bfloat16  TP=2      38.614  199.311     24.3        -        -  -
+AWS NxDI offline tp2_bf16                    NxDI generate  bfloat16  TP=2      40.601   50.616    24.58   48.947    81.72  greedy 8/12 prompts, 311/366 tokens

@@ -1,0 +1,285 @@
+# I96: FLUX.2 [klein] 4B on the NEURON backend (Inferentia2, Trainium1): scope
+
+Date: 2026-11-04. Branch `i96-diffusion-neuron-scope` (from `diff-merge` 2cfc420). Desk work only: no AWS, RunPod or
+GPU job ran. Evidence: the code (cited file:line) and a new probe, `scripts/i96_probe.py`, run on the Mac (NKISHIM tier).
+
+## 0. Summary
+
+- The klein transformer already lowers on NEURON. Nothing in one 1024² step fails to render. The probe found 665
+  kernel launches per step in float32, 164 of them distinct, and 0 failures.
+- Three things are slow or heavy today, and each is a small model-side change:
+  1. In bf16, attention misses the flash kernel and builds the full 4608 × 4608 score matrix (1.9 GiB per head set).
+  2. In bf16, every linear casts its weight to a float32 copy first, then runs the float32 matmul.
+  3. In float32, the two output projections of each double block miss the matmul pattern and run as a VectorE GEMM.
+- The Qwen3 text encoder does not run on NEURON. `Llama` refuses q/k RMSNorm on a NEURON tier.
+- The VAE lowers, but at 1024² its im2col buffers reach 9 GiB. It should run on the host CPU first.
+- A first chip run within ~<redacted> on inf2 and ~<redacted> on trn1 is realistic **only if** the NEFFs are compiled on a cheap
+  CPU pod first. The biggest unknown is compile time: one step has kernels with up to 46,656 unrolled `nc_matmul`s.
+- The first run should prove one thing: the transformer's velocity at each of the 4 steps, teacher-forced, against
+  the float32 reference that already exists on the Mac. Not a fast image.
+
+## 1. How NEURON runs a model today (verified from code)
+
+There are two layers. klein can only use the first.
+
+1. **Generic lowering of the lazy graph.** Any Tensor graph is scheduled as usual. Each kernel is rendered by
+   `fusezap/codegen/nki.py` (elementwise and reduce ops on VectorE / ScalarE / GpSimd; supported ops and limits at
+   nki.py:16-34). The scheduler hook turns two patterns into hand-written TensorE kernels:
+   `matmul` and `attention` / `attention_mask` (offered at fusezap/device/neuron.py:706-710; rendered by
+   `nki_kernels.render_matmul` nki_kernels.py:76 and `render_attention` :185). Each kernel is one NEFF, compiled once
+   per (source, sizes) and cached on disk (neuron.py:164-236). Eager code launches one NEFF per schedule item. Under
+   `fz.jit`, `fuse_schedule` can merge items between fences into one NEFF (neuron.py:842).
+   A kernel the renderer cannot lower raises `NKIUnsupported`; nothing falls back to another device (neuron.py:33).
+2. **Hand-written per-model kernels.** Llama-family decode uses its own NKI kernels: a whole decoder layer as one
+   kernel (`LayerSpec`, nki_kernels.py:723, `render_layer` :1003), the head (`HeadSpec` :539), RMSNorm, the KV write,
+   bf16 variants (`fusezap/codegen/nki_bf16.py`). `Llama` picks them itself (llama.py:303-313, :354-360,
+   fusezap/serve/neuron_kv.py). Qwen2.5-0.5B/7B and Llama-3.1-8B reached their speed through these. None of them
+   apply to the FLUX.2 transformer or the VAE.
+
+Two limits matter for klein:
+- The matmul and attention patterns accept **float32 only** (fusezap/schedule.py:386, :388, :450, :495;
+  nki_kernels.py:22).
+- A pattern operand must be **one plain strided view** (`_sview`, schedule.py:362-367). A permuted-then-reshaped
+  tensor is two views, so it is not matched.
+
+## 2. Each piece of the klein pipeline on NEURON
+
+Probe: `PYTHONPATH=. python scripts/i96_probe.py`. Part A builds each piece at klein's real 1024² shapes (4096 image
++ 512 text tokens = 4608) over unallocated device buffers, schedules it, and renders every item as NEURONDevice
+would. Part B runs tiny models on NKISHIM (the numpy model of nki 0.6) against CPU. Run on the Mac: under 2 minutes,
+almost no memory. "Renders" means the NKI source is produced. It does not yet mean neuronx-cc compiles it (that
+needs Linux x86_64; work item W4).
+
+**Transformer (fusezap/serve/models/flux2.py), one 1024² step:**
+
+| Piece | Code | float32 today | bf16 today |
+|---|---|---|---|
+| Timestep embedding (sin/cos, 2 linears) + 3 shared modulations | flux2.py:227-251 | Runs: TensorE matmul + generic kernels (SIN has range reduction, nki.py:565) | Runs, plus weight casts |
+| x / context embedders | flux2.py:253-254 | Runs (TensorE) | Runs, plus casts |
+| LayerNorm + modulate (adaLN) | flux2.py:160, :194 | Runs (generic, 3 kernels) | Runs |
+| q/k/v and FF linears | flux2.py:159, :196, :208 | Runs (TensorE `fz_matmul`) | Runs, but each weight is first cast to a float32 copy, then the float32 matmul (TensorE at 1/4 rate) |
+| Output projections `to_out.0` / `to_add_out` on the attention output | flux2.py:183-184, :204-205 | **Falls back** to a VectorE GEMM (10 per step): the input is a permute view, so `_sview` rejects it. A `.contiguous()` fixes it (checked) | Matched (the cast makes it contiguous) |
+| Per-head q/k RMSNorm | flux2.py:161-164 | Runs (generic) | Runs |
+| 4-axis interleaved RoPE | flux2.py:168-176 (tables on host :63-72) | Runs (generic, 3 kernels) | Runs |
+| Joint attention, 24 heads × 4608 × 128, no mask | flux2.py:85-94, :180-184 | Runs: the flash kernel `fz_attention` (no score matrix) | **Falls back** to composed attention: two float32 matmuls + softmax kernels on a 24 × 4608 × 4608 float32 score tensor (1.9 GiB). Cause: `sdpa` casts to float32 only on METAL (flux2.py:92) |
+| SwiGLU | flux2.py:165-167 | Runs (generic) | Runs |
+| Single block (fused qkv+MLP-in, 3072 → 27648) | flux2.py:214-225 | Runs | Runs, plus casts |
+| Output norm + `proj_out` | flux2.py:262-264 | Runs | Runs |
+| **Whole step** (5 double + 20 single blocks) | flux2.py:244-264 | **665 launches, 164 distinct kernels, 124 TensorE, 10 VectorE GEMMs, 0 failures** | **940 launches, 185 distinct, no flash attention, 0 failures** |
+| Sampler: σ schedule, μ shift | flux2_klein.py:34-50 | Host numpy, unchanged | same |
+| Euler update x += dt·v | flux2_klein.py:119 | Runs (1 generic kernel) | same |
+
+**VAE decoder (fusezap/serve/models/flux2_vae.py) at 1024²:**
+
+| Piece | Code | NEURON today |
+|---|---|---|
+| conv2d 3×3 and 1×1 | flux2_vae.py:97 → tensor.py:746-786 | Runs as im2col (8 copy kernels) + one TensorE matmul. There is **no conv kernel on NEURON**: the `conv` pattern (schedule.py:553, :624) is offered only by METAL (metal.py:439). Largest im2col: 256 ch × 9 × 1024² float32 = **9.0 GiB** (upsampler conv and up-block 3's first conv) |
+| GroupNorm(32) + SiLU | flux2_vae.py:98 → tensor.py:787-809 | Runs (10 generic kernels, two-level sums) |
+| Nearest 2× upsample | tensor.py:810-838 | Runs: a view, folded into the next conv's copy (0 kernels of its own) |
+| Mid-block attention, 1 head × 16384 × 512 | flux2_vae.py:106-113 | float32: `fz_attention` renders with D = Dv = 512 (4 D-chunks). SBUF fit is not compiled yet. bf16: composed (16384² scores = 1 GiB) |
+| BN denormalize + unpatchify | flux2_vae.py:136-145 | Runs (1 kernel) |
+
+**Text encoder (fusezap/serve/models/text_encoder.py):** **missing on NEURON.** It is a `Llama` with a Qwen3 config,
+and `Llama.__init__` raises `NotImplementedError("q/k RMSNorm (Qwen3) is not in the NEURON kernels yet")` on any
+NEURON tier (llama.py:223-224). The probe confirms it on NKISHIM. The Llama NEURON path is also built for decode with
+a KV cache; `encode()` (hidden states 9/18/27 over 512 tokens) has never run there.
+
+**Tiny numerics on NKISHIM vs CPU (probe part B):** transformer float32 max rel err 6.0e-7; bf16 1.9e-3 (vs CPU bf16);
+VAE float32 1.6e-6. So the generic lowering computes the right thing at small shapes. Real shapes are W2.
+
+## 3. Memory plan, 1024², inf2.8xlarge (2 cores × 16 GiB; trn1.2xlarge the same)
+
+Measured limit: one runtime worker allocates **15.00 GiB** on core 0 (I69 7B run 1, branch nki-n7-results,
+docs/status/nki-7b-inf2-run1). FuseZap's budget default is 15.25 GiB (neuron.py:298-302).
+
+| Component | Params | float32 | bf16 | Where it should run first |
+|---|---|---|---|---|
+| Transformer | 3.876 B (from the checkpoint) | 14.44 GiB: does not fit with activations | **7.22 GiB** | Core 0, bf16 weights |
+| Transformer activations, one step, eager, per-block `cut` | | ~1.5 GiB peak [est]: single block's 4608 × 27648 projection is 486 MiB, the float32 weight copy up to 324 MiB | same | Core 0 |
+| Score matrix if attention is not flash | | 1.9 GiB per tensor, 2-3 live | | Avoid (W1) |
+| NEFF code, 164-185 NEFFs | | unknown; Qwen's was 0.11 GiB | | Measure in W4 |
+| Qwen3 encoder, layers 0-26 + embedding | 2.72 B + 0.39 B | 11.6 GiB | 5.8 GiB | **Host CPU** (it cannot run on NEURON today) |
+| VAE decoder | 49.6 M | 0.18 GiB weights, but ~11-12 GiB peak at 1024² (9.0 GiB im2col + 1 GiB activations) | | **Host CPU** |
+
+Core 0 total for the transformer in bf16: about 7.2 + 1.5 + NEFFs ≈ 9-10 GiB, under 15.0. In float32 it does not fit.
+
+Encoder and VAE on the host first: yes.
+- The inf2.8xlarge host has 123 GiB RAM and 32 vCPU (env.log of the 7B run). The float32 encoder is ~3 TFLOP per
+  prompt. The interim `HFQwen3PromptEncoder` (torch on CPU, flux2_klein.py:162-189) already exists. FuseZap's VAE runs on its CPU
+  device too (the tiny VAE tests and this probe run it there; 1024² speed on CPU is unmeasured).
+- trn1.2xlarge has 8 vCPU and 32 GiB RAM. It holds the encoder in float32, but slowly.
+- For the first run neither is needed. The Mac already has diffusers' float32 CPU reference at 1024²
+  (`<redacted>/ne-diff-merge/results/diff/cpu_f32/`: prompt embeddings, the noise, `x` (5 latents) and `v`
+  (4 velocities) for 8 prompts, ~18 MB per case). The job uploads those.
+- Later, core 1 is free: the encoder (needs Qwen3 q/k norm in the NEURON Llama path) or the VAE (needs an NKI conv
+  kernel) could move there, one process per core as in `fusezap/serve/neuron_tp.py`.
+
+## 4. Work items before and for the chip
+
+Sizes: S ≤ 0.5 day, M ≤ 2 days, L more. Spend is the most each may cost.
+
+| # | Task | Done when | Size | Spend |
+|---|---|---|---|---|
+| W1 | NEURON routing in flux2.py: (a) `sdpa` casts q/k/v to float32 on NEURON too (flux2.py:92); (b) `.contiguous()` on the attention output before `to_out` / `to_add_out` (flux2.py:183-184); (c) on NEURON, linears take bf16 K-major weights through `neuron_kv.matmul_bf16` (neuron_kv.py:421), as `Llama.linear` does (llama.py:354-360) | The probe shows, in bf16: flash attention in every block, 0 VectorE GEMMs, no per-call weight casts. Tiny NKISHIM vs CPU within G1's bf16 tolerance | S | <redacted> (Mac) |
+| W2 | NKISHIM numerics at real shapes | One real double block and one real single block (klein weights, 1024², S = 4608) on NKISHIM vs CPU float32, float32 rel-L2 ≤ 1e-5, bf16 within the bar; plus the full tiny pipeline as a test file (`tests/test_flux2_neuron.py`) | M | <redacted> (Mac; numpy is slow, hours of wall time) |
+| W3 | HBM accounting | Peak device bytes of one 1024² step with bf16 weights on NKISHIM (as `scripts/nki_hbm_account.py` does for Llama), under 14 GiB with NEFFs excluded | S | <redacted> |
+| W4 | Compile every kernel of one step for inf2 and trn1 | On a Linux CPU pod with `scripts/nki_env.sh --cc` (nki 0.6.0, neuronx-cc 2.27, the DLAMI's pins): all distinct kernels of one 512² and one 1024² step (after W1), plus the VAE mid attention at D = 512, compiled to NEFFs. Record seconds, NEFF sizes and failures (SBUF/PSUM, instruction count). Also run them in NKISIM at 512². Keep the NEFF cache as a tarball | M | ~<redacted>-3 CPU pod |
+| W5 | Only if W4 shows very long compiles or failures for the big matmuls (up to 46,656 unrolled `nc_matmul` per kernel: 4608 × 27648 × 3072) | Split such matmuls into row or column blocks, each a smaller NEFF that is reused across blocks; recompile in W4's pod | M | ~<redacted> |
+| W6 | Job script `scripts/nki_klein_inf2.sh` (trn1 via `FZ_NEURON_TARGET` / instance type) | One command through `scripts/aws_remote.sh`, with a Monitor and a hard stop (2 h inf2, 2.5 h trn1). Phases: host check; unpack the NEFF cache; download the transformer only (7.2 GB); load bf16 weights to core 0; G3 teacher-forced at 512² then 1024² for 2 prompts (fed the reference `x[k]`, compared on `v[k]`); then a free-running 4-step latent (G4); VAE on the host CPU to a PNG if time is left; logs and a summary JSON | S | <redacted> |
+| W7 | First inf2.8xlarge run | W6's G3 passes: velocity rel-L2 vs float32 reference within the bf16 bar (≤ 1.5 × diffusers-bf16's, I82 §4) at every step, on 2 prompts, at 1024². Report s/step, launches, peak HBM, compile hits | M | **≤ <redacted>** |
+| W8 | First trn1.2xlarge run | The same script and gate with trn1 NEFFs from W4 | S | **≤ <redacted>** |
+
+Later, not in this budget: Qwen3 q/k norm and `encode()` on the NEURON Llama path (llama.py:223); an NKI
+implicit-GEMM conv kernel for the VAE; fusion (`fz.jit` + `fuse_schedule`) and a bf16 TensorE path for speed; an AWS
+baseline.
+
+## 4b. Done on the Mac (2026-11-04/05): W1, W2, W3, W6
+
+All free. No AWS, RunPod or GPU job ran.
+
+**W1, routing (fusezap/serve/models/flux2.py).** Each change applies only on a NEURON tier (NEURON, NKISHIM, NKISIM).
+METAL and CPU take the same code paths as before.
+- `sdpa` casts bf16 q/k/v to float32 on NEURON as it does on METAL, so the flash kernel takes klein's attention.
+- `_attn` makes the attention output contiguous on NEURON, so `to_out` / `to_add_out` reach the TensorE matmul.
+- With bf16 weights on NEURON, every 2-D weight is stored K-major (relaid on the host at load) and `_lin` calls
+  `neuron_kv.matmul_bf16` (bf16 operands, float32 accumulation). No float32 weight copy is made.
+  `FZ_KLEIN_NEURON_BF16MM=0` turns this off.
+- Probe after W1 (docs/diff/i96_probe.txt), one 1024² step: float32 has 660 launches, 0 VectorE GEMMs (10 before).
+  bf16 has 726 launches, 0 VectorE GEMMs, flash attention in every block, and MatmulBF16 for every linear. Before W1,
+  bf16 had 940 launches, no flash attention and a float32 copy of each weight.
+- Tests: the diffusion test files on the default tiers (interp, NPY, CPU, METAL) give 50 passed. The same files on
+  NKISHIM give 21 passed. The new `tests/test_flux2_neuron.py` gives 5 passed: tiny model in f32 and bf16 vs CPU,
+  kernel routing checks, and a check that METAL/CPU are untouched.
+- METAL bf16, 512², prompt 0, with real weights (`scripts/i96_klein_chip.py --device METAL`): G3 worst 4.6e-2 and G4 5.1e-2,
+  against bars of 0.151 and 0.309.
+
+**W2, real shapes on NKISHIM (`scripts/i96_w2_blocks.py`).** Real klein weights for double block 0 and single block 0.
+Inputs are the reference's x_0 and prompt-0 embeddings. Each stage is compared with CPU float32 (rel-L2).
+
+| 512² (S = 1536) | float32 (bar 1e-5) | bf16 NKISHIM | bf16 CPU (bar: 1.5x this) |
+|---|---|---|---|
+| modulation | 8.8e-7 | 1.71e-3 | 1.71e-3 |
+| x / context embedder | 1.3e-7 / 1.9e-6 | 2.36e-3 / 1.73e-3 | 2.36e-3 / 1.73e-3 |
+| double block 0, image / text | 1.9e-6 / 1.5e-6 | 5.3e-3 / 3.3e-3 | 9.7e-3 / 3.5e-3 |
+| single block 0 | 2.5e-6 | 5.3e-3 | 6.8e-3 |
+
+All 512² stages pass. NKISHIM takes ~50 s per block, and the whole run took 46 min.
+At **1024² (S = 4608), float32**, every stage passes as well: modulation 8.8e-7, embedders 1.3e-7 / 1.9e-6, double block
+0 image / text 3.9e-6 / 1.5e-6, single block 0 4.4e-6. NKISHIM takes ~280 s per block. **1024² bf16 passes too**
+(docs/diff/i96_w2_1024.json). NKISHIM vs CPU float32: double block 0 image / text 5.9e-3 / 3.2e-3, single block 0
+7.0e-3. CPU bf16's own distances are 1.09e-2 / 3.4e-3 / 1.0e-2.
+
+**W3, device memory (`scripts/i96_dry_step.py`).** This runs one eager step exactly as the pipeline does: real shapes,
+unallocated weights, and the device's `run` replaced by a recorder. The allocator still sizes every buffer.
+
+| Step, bf16 (W1) | launches | distinct NEFFs | weights | peak in use | + free list |
+|---|---|---|---|---|---|
+| 512² | 772 | 95 | 7.22 GiB | 7.80 GiB | 8.00 GiB |
+| 1024² | 772 | 95 | 7.22 GiB | **8.93 GiB** | 9.84 GiB (NeuronAllocator caps its list at 256 MiB) |
+
+One inf2 core allocates 15.00 GiB, which leaves ~6 GiB for NEFF code (unmeasured) and the runtime. Eager runs reuse
+one NEFF per kernel shape across the 25 blocks, so a size has 95 NEFFs (the probe's count of 169 came from one big
+lazy graph).
+
+**W6, job scripts** (not run):
+- `scripts/i96_stage.sh` (Mac): copies the refs (2 prompts, 110 MB) and any fetched NEFF tarball into
+  `.scratch/i96/`, which the runners rsync.
+- `scripts/nki_klein_neff_pod.sh` (W4, RunPod CPU pod): `scripts/nki_env.sh --cc`, then
+  `i96_dry_step.py --compile` for 512² and 1024², inf2 then trn1. Per-kernel seconds, NEFF bytes and failures are saved
+  after each kernel. Each target's cache is packed as `neff_<t>.tar`.
+- `scripts/nki_klein_inf2.sh` (W7 on inf2.8xlarge, W8 on trn1.2xlarge; the target follows the instance). Phases: env;
+  setup (transformer + VAE only, pinned revision); NEFF unpack; precompile (hits when W4's cache is staged, otherwise
+  it compiles on the instance); `i96_klein_chip.py` G3 + G4 at 512² with the host-CPU VAE (G6), then at 1024². Every
+  phase has a cap. Core 0 only.
+- `scripts/i96_klein_chip.py`: the gate runner (bars from docs/validate/diff_gates.json). Tested on METAL (above).
+  The compile path of `i96_dry_step.py` was tested with a fake compiler: 95/95 compiled, then 95/95 cache hits.
+
+## 4c. W7: first Inferentia2 run (2026-11-05): PASS
+
+One inf2.8xlarge (us-east-1b, Neuron DLAMI SDK 2.33.0), FLUX.2 [klein] 4B transformer in bf16 on NeuronCore 0, the W4 NEFF cache
+staged (95/95 hits; prompt 1 needed 4 more kernels, 6.1 s on the instance). Gated against diffusers' float32 CPU reference.
+Evidence: docs/diff/i96_w7/ (chip_512.json, chip_1024.json, SUMMARY.txt, g6_mac_decode.json, PNGs).
+
+| Case | G3 worst step (bar 0.151) | G4 final latent (bar 0.309) | G6 PSNR (bar 17 dB) | s/step after load | Peak HBM |
+|---|---|---|---|---|---|
+| 512², prompt 0 | 4.61e-2 | 4.85e-2 | 43.70 dB | 8.6 | 7.94 GiB |
+| 1024², prompt 0 | 3.47e-2 | 1.02e-1 | 35.04 dB | 28.3 | 9.15 GiB |
+| 1024², prompt 1 | 3.64e-2 | 7.77e-2 | 35.30 dB | 28.3 | 9.15 GiB |
+
+772 kernel launches per step. 512² prompt 1 did not run: the host-CPU VAE decode of prompt 0 (FuseZap CPU) took > 18 min
+and timed out the phase. That decode is now opt-in (KLEIN_VAE_512=1) and G6 is scored on the Mac (scripts/i96_mac_decode.py,
+float32 VAE on METAL, decoding the latents the chip produced).
+
+Getting there: attempt 1 never opened SSH (bad boot, <redacted>); attempt 2 was refused with VcpuLimitExceeded about a minute
+after attempt 1 reached terminated (no charge); attempt 3 hit NRT_RESOURCE at 512² (<redacted>): the runtime worker allocated
+every buffer of a batch before applying its frees, so a whole forward's activations were live at once (14.7 GB on a 7.4 GiB
+host account). Fixed in 0933e1e (nrt_worker frees in request order; regression test). Attempt 4 passed (<redacted>). W7 total <redacted>
+of the <redacted> cap. This is correctness only: speed (fusion, a bf16 TensorE path, fewer launches) is later work.
+
+## 4d. W8: first Trainium1 run (2026-11-05): PASS
+
+One trn1.2xlarge (us-east-1f; us-east-1d had no capacity), the same script, the W4 trn1 NEFF cache (95/95 hits). Same
+NeuronCore-v2 numerics as inf2: every G3/G4 value equals W7's to four digits. Evidence: docs/diff/i96_w8/.
+
+| Case | G3 worst step (bar 0.151) | G4 final latent (bar 0.309) | G6 PSNR (bar 17 dB) | s/step after load | Peak HBM |
+|---|---|---|---|---|---|
+| 512², prompt 0 | 4.61e-2 | 4.85e-2 | 43.70 dB | 9.1 | 7.94 GiB |
+| 512², prompt 1 | 4.69e-2 | 6.27e-2 | 36.85 dB | 9.0 | 7.94 GiB |
+| 1024², prompt 0 | 3.47e-2 | 1.02e-1 | 35.04 dB | 29.9 | 9.15 GiB |
+| 1024², prompt 1 | 3.64e-2 | 7.77e-2 | 35.30 dB | 30.0 | 9.15 GiB |
+
+G6 decoded on the Mac (scripts/i96_mac_decode.py). Attempt 1 booted but never opened SSH (<redacted>); aws_remote now logs EC2
+status checks and the console tail before terminating such an instance (0f7c25a). Attempt 2 passed (<redacted>). W8 total
+<redacted> of the <redacted> cap.
+
+## 5. Is a first chip run possible within ~<redacted> (inf2) and ~<redacted> (trn1)?
+
+Yes, with conditions. Prices from docs/aws_spend.csv: inf2.8xlarge ~<redacted>, trn1.2xlarge ~<redacted>. So <redacted> is ~7 h
+and <redacted> is ~3.7 h.
+
+What one attempt costs, if W4's NEFFs are ready:
+- Boot, setup, host check: ~15 min (past jobs). Transformer download: 7.2 GB, a few minutes.
+- Loading 185 cached NEFFs and 7.2 GiB of weights: minutes.
+- Compute: one step is ~42 TFLOP (I82 §3). Today every matmul is float32 on TensorE (23 TFLOPS per core, 1/4 of
+  bf16), so the floor is ~1.8 s per step. Real efficiency is unmeasured; 10-60 s per step is a guess [est].
+  2 prompts × 4 teacher-forced steps × 2 sizes plus 1 free run: well under 30 min even at the slow end.
+- One attempt: about 1 h, about <redacted> on inf2 and <redacted> on trn1. <redacted> covers ~5 attempts; <redacted> covers ~2-3.
+
+What breaks the budget:
+- **Compiling on the chip instance.** 164-185 distinct kernels, some with tens of thousands of unrolled matmuls.
+  Past fused Llama kernels took ~200 s each cold. The klein ones are bigger. Compile time is unknown. If it is
+  minutes per kernel, compiling on the instance could take hours. So W4 must come first, on a CPU pod.
+- NEFF pins. The cache key includes the compiler versions and the target (neuron.py:164, :187). The pod must use the
+  instance's exact nki / neuronx-cc pins, and trn1 needs its own NEFF set.
+- An HBM surprise (NEFF code size). W3 and W4 bound it.
+
+What the first run would prove:
+- The klein transformer runs on a NeuronCore through FuseZap's generic lowering, with no klein-specific kernel.
+- Its velocities match the float32 reference within the bf16 bar at 512² and 1024² (G3), and a 4-step free run
+  stays close (G4).
+- Measured s/step, launches per step, peak HBM and compile cost. These set the speed work.
+
+What it would not prove: speed (float32 TensorE, eager, ~665 launches per step), the text encoder on chip, or the VAE
+on chip. A full image would come from host-CPU encoder and VAE around the chip's transformer.
+
+## 6. AWS baseline for FLUX on Inferentia2 / Trainium1
+
+- No AWS Neuron package is installed on this Mac (no optimum-neuron, no neuronx-distributed-inference). Nothing here
+  could be checked against installed code.
+- Local docs, written from web sources on earlier days:
+  - docs/NKI_BACKEND.md N6b (2026-10-27): NxD Inference 0.10 is in maintenance with no new releases planned, and
+    "optimum-neuron is not in the Neuron docs or pip repo".
+  - docs/I82_DIFFUSION_SCOPE.md §6 (sources fetched 2026-11-04): NxD Inference's FLUX.1 support (beta, SDK 2.29)
+    targets Trn2; its FLUX.1-dev tutorial runs on trn2.48xlarge. optimum-neuron's table lists Flux for Inf2, but
+    FLUX.2 or klein coverage was not checked.
+- So: an AWS baseline for FLUX.2 [klein] on inf2 or trn1 is **unverified**. I found nothing that says one exists.
+
+## 7. Files
+
+- `scripts/i96_probe.py`: the probe (part A at real shapes, part B tiny numerics). `--json out.json` saves the rows.
+- `docs/diff/i96_probe.txt`: its output on the Mac (M5 Max), after W1.
+- `scripts/i96_w2_blocks.py`, `docs/diff/i96_w2_512.json` (and `_1024.json`): W2.
+- `scripts/i96_dry_step.py`, `docs/diff/i96_w3_dry_{512,1024}.json`: W3, and W4's compiler.
+- `scripts/i96_stage.sh`, `scripts/nki_klein_neff_pod.sh`, `scripts/nki_klein_inf2.sh`, `scripts/i96_klein_chip.py`: W6.
+- `tests/test_flux2_neuron.py`: W1/W2 tests on NKISHIM.
+- This document.

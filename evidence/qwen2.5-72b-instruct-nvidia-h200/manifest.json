@@ -1,0 +1,76 @@
+{
+ "schema": "fusezap.evidence/v1",
+ "slug": "qwen2.5-72b-instruct-nvidia-h200",
+ "cell": {
+  "model": "Qwen2.5-72B-Instruct",
+  "chip": "nvidia-h200",
+  "chip_name": "NVIDIA H200",
+  "status": "Preview",
+  "verified": "2026-10-25",
+  "metric": "20.7 ms a token"
+ },
+ "source": "The FuseZap engine repository (private). Commits are named by id; references without one were read at the engine’s main on the snapshot day (9b31ca4).",
+ "main_pin": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+ "redaction": "Text files are published as they are in the repository, except that API keys and tokens, IP addresses, private hostnames, instance, pod and container ids, home-directory paths and e-mail addresses are replaced with <redacted>. sha256 is the published file’s; source_sha256, where given, is the original’s.",
+ "files": [
+  {
+   "ref": "docs/status/tp-m3/logs/validate-qwen2.5-72b-instruct.log",
+   "kind": "path",
+   "commit": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+   "commit_short": "9b31ca4",
+   "commit_date": "2026-11-06",
+   "resolved": "No commit in the reference: read at the engine’s main of the snapshot day.",
+   "path": "docs/status/tp-m3/logs/validate-qwen2.5-72b-instruct.log",
+   "source_bytes": 1327,
+   "source_sha256": null,
+   "status": "published",
+   "file": "validate-qwen2.5-72b-instruct.log.txt",
+   "bytes": 1327,
+   "sha256": "1dbef243bae7df1775e2612c1dc6a5a231cb89239ab964e1d3a8b5148ce6cecd",
+   "redactions": [],
+   "shows": "Validate’s log for the full suite on two H200s: accuracy, functional checks, structured output and tool calls, stability and performance, and the decision.",
+   "note": null
+  },
+  {
+   "ref": "docs/status/tp-m3/validate/qwen2.5-72b-instruct/performance.csv",
+   "kind": "path",
+   "commit": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+   "commit_short": "9b31ca4",
+   "commit_date": "2026-11-06",
+   "resolved": "No commit in the reference: read at the engine’s main of the snapshot day.",
+   "path": "docs/status/tp-m3/validate/qwen2.5-72b-instruct/performance.csv",
+   "source_bytes": 760,
+   "source_sha256": null,
+   "status": "published",
+   "file": "performance.csv",
+   "bytes": 760,
+   "sha256": "328863cbb31d95e67f29fcdd2f8132b4c26ffb7d004c9e975cf16145636a8937",
+   "redactions": [],
+   "shows": "The performance points of that full-suite run, one row per concurrency level.",
+   "note": null
+  },
+  {
+   "ref": "518082c:docs/status/tp-m6-qwen72b-h200/validate/qwen2.5-72b-instruct/report.json",
+   "kind": "path",
+   "commit": "518082c566473bcc145f56946b3961f181fceeaa",
+   "commit_short": "518082c",
+   "commit_date": "2026-10-26",
+   "resolved": null,
+   "path": "docs/status/tp-m6-qwen72b-h200/validate/qwen2.5-72b-instruct/report.json",
+   "source_bytes": 116229,
+   "source_sha256": "20fd50abba1d39d80e440787584979dc5b0fc286b05f1d89f919d98f61f2aacc",
+   "status": "published",
+   "file": "report.json",
+   "bytes": 116227,
+   "sha256": "aace0c2096bb400ab24353273b956a38436d99757c2602ec4f0b8ac65b740ce7",
+   "redactions": [
+    {
+     "what": "pod or container id",
+     "count": 1
+    }
+   ],
+   "shows": "The Validate report from the later speed run on two H200s: every gate, the accuracy result against the float32 reference and the performance points.",
+   "note": null
+  }
+ ]
+}

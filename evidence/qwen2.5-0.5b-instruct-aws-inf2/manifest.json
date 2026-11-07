@@ -1,0 +1,67 @@
+{
+ "schema": "fusezap.evidence/v1",
+ "slug": "qwen2.5-0.5b-instruct-aws-inf2",
+ "cell": {
+  "model": "Qwen2.5-0.5B-Instruct",
+  "chip": "aws-inf2",
+  "chip_name": "AWS Inferentia2",
+  "status": "Preview",
+  "verified": "2026-10-27",
+  "metric": "27.1 ms a token"
+ },
+ "source": "The FuseZap engine repository (private). Commits are named by id; references without one were read at the engine’s main on the snapshot day (9b31ca4).",
+ "main_pin": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+ "redaction": "Text files are published as they are in the repository, except that API keys and tokens, IP addresses, private hostnames, instance, pod and container ids, home-directory paths and e-mail addresses are replaced with <redacted>. sha256 is the published file’s; source_sha256, where given, is the original’s.",
+ "files": [
+  {
+   "ref": "6e8ce58535b5dd49ba56a015aee452550cda51c0:docs/status/nki-n6-run1/nki_n6/validate.log",
+   "kind": "path",
+   "commit": "6e8ce58535b5dd49ba56a015aee452550cda51c0",
+   "commit_short": "6e8ce58",
+   "commit_date": "2026-11-01",
+   "resolved": null,
+   "path": "docs/status/nki-n6-run1/nki_n6/validate.log",
+   "source_bytes": 3518,
+   "source_sha256": "ef7c5f23f4ec48b91e13543ef3411441816cd8844c63dd5a4f2f2a00828481ca",
+   "status": "published",
+   "file": "validate.log.txt",
+   "bytes": 3514,
+   "sha256": "af5803881dc8527214ce8286d60865c60e7b57a237993f161baab237bbb3d7d5",
+   "redactions": [
+    {
+     "what": "home-directory path",
+     "count": 2
+    }
+   ],
+   "shows": "The shell trace of the served run on Inferentia2: the server starting, then Validate’s accuracy and performance checks over HTTP, each with its verdict.",
+   "note": null
+  },
+  {
+   "ref": "6e8ce58535b5dd49ba56a015aee452550cda51c0:docs/status/nki-n6-run1/nki_n6/SUMMARY.txt",
+   "kind": "path",
+   "commit": "6e8ce58535b5dd49ba56a015aee452550cda51c0",
+   "commit_short": "6e8ce58",
+   "commit_date": "2026-11-01",
+   "resolved": null,
+   "path": "docs/status/nki-n6-run1/nki_n6/SUMMARY.txt",
+   "source_bytes": 18940,
+   "source_sha256": "b55c96833126323b21522c8004cac54d5e0e1bddd37bcdfbc370d8c15de31ab3",
+   "status": "published",
+   "file": "SUMMARY.txt",
+   "bytes": 18927,
+   "sha256": "1c2a1a6f460ca57186a4c93f0cc3a916e87ded109532fed8f81ea336f5844927",
+   "redactions": [
+    {
+     "what": "EC2 instance id",
+     "count": 1
+    },
+    {
+     "what": "home-directory path",
+     "count": 2
+    }
+   ],
+   "shows": "The job summary from the same instance: its phases, the decode timings of each variant (the fused-layer change among them), the token check against the float32 reference, the Validate results and the AWS vLLM-Neuron attempts on the same instance.",
+   "note": null
+  }
+ ]
+}

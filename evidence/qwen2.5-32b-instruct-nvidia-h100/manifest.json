@@ -1,0 +1,48 @@
+{
+ "schema": "fusezap.evidence/v1",
+ "slug": "qwen2.5-32b-instruct-nvidia-h100",
+ "cell": {
+  "model": "Qwen2.5-32B-Instruct",
+  "chip": "nvidia-h100",
+  "chip_name": "NVIDIA H100",
+  "status": "Preview",
+  "verified": "2026-10-21",
+  "metric": "31.4 tok/s, one request"
+ },
+ "source": "The FuseZap engine repository (private). Commits are named by id; references without one were read at the engine’s main on the snapshot day (9b31ca4).",
+ "main_pin": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+ "redaction": "Text files are published as they are in the repository, except that API keys and tokens, IP addresses, private hostnames, instance, pod and container ids, home-directory paths and e-mail addresses are replaced with <redacted>. sha256 is the published file’s; source_sha256, where given, is the original’s.",
+ "files": [
+  {
+   "ref": "docs/status/H100-32B.md",
+   "kind": "path",
+   "commit": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
+   "commit_short": "9b31ca4",
+   "commit_date": "2026-11-06",
+   "resolved": "No commit in the reference: read at the engine’s main of the snapshot day.",
+   "path": "docs/status/H100-32B.md",
+   "source_bytes": 12619,
+   "source_sha256": "65be9973ebe92deda5eaff22973e53e75c9c14826622f539af0cf8def3cda811",
+   "status": "published",
+   "file": "H100-32B.md.txt",
+   "bytes": 12649,
+   "sha256": "f6595faf0baee7d00ff7d1707d878b7da7ed5fd4b00417b41faa58177f5324ff",
+   "redactions": [
+    {
+     "what": "pod or container id",
+     "count": 2
+    },
+    {
+     "what": "cost",
+     "count": 10
+    },
+    {
+     "what": "internal wording",
+     "count": 1
+    }
+   ],
+   "shows": "Notes on Qwen2.5-32B-Instruct on one H100: loading, memory, top-1 agreement with float32 and the same-pod comparison with vLLM, with the gaps.",
+   "note": null
+  }
+ ]
+}

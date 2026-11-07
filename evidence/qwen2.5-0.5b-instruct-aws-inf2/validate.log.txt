@@ -1,0 +1,70 @@
++ '[' -f results/nki_n6/chosen.env ']'
++ set -a
++ . results/nki_n6/chosen.env
++ set +a
++ cat results/nki_n6/chosen.env
++ local pid=13070 t=0
++ curl -sf http://127.0.0.1:8000/v1/models
++ .venv/bin/python -m fusezap serve Qwen/Qwen2.5-0.5B-Instruct --device NEURON --max-num-seqs 4 --num-blocks 256 --block-size 16 --max-model-len 1024 --max-prefill-tokens 128 --port 8000
++ sleep 5
++ t=5
++ kill -0 13070
++ curl -sf http://127.0.0.1:8000/v1/models
++ sleep 5
++ t=10
++ kill -0 13070
++ curl -sf http://127.0.0.1:8000/v1/models
++ sleep 5
++ t=15
++ kill -0 13070
++ curl -sf http://127.0.0.1:8000/v1/models
++ sleep 5
++ t=20
++ kill -0 13070
++ curl -sf http://127.0.0.1:8000/v1/models
++ sleep 5
++ t=25
++ kill -0 13070
++ curl -sf http://127.0.0.1:8000/v1/models
++ sleep 5
++ t=30
++ kill -0 13070
++ curl -sf http://127.0.0.1:8000/v1/models
++ sleep 5
++ t=35
++ kill -0 13070
++ curl -sf http://127.0.0.1:8000/v1/models
++ sleep 5
++ t=40
++ kill -0 13070
++ curl -sf http://127.0.0.1:8000/v1/models
++ sleep 5
++ t=45
++ kill -0 13070
++ curl -sf http://127.0.0.1:8000/v1/models
++ echo 'server ready after 45s'
+server ready after 45s
++ grep -E '^fusezap:' results/nki_n6/server.log
+fusezap: loaded Qwen/Qwen2.5-0.5B-Instruct on NEURON (float32) in 33.2s
+fusezap: warm-up 6.4s (first run on a cold ~/.cache/fusezap also tunes kernels: minutes)
++ .venv/bin/python -m fusezap validate --base-url http://127.0.0.1:8000 --model Qwen/Qwen2.5-0.5B-Instruct --reference docs/validate/examples/refs/qwen2.5-0.5b-instruct-f32.json --checks accuracy --hardware 'inf2.xlarge (NeuronCore-v2, 1 core)' --target-format float32 --no-pdf --out results/nki_n6/validate_accuracy
+validate: mode single; checks accuracy; 0 performance repeats
+validate: candidate (candidate): http://<host>:8000 serves ['Qwen/Qwen2.5-0.5B-Instruct']; engine fusezap; metrics yes
+accuracy candidate: logprobs (echo): top-1 1.0 (ties split; strict 1.0, generous 1.0, 0 ties), greedy exact match 1.0, errors 0
+validate: PASS, decision PROMOTE (2 passed, 0 failed, 0 inconclusive, 0 error, 15 skipped); exit 0; wrote <redacted>/fusezap/results/nki_n6/validate_accuracy
++ echo '######## performance: --workload short --concurrency 1,4 --repeats 1 --requests-per-point 8'
+######## performance: --workload short --concurrency 1,4 --repeats 1 --requests-per-point 8
++ .venv/bin/python -m fusezap validate --base-url http://127.0.0.1:8000 --model Qwen/Qwen2.5-0.5B-Instruct --reference docs/validate/examples/refs/qwen2.5-0.5b-instruct-f32.json --checks performance --workload short --concurrency 1,4 --repeats 1 --requests-per-point 8 --hardware 'inf2.xlarge (NeuronCore-v2, 1 core)' --target-format float32 --no-pdf --out results/nki_n6/validate_perf
+validate: mode single; checks performance; 1 performance repeats
+validate: candidate (candidate): http://<host>:8000 serves ['Qwen/Qwen2.5-0.5B-Instruct']; engine fusezap; metrics yes
+performance candidate: short c=1: 36.6 tok/s over 1 repeats, TTFT p99 55.866 ms, TPOT p50 27.124 ms, errors 0
+performance candidate: short c=4: 32.1 tok/s over 1 repeats, TTFT p99 12555.959 ms, TPOT p50 70.646 ms, errors 0
+validate: PASS, decision PROMOTE (1 passed, 0 failed, 0 inconclusive, 0 error, 17 skipped); exit 0; wrote <redacted>/fusezap/results/nki_n6/validate_perf
++ kill 13070
++ wait 13070
++ tail -5 results/nki_n6/server.log
+INFO:     127.0.0.1:54678 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13070]

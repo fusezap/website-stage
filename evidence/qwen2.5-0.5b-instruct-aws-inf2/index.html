@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Evidence: Qwen2.5-0.5B-Instruct on AWS Inferentia2 — FuseZap</title>
+<meta name="description" content="The files behind the Qwen2.5-0.5B-Instruct on AWS Inferentia2 cell of FuseZap’s model × chip matrix, each with its source commit and SHA-256.">
+<link rel="canonical" href="https://fusezap.ai/evidence/qwen2.5-0.5b-instruct-aws-inf2/">
+<meta name="theme-color" content="#08080B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FuseZap">
+<meta property="og:title" content="Evidence: Qwen2.5-0.5B-Instruct on AWS Inferentia2 — FuseZap">
+<meta property="og:description" content="The files behind the Qwen2.5-0.5B-Instruct on AWS Inferentia2 cell of FuseZap’s model × chip matrix, each with its source commit and SHA-256.">
+<meta property="og:url" content="https://fusezap.ai/evidence/qwen2.5-0.5b-instruct-aws-inf2/">
+<meta property="og:image" content="https://fusezap.ai/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Evidence: Qwen2.5-0.5B-Instruct on AWS Inferentia2 — FuseZap">
+<meta name="twitter:description" content="The files behind the Qwen2.5-0.5B-Instruct on AWS Inferentia2 cell of FuseZap’s model × chip matrix, each with its source commit and SHA-256.">
+<meta name="twitter:image" content="https://fusezap.ai/og.png">
+<link rel="alternate" type="application/rss+xml" title="FuseZap blog" href="../../blog/feed.xml">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+<link rel="preload" href="../../fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../fonts/fz-serif-latin.woff2" as="font" type="font/woff2" crossorigin media="(min-width: 641px)">
+<link rel="preload" href="../../fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../site.min.css?v=202611061531">
+<script>document.documentElement.classList.add('js')</script>
+<noscript><style>
+@font-face { font-family: "FZ Serif"; src: url(../../fonts/fz-serif-latin.woff2) format("woff2"); font-weight: 300 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "FZ Serif"; src: url(../../fonts/fz-serif-italic-latin.woff2) format("woff2"); font-weight: 300 700; font-style: italic; font-display: swap; }
+</style></noscript>
+</head>
+<body class="page-evidence">
+<!-- Generated page: edit its source in the site generator, not this file. -->
+<a class="skip" href="#main">Skip to content</a>
+<nav class="nav" aria-label="Main">
+  <div class="wrap nav-in">
+    <a class="brand" href="../../index.html" aria-label="FuseZap home">
+      <img class="brand-mark" src="../../favicon.svg" alt="" width="24" height="24">
+      <img class="brand-word" src="../../wordmark-light.svg" alt="FuseZap" width="88" height="20" fetchpriority="high">
+    </a>
+    <div class="nav-links">
+      <a href="../../chips.html">Chips</a><a href="../../validate.html">Validate</a><a href="../../core.html">Core &amp; Serve</a><a href="../../matrix.html">Matrix</a><a href="../../blog/index.html">Blog</a><a href="../../engineering.html">Engineering</a><a href="../../about.html">About</a>
+    </div>
+    <a class="btn btn-light btn-sm nav-cta" href="mailto:assessment@fusezap.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20FuseZap%20team%2C%0A%0AWe%27re%20bringing%20up%20a%20new%20chip%20and%20would%20like%20the%20free%20week-0%20assessment.%0A%0AName%2C%20role%20and%20company%3A%20%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0AModels%20our%20customers%20ask%20for%20first%3A%20%0ATimeline%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A%0AHappy%20to%20go%20deeper%20on%20a%20call.%0A">Request a chip assessment</a>
+    <details class="nav-more">
+      <summary aria-label="Menu"><span></span><span></span></summary>
+      <div class="nav-sheet">
+        <a href="../../chips.html">Chips</a><a href="../../validate.html">Validate</a><a href="../../core.html">Core &amp; Serve</a><a href="../../matrix.html">Matrix</a><a href="../../blog/index.html">Blog</a><a href="../../engineering.html">Engineering</a><a href="../../about.html">About</a>
+        <a class="btn btn-light" href="mailto:assessment@fusezap.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20FuseZap%20team%2C%0A%0AWe%27re%20bringing%20up%20a%20new%20chip%20and%20would%20like%20the%20free%20week-0%20assessment.%0A%0AName%2C%20role%20and%20company%3A%20%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0AModels%20our%20customers%20ask%20for%20first%3A%20%0ATimeline%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A%0AHappy%20to%20go%20deeper%20on%20a%20call.%0A">Request a chip assessment</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<main id="main">
+<header class="hero phero phero-bare" id="top"><svg class="hero-grid" aria-hidden="true" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice"><defs><pattern id="cells" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#fff" stroke-width=".5"/></pattern><radialGradient id="gridFade" cx="50%" cy="38%" r="60%"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="gridMask"><rect width="1200" height="700" fill="url(#gridFade)"/></mask></defs><g mask="url(#gridMask)" opacity=".05"><rect width="1200" height="700" fill="url(#cells)"/></g></svg><div class="hero-glow" aria-hidden="true"></div><div class="wrap hero-copy"><p class="eyebrow rise"><span class="eyebrow-dot" aria-hidden="true"></span>Matrix evidence</p><h1 class="rise d1">Qwen2.5-0.5B-Instruct<br><span>on AWS Inferentia2.</span></h1><p class="lede rise d2">The files behind one cell of the model × chip matrix, published from FuseZap’s engine repository, each with the commit it comes from and its SHA-256.</p><div class="hero-actions rise d3"><a class="btn btn-accent" href="../../matrix.html#table">Back to the matrix</a><a class="btn btn-ghost-dark" href="../../evidence/qwen2.5-0.5b-instruct-aws-inf2/manifest.json">The list as JSON</a></div></div></header><section class="sec sec-paper" id="files"><div class="wrap"><div class="sec-head sec-head-row"><div><p class="kicker reveal">The evidence</p><h2 class="h2 reveal">2 files behind one cell.</h2></div><p class="sec-aside reveal">Each file is as it is in the engine repository, except where something private had to come out: there it says &lt;redacted&gt;, and the list says what. The list describes the files; it adds no numbers of its own.</p></div><div class="ev-grid"><div class="ev-cell"><p class="ev-k">The cell</p><div class="cellcard"><div class="mf-cell"><b class="mf-chip">AWS Inferentia2</b><div class="mf-tags"><span class="st st-pre">Preview</span><span class="v v-promote v-xs">PROMOTE</span></div><b class="mf-metric">27.1 ms a token</b><span class="mf-cfg">fp32, 1 NeuronCore (inf2.xlarge)</span><span class="mf-note">Same evening as the first served run (about 161 ms a token), after fusing each layer's kernels into one launch (the evening of 26 Oct Pacific time, 27 Oct UTC)</span><time class="mf-date" datetime="2026-10-27">Verified 27 Oct 2026</time></div></div><p class="ev-how">To check a file, compare its SHA-256: <code>shasum -a 256 validate.log.txt</code></p></div><ol class="ev-files"><li class="ev-file"><div class="ev-h"><a class="ev-name" href="validate.log.txt">validate.log.txt</a><span class="st st-on">Published</span></div><p class="ev-shows">The shell trace of the served run on Inferentia2: the server starting, then Validate’s accuracy and performance checks over HTTP, each with its verdict.</p><dl class="ev-meta"><div><dt>From</dt><dd><code class="ev-path">docs/status/nki-n6-run1/nki_n6/validate.log</code> at commit <code>6e8ce58</code>, 1 Nov 2026</dd></div><div><dt>SHA-256</dt><dd><code class="ev-sha">af5803881dc8527214ce8286d60865c60e7b57a237993f161baab237bbb3d7d5</code></dd></div><div><dt>Size</dt><dd>3,514 bytes</dd></div><div><dt>Redacted</dt><dd>2 home-directory paths, each replaced with <code>&lt;redacted&gt;</code>. The original’s SHA-256: <code class="ev-sha">ef7c5f23f4ec48b91e13543ef3411441816cd8844c63dd5a4f2f2a00828481ca</code></dd></div></dl></li><li class="ev-file"><div class="ev-h"><a class="ev-name" href="SUMMARY.txt">SUMMARY.txt</a><span class="st st-on">Published</span></div><p class="ev-shows">The job summary from the same instance: its phases, the decode timings of each variant (the fused-layer change among them), the token check against the float32 reference, the Validate results and the AWS vLLM-Neuron attempts on the same instance.</p><dl class="ev-meta"><div><dt>From</dt><dd><code class="ev-path">docs/status/nki-n6-run1/nki_n6/SUMMARY.txt</code> at commit <code>6e8ce58</code>, 1 Nov 2026</dd></div><div><dt>SHA-256</dt><dd><code class="ev-sha">1c2a1a6f460ca57186a4c93f0cc3a916e87ded109532fed8f81ea336f5844927</code></dd></div><div><dt>Size</dt><dd>18,927 bytes</dd></div><div><dt>Redacted</dt><dd>1 EC2 instance id, 2 home-directory paths, each replaced with <code>&lt;redacted&gt;</code>. The original’s SHA-256: <code class="ev-sha">b55c96833126323b21522c8004cac54d5e0e1bddd37bcdfbc370d8c15de31ab3</code></dd></div></dl></li></ol></div></div></section>
+
+</main>
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a class="brand" href="../../index.html" aria-label="FuseZap home"><img src="../../favicon.svg" alt="" width="20" height="20"><img src="../../wordmark-light.svg" alt="FuseZap" width="70" height="16"></a>
+        <p>FuseZap Core helps you get models running. FuseZap Validate helps you keep them working.</p>
+      </div>
+      <nav class="foot-map" aria-label="Sitemap">
+        <div><p class="foot-h">Product</p><ul><li><a href="../../chips.html">Bring-Up Program</a></li><li><a href="../../validate.html">Validate</a></li><li><a href="../../core.html">Core &amp; Serve</a></li><li><a href="../../matrix.html">Matrix</a></li><li><a href="https://github.com/fusezap/fusezap-core">Core on GitHub</a></li></ul></div><div><p class="foot-h">Evidence</p><ul><li><a href="../../status.html">Status</a></li><li><a href="../../releases.html">Releases</a></li><li><a href="../../method.html">Method</a></li><li><a href="../../engineering.html">Engineering</a></li><li><a href="../../reports/fusezap-validate-qwen2.5-72b-vllm.html">Sample Validate report</a></li><li><a href="../../reports/sample-op-coverage.html">Sample op-coverage report</a></li></ul></div><div><p class="foot-h">Company</p><ul><li><a href="../../about.html">About</a></li><li><a href="../../blog/index.html">Blog</a></li><li><a href="../../faq.html">FAQ</a></li><li><a href="mailto:hello@fusezap.ai">Contact</a></li></ul></div><div><p class="foot-h">Legal</p><ul><li><a href="../../privacy.html">Privacy</a></li><li><a href="../../terms.html">Terms</a></li></ul></div>
+      </nav>
+    </div>
+    <p class="foot-legal">Copyright © 2026 Techyodl. All rights reserved. FuseZap is a Techyodl product. vLLM, PyTorch, NVIDIA and other names are trademarks of their owners; FuseZap is not affiliated with or endorsed by them.</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+  // Source Serif 4: wider than 640px at once; on phones a face in the first screen at once, the rest after
+  // the first paint, so it doesn't share the network with the hero's fonts. site.css "Performance" 2.
+  // The same two rules are in a <noscript> in templates/base.html.
+  try {
+    const css = document.querySelector('link[rel=stylesheet][href*="site.min.css"]').href;
+    const added = {};
+    const load = style => {
+      if (added[style]) return; added[style] = true;
+      const f = style === 'italic' ? 'fz-serif-italic-latin' : 'fz-serif-latin';
+      const face = new FontFace('FZ Serif', `url(${new URL('fonts/' + f + '.woff2', css)}) format("woff2")`, { weight: '300 700', style, display: 'swap' });
+      document.fonts.add(face); face.load().catch(() => {});
+    };
+    const serif = () => { load('normal'); load('italic'); };
+    if (matchMedia('(min-width: 641px)').matches) serif();
+    else {
+      // A face whose text is in the first screen (the roman on the blog index, under the hero) loads at
+      // once. The scan runs when the browser is idle, looks only at likely text containers, in page
+      // order, stops at the first one below the screen, and stops as soon as both faces are needed.
+      const scan = () => {
+        const sel = 'p, h1, h2, h3, h4, li, blockquote, figcaption, dd, dt, .it, .story, .feat-t, .toc-t, .m-title, .track-note, .sig b';
+        for (const el of document.querySelectorAll(sel)) {
+          const r = el.getBoundingClientRect();
+          if (!r.width || r.bottom <= 0) continue;
+          if (r.top >= innerHeight) break;
+          if (![...el.childNodes].some(n => n.nodeType === 3 && n.data.trim())) continue;
+          const cs = getComputedStyle(el);
+          if (/^["']?FZ Serif/.test(cs.fontFamily)) load(cs.fontStyle === 'normal' ? 'normal' : 'italic');
+          if (added.normal && added.italic) break;
+        }
+      };
+      if (window.requestIdleCallback) requestIdleCallback(scan, { timeout: 500 }); else setTimeout(scan, 0);
+      if (window.PerformanceObserver && (PerformanceObserver.supportedEntryTypes || []).includes('paint'))
+        new PerformanceObserver((l, o) => { if (l.getEntriesByName('first-contentful-paint').length) { o.disconnect(); setTimeout(serif, 0); } }).observe({ type: 'paint', buffered: true });
+      else addEventListener('load', serif);
+      setTimeout(serif, 3000);
+    }
+  } catch (e) {}
+  // Escape closes the phone menu and puts focus back on its button
+  addEventListener('keydown', e => { const m = document.querySelector('.nav-more[open]'); if (e.key === 'Escape' && m) { m.open = false; m.querySelector('summary').focus(); } });
+  // "Copy address" next to a CTA (components.contact_line). Without the Clipboard API (old browsers,
+  // plain http) the address is selected instead, ready for Ctrl+C / Cmd+C.
+  document.querySelectorAll('.copy-addr').forEach(b => b.addEventListener('click', async () => {
+    const live = b.nextElementSibling;
+    let ok = false;
+    try { await navigator.clipboard.writeText(b.dataset.copy); ok = true; }
+    catch (e) { const r = document.createRange(); r.selectNodeContents(b.previousElementSibling); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+    b.classList.toggle('is-copied', ok);
+    live.textContent = ok ? 'Copied' : 'Address selected';
+    clearTimeout(b.t); b.t = setTimeout(() => { b.classList.remove('is-copied'); live.textContent = ''; }, 2500);
+  }));
+  // Matrix filters (components._mf_filter): chip, status and model family over the full table and the phone cards.
+  // The bar ships hidden, so without JavaScript the table reads in full. A cell shows if it matches every filter;
+  // a row or chip column shows if any of its cells does. The two cells that span every row (Planned, Your chip)
+  // move to the first row still shown.
+  document.querySelectorAll('.mf-filterable').forEach(root => {
+    const bar = root.querySelector('.mf-filter'), none = root.querySelector('.mf-none'), count = bar.querySelector('.mf-count');
+    const box = root.querySelector('.mf-box'), table = root.querySelector('table.mf'), total = +bar.dataset.total;
+    const f = { chip: '', status: '', family: '' };
+    const ok = el => Object.keys(f).every(k => !f[k] || el.dataset[k] === f[k]);
+    const span = [...table.querySelectorAll('td.mf-planned, td.mf-you')];
+    const plan = new Set([...table.querySelectorAll('td.mf-planned')].map(td => td.dataset.chip));
+    const apply = () => {
+      const any = f.chip || f.status || f.family;
+      const res = [...table.querySelectorAll('td[data-r]')];
+      let n = 0;
+      res.forEach(td => { const m = ok(td); td.classList.toggle('mf-out', !m); n += m; });
+      const cols = new Set(res.filter(td => !td.classList.contains('mf-out')).map(td => td.dataset.chip));
+      const planned = !f.status && !f.chip;
+      table.querySelectorAll('[data-chip]').forEach(el => { el.hidden = !(cols.has(el.dataset.chip) || (planned && plan.has(el.dataset.chip))); });
+      const ncol = table.querySelectorAll('thead th[data-chip]:not([hidden])').length;  // ~108px a column, as unfiltered
+      table.style.minWidth = any ? Math.max(560, 150 + 108 * (ncol + 1)) + 'px' : '';
+      const rows = [...table.tBodies[0].rows];
+      rows.forEach(tr => { tr.hidden = !tr.querySelector('td[data-r]:not(.mf-out)'); });
+      const shown = rows.filter(tr => !tr.hidden);
+      if (shown.length) span.forEach(td => { td.rowSpan = shown.length; shown[0].appendChild(td); });
+      root.querySelectorAll('.mf-cards li[data-r]').forEach(li => { li.hidden = !ok(li); });
+      root.querySelectorAll('.mf-cards .mfc-m[data-family]').forEach(m => { m.hidden = !m.querySelector('li[data-r]:not([hidden])'); });
+      count.textContent = any ? `Showing ${n} of ${total} results` : `Showing all ${total} results`;
+      box.hidden = !n;
+      none.hidden = !!n;
+      if (!n) {
+        const b = bar.querySelector('.mf-fb[data-f="status"][aria-pressed="true"]'), o = bar.querySelector('.mf-sel').selectedOptions[0];
+        none.textContent = ['No results match these filters.', b && b.dataset.def, f.chip && !table.querySelector('td[data-r][data-chip="' + f.chip + '"]') ? o.textContent.replace(/ \(.*\)$/, '') + ' has no cells yet.' : '',
+          f.status === 'Planned' && bar.dataset.planned ? `Planned, with no cells yet: ${bar.dataset.planned}.` : ''].filter(Boolean).join(' ');
+      }
+    };
+    bar.querySelectorAll('.mf-fb').forEach(b => b.addEventListener('click', () => {
+      bar.querySelectorAll(`.mf-fb[data-f="${b.dataset.f}"]`).forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      f[b.dataset.f] = b.dataset.v; apply();
+    }));
+    bar.querySelector('.mf-sel').addEventListener('change', e => { f.chip = e.target.value; apply(); });
+    bar.hidden = false;
+  });
+  document.querySelectorAll('.gate-bar').forEach(b => b.querySelectorAll('i').forEach((e, i) => e.style.setProperty('--i', i)));
+  // Video posters (far below the fold) load when the video nears the screen, not with the page
+  const setPoster = v => { v.poster = v.dataset.poster; v.removeAttribute('data-poster'); };
+  const vids = document.querySelectorAll('video[data-poster]');
+  if ('IntersectionObserver' in window) {
+    const vo = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { setPoster(e.target); vo.unobserve(e.target); } }), { rootMargin: '1000px 0px' });
+    vids.forEach(v => vo.observe(v));
+  } else vids.forEach(setPoster);
+  const els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    els.forEach(e => e.classList.add('in')); return;
+  }
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  els.forEach(e => io.observe(e));
+})();
+</script>
+
+</body>
+</html>
