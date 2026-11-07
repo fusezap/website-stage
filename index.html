@@ -26,7 +26,7 @@
 <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/fz-serif-latin.woff2" as="font" type="font/woff2" crossorigin media="(min-width: 641px)">
 <link rel="preload" href="fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="site.min.css?v=202611061706">
+<link rel="stylesheet" href="site.min.css?v=202611061857">
 <script>document.documentElement.classList.add('js')</script>
 <noscript><style>
 @font-face { font-family: "FZ Serif"; src: url(fonts/fz-serif-latin.woff2) format("woff2"); font-weight: 300 700; font-style: normal; font-display: swap; }
@@ -130,7 +130,7 @@
 
 <section class="sec sec-paper" id="beyond">
   <div class="wrap">
-    <div class="sec-head sec-head-row"><div><p class="kicker reveal">Beyond validation</p><h2 class="h2 reveal">FuseZap Core &amp; Serve: open software for <em class='it'>new chips</em>.</h2></div><p class="sec-aside reveal">Validate uses the same checks we use to bring up new chips. Core runs today’s open models on a chip, Serve puts them behind the OpenAI API, and both are Apache-2.0. For chip makers, they come with the Bring-Up Program.</p></div>
+    <div class="sec-head sec-head-row"><div><p class="kicker reveal">Beyond validation</p><h2 class="h2 reveal">FuseZap Core &amp; Serve: open software for <em class='it'>new chips</em>.</h2></div><p class="sec-aside reveal">Validate uses the same checks we use to bring up new chips. Core runs today’s open models on a chip, Serve puts them behind an OpenAI-compatible API, and both are Apache-2.0. For chip makers, they come with the Bring-Up Program.</p></div>
     <p class="fine reveal"><a class="tl" href="core.html">How Core &amp; Serve work →</a> &nbsp; <a class="tl" href="chips.html">The Bring-Up Program →</a></p>
   </div>
 </section>
@@ -181,7 +181,7 @@
 <section class="sec" id="program">
   <div class="wrap">
     <div class="sec-head sec-head-row"><div><p class="kicker reveal">The FuseZap Bring-Up Program</p><h2 class="h2 reveal">From your toolchain to your customers’ API.</h2></div><p class="sec-aside reveal">You bring a kernel compiler and a driver, or a functional simulator. We bring the engine, the server and the checks, and build your chip’s backend side by side with your team.</p></div>
-    <ol class="track reveal" aria-label="The four steps of the Bring-Up Program"><li class="tk"><span class="tk-node">0</span><span class="tk-when">Week 0</span><h3>Op-coverage report</h3><p>We run our operation tests on your toolchain or simulator: what runs today, and what it would take to get the rest.</p></li><li class="tk"><span class="tk-node">1</span><span class="tk-when">Correct</span><h3>First model correct</h3><p>One backend for your chip, and a first model that matches a full-precision reference token for token.</p></li><li class="tk"><span class="tk-node">2</span><span class="tk-when">Served</span><h3>Behind the OpenAI API</h3><p>FuseZap Serve puts it behind the API your customers already call, with streaming, tool calls and structured output.</p></li><li class="tk"><span class="tk-node">3</span><span class="tk-when">Guarded</span><h3>Validate in your CI</h3><p>Every driver, compiler and model change gets PROMOTE, BLOCK or REVIEW before it reaches a customer.</p></li></ol>
+    <ol class="track reveal" aria-label="The four steps of the Bring-Up Program"><li class="tk"><span class="tk-node">0</span><span class="tk-when">Week 0</span><h3>Op-coverage report</h3><p>We run our operation tests on your toolchain or simulator: what runs today, and what it would take to get the rest.</p></li><li class="tk"><span class="tk-node">1</span><span class="tk-when">Correct</span><h3>First model correct</h3><p>One backend for your chip, and a first model that matches a full-precision reference token for token.</p></li><li class="tk"><span class="tk-node">2</span><span class="tk-when">Served</span><h3>Behind an OpenAI-compatible API</h3><p>FuseZap Serve puts it behind the API your customers already call, with streaming, tool calls and structured output.</p></li><li class="tk"><span class="tk-node">3</span><span class="tk-when">Guarded</span><h3>Validate in your CI</h3><p>Every driver, compiler and model change gets PROMOTE, BLOCK or REVIEW before it reaches a customer.</p></li></ol>
     <p class="track-note reveal">We aim for weeks to a first model, not quarters. After the week-0 report, we’ll give you an honest estimate for yours.</p>
 
     <div class="keep">

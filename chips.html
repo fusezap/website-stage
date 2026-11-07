@@ -6,18 +6,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
 <title>The FuseZap Bring-Up Program — Today’s models on your chip</title>
-<meta name="description" content="Bring up today’s open models on your chip: an op-coverage report in week 0, a first model that’s right, serving behind the OpenAI API, then Validate in your CI.">
+<meta name="description" content="Bring up today’s open models on your chip: an op-coverage report in week 0, a first model that’s right, serving behind an OpenAI-compatible API, then Validate in your CI.">
 <link rel="canonical" href="https://fusezap.ai/chips.html">
 <meta name="theme-color" content="#08080B">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="FuseZap">
 <meta property="og:title" content="The FuseZap Bring-Up Program — Today’s models on your chip">
-<meta property="og:description" content="Bring up today’s open models on your chip: an op-coverage report in week 0, a first model that’s right, serving behind the OpenAI API, then Validate in your CI.">
+<meta property="og:description" content="Bring up today’s open models on your chip: an op-coverage report in week 0, a first model that’s right, serving behind an OpenAI-compatible API, then Validate in your CI.">
 <meta property="og:url" content="https://fusezap.ai/chips.html">
 <meta property="og:image" content="https://fusezap.ai/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The FuseZap Bring-Up Program — Today’s models on your chip">
-<meta name="twitter:description" content="Bring up today’s open models on your chip: an op-coverage report in week 0, a first model that’s right, serving behind the OpenAI API, then Validate in your CI.">
+<meta name="twitter:description" content="Bring up today’s open models on your chip: an op-coverage report in week 0, a first model that’s right, serving behind an OpenAI-compatible API, then Validate in your CI.">
 <meta name="twitter:image" content="https://fusezap.ai/og.png">
 <link rel="alternate" type="application/rss+xml" title="FuseZap blog" href="blog/feed.xml">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -26,7 +26,7 @@
 <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/fz-serif-latin.woff2" as="font" type="font/woff2" crossorigin media="(min-width: 641px)">
 <link rel="preload" href="fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="site.min.css?v=202611061706">
+<link rel="stylesheet" href="site.min.css?v=202611061857">
 <script>document.documentElement.classList.add('js')</script>
 <noscript><style>
 @font-face { font-family: "FZ Serif"; src: url(fonts/fz-serif-latin.woff2) format("woff2"); font-weight: 300 700; font-style: normal; font-display: swap; }
@@ -75,7 +75,7 @@
       <span role="rowheader" class="board-chip"><b>AWS Inferentia2</b><small>Simulator first</small></span>
       <span role="cell" data-step="0 · Op coverage" class="board-cell"><b>1,171 of 1,174</b><small>operation tests passed on the first full run on the chip</small><time datetime="2026-10-26">26 Oct 2026</time></span>
       <span role="cell" data-step="1 · First model correct" class="board-cell"><b>24 of 24</b><small>reference prompts matched by Qwen2.5-0.5B</small><time datetime="2026-10-27">27 Oct 2026</time></span>
-      <span role="cell" data-step="2 · Served" class="board-cell"><b>Qwen2.5-7B</b><small>across both cores of one chip, behind the OpenAI API</small><time datetime="2026-10-29">29 Oct 2026</time></span>
+      <span role="cell" data-step="2 · Served" class="board-cell"><b>Qwen2.5-7B</b><small>across both cores of one chip, behind an OpenAI-compatible API</small><time datetime="2026-10-29">29 Oct 2026</time></span>
       <span role="cell" data-step="3 · Validate" class="board-cell"><b><span class="v v-promote">PROMOTE</span></b><small>38.8 ms a token served, against 40.6 for AWS NxD Inference run directly</small><time datetime="2026-11-01">1 Nov 2026</time></span>
     </div>
     <div class="board-row board-you" role="row">
@@ -136,7 +136,7 @@
     <p>The tests passed in the simulator first. Then we ran on the real chip, one step at a time. Nothing above the new backend changed: not Serve, not the models, not the API.</p>
   </div>
   </div><div class="does reveal"><p class="does-k">What FuseZap does</p><h3>Behind the API your customers already call.</h3><p>FuseZap Serve puts the model behind an OpenAI-compatible API, with streaming, tool calls and structured output (<a href='engineering.html#not-done'>known limits</a>). On Inferentia2 that was Qwen2.5-7B across both cores of one chip, at <b>38.8 ms</b> a token, served over HTTP, against 40.6 for AWS’s own library run directly with no server in front.</p></div></div>
-  <figure class="ex reveal" aria-labelledby="ex-cap"><figcaption id="ex-cap" class="ex-cap"><span class="kicker kicker-sm">The Inferentia2 bring-up · Fig. 4</span><b>Every dot is a dated run.</b><span>Each one is written up in the engineering notes, with its test counts and timings.</span></figcaption><div class="ex-plot"><div class="ex-axis" aria-hidden="true"><span style="--x:0">Sim</span><span style="--x:20">26 Oct</span><span style="--x:33.3">27</span><span style="--x:46.7">28</span><span style="--x:60">29</span><span style="--x:73.3">30</span><span style="--x:86.7">31</span><span style="--x:100">1 Nov</span></div><div class="ex-rail" aria-hidden="true"><i class="ex-fill"></i></div><ol class="ex-ev"><li style="--x:0"><span class="ex-dot ex-dot-sim"></span><time>Before the chip</time><b>Tests pass on AWS’s simulator</b><span>One new Core backend: a renderer for NKI and a device that compiles each kernel once.</span></li><li style="--x:20"><span class="ex-dot"></span><time datetime="2026-10-26">26 Oct 2026</time><b>1,171 of 1,174</b><span>operation tests passed on the first full run on the real chip.</span></li><li style="--x:33.3" class="ex-low"><span class="ex-dot"></span><time datetime="2026-10-27">27 Oct 2026</time><b>First model correct</b><span>Qwen2.5-0.5B matched the reference on all 24 reference prompts.</span></li><li style="--x:60"><span class="ex-dot"></span><time datetime="2026-10-29">29 Oct 2026</time><b>A 7B model served</b><span>Across both cores of one chip, behind the OpenAI API. <span class="v v-promote v-xs">PROMOTE</span></span></li><li style="--x:100" class="ex-low ex-end"><span class="ex-dot ex-dot-lume"></span><time datetime="2026-11-01">1 Nov 2026</time><b>First token in 55 ms</b><span>Down from 91, with the same answers, bit for bit.</span></li></ol></div><p class="ex-more"><a class="tl tl-dark" href="engineering.html#inferentia2">Every test count and timing →</a><a class="tl tl-dark" href="matrix.html">Where it stands on the matrix →</a></p></figure>
+  <figure class="ex reveal" aria-labelledby="ex-cap"><figcaption id="ex-cap" class="ex-cap"><span class="kicker kicker-sm">The Inferentia2 bring-up · Fig. 4</span><b>Every dot is a dated run.</b><span>Each one is written up in the engineering notes, with its test counts and timings.</span></figcaption><div class="ex-plot"><div class="ex-axis" aria-hidden="true"><span style="--x:0">Sim</span><span style="--x:20">26 Oct</span><span style="--x:33.3">27</span><span style="--x:46.7">28</span><span style="--x:60">29</span><span style="--x:73.3">30</span><span style="--x:86.7">31</span><span style="--x:100">1 Nov</span></div><div class="ex-rail" aria-hidden="true"><i class="ex-fill"></i></div><ol class="ex-ev"><li style="--x:0"><span class="ex-dot ex-dot-sim"></span><time>Before the chip</time><b>Tests pass on AWS’s simulator</b><span>One new Core backend: a renderer for NKI and a device that compiles each kernel once.</span></li><li style="--x:20"><span class="ex-dot"></span><time datetime="2026-10-26">26 Oct 2026</time><b>1,171 of 1,174</b><span>operation tests passed on the first full run on the real chip.</span></li><li style="--x:33.3" class="ex-low"><span class="ex-dot"></span><time datetime="2026-10-27">27 Oct 2026</time><b>First model correct</b><span>Qwen2.5-0.5B matched the reference on all 24 reference prompts.</span></li><li style="--x:60"><span class="ex-dot"></span><time datetime="2026-10-29">29 Oct 2026</time><b>A 7B model served</b><span>Across both cores of one chip, behind an OpenAI-compatible API. <span class="v v-promote v-xs">PROMOTE</span></span></li><li style="--x:100" class="ex-low ex-end"><span class="ex-dot ex-dot-lume"></span><time datetime="2026-11-01">1 Nov 2026</time><b>First token in 55 ms</b><span>Down from 91, with the same answers, bit for bit.</span></li></ol></div><p class="ex-more"><a class="tl tl-dark" href="engineering.html#inferentia2">Every test count and timing →</a><a class="tl tl-dark" href="matrix.html">Where it stands on the matrix →</a></p></figure>
 </div></section>
 
 <section class="moment" id="guarded" aria-labelledby="guarded-h"><div class="wrap"><div class="m-head reveal"><span class="m-n">03</span><span class="m-k">Step three · Validate</span><span class="m-rule"></span><span class="m-p">Every release after</span></div><div class="m-grid"><div class="m-text"><h2 class="m-title reveal" id="guarded-h">Then every release, checked.</h2>

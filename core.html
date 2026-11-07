@@ -6,18 +6,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
 <title>FuseZap Core &amp; Serve — The open engine for today’s models on any chip</title>
-<meta name="description" content="Core is the engine and Serve is the server on top. Together they take a chip from “it has a driver” to serving today’s models behind the OpenAI API. Apache-2.0.">
+<meta name="description" content="Core is the engine and Serve is the server on top. Together they take a chip from “it has a driver” to serving today’s models behind an OpenAI-compatible API. Apache-2.0.">
 <link rel="canonical" href="https://fusezap.ai/core.html">
 <meta name="theme-color" content="#08080B">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="FuseZap">
 <meta property="og:title" content="FuseZap Core &amp; Serve — The open engine for today’s models on any chip">
-<meta property="og:description" content="Core is the engine and Serve is the server on top. Together they take a chip from “it has a driver” to serving today’s models behind the OpenAI API. Apache-2.0.">
+<meta property="og:description" content="Core is the engine and Serve is the server on top. Together they take a chip from “it has a driver” to serving today’s models behind an OpenAI-compatible API. Apache-2.0.">
 <meta property="og:url" content="https://fusezap.ai/core.html">
 <meta property="og:image" content="https://fusezap.ai/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="FuseZap Core &amp; Serve — The open engine for today’s models on any chip">
-<meta name="twitter:description" content="Core is the engine and Serve is the server on top. Together they take a chip from “it has a driver” to serving today’s models behind the OpenAI API. Apache-2.0.">
+<meta name="twitter:description" content="Core is the engine and Serve is the server on top. Together they take a chip from “it has a driver” to serving today’s models behind an OpenAI-compatible API. Apache-2.0.">
 <meta name="twitter:image" content="https://fusezap.ai/og.png">
 <link rel="alternate" type="application/rss+xml" title="FuseZap blog" href="blog/feed.xml">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -26,7 +26,7 @@
 <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/fz-serif-latin.woff2" as="font" type="font/woff2" crossorigin media="(min-width: 641px)">
 <link rel="preload" href="fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="site.min.css?v=202611061706">
+<link rel="stylesheet" href="site.min.css?v=202611061857">
 <script>document.documentElement.classList.add('js')</script>
 <noscript><style>
 @font-face { font-family: "FZ Serif"; src: url(fonts/fz-serif-latin.woff2) format("woff2"); font-weight: 300 700; font-style: normal; font-display: swap; }
@@ -57,7 +57,7 @@
 </nav>
 
 <main id="main">
-<header class="hero phero" id="top"><svg class="hero-grid" aria-hidden="true" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice"><defs><pattern id="cells" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#fff" stroke-width=".5"/></pattern><radialGradient id="gridFade" cx="50%" cy="38%" r="60%"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="gridMask"><rect width="1200" height="700" fill="url(#gridFade)"/></mask></defs><g mask="url(#gridMask)" opacity=".05"><rect width="1200" height="700" fill="url(#cells)"/></g></svg><div class="hero-glow" aria-hidden="true"></div><div class="wrap hero-copy"><p class="eyebrow rise"><span class="eyebrow-dot" aria-hidden="true"></span>FuseZap Core &amp; Serve · Apache-2.0</p><h1 class="rise d1">The open engine<br><span>for today’s models on any chip.</span></h1><p class="lede rise d2">Core is the engine. Serve is the server on top. Together they take a chip from “it has a driver” to “it serves Llama behind the OpenAI API”.</p><div class="hero-actions rise d3"><a class="btn btn-accent" href="mailto:assessment@fusezap.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20FuseZap%20team%2C%0A%0AWe%27re%20bringing%20up%20a%20new%20chip%20and%20would%20like%20the%20free%20week-0%20assessment.%0A%0AName%2C%20role%20and%20company%3A%20%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0AModels%20our%20customers%20ask%20for%20first%3A%20%0ATimeline%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A%0AHappy%20to%20go%20deeper%20on%20a%20call.%0A">Request a chip assessment</a><a class="btn btn-ghost-dark" href="matrix.html">See the model × chip matrix</a></div></div><div class="wrap phero-obj rise d4">
+<header class="hero phero" id="top"><svg class="hero-grid" aria-hidden="true" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice"><defs><pattern id="cells" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#fff" stroke-width=".5"/></pattern><radialGradient id="gridFade" cx="50%" cy="38%" r="60%"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="gridMask"><rect width="1200" height="700" fill="url(#gridFade)"/></mask></defs><g mask="url(#gridMask)" opacity=".05"><rect width="1200" height="700" fill="url(#cells)"/></g></svg><div class="hero-glow" aria-hidden="true"></div><div class="wrap hero-copy"><p class="eyebrow rise"><span class="eyebrow-dot" aria-hidden="true"></span>FuseZap Core &amp; Serve · Apache-2.0</p><h1 class="rise d1">The open engine<br><span>for today’s models on any chip.</span></h1><p class="lede rise d2">Core is the engine. Serve is the server on top. Together they take a chip from “it has a driver” to “it serves Llama behind an OpenAI-compatible API”.</p><div class="hero-actions rise d3"><a class="btn btn-accent" href="mailto:assessment@fusezap.ai?subject=FuseZap%20chip%20assessment&amp;body=Hi%20FuseZap%20team%2C%0A%0AWe%27re%20bringing%20up%20a%20new%20chip%20and%20would%20like%20the%20free%20week-0%20assessment.%0A%0AName%2C%20role%20and%20company%3A%20%0AStage%20%28simulator%20%2F%20first%20silicon%20%2F%20shipping%29%3A%20%0AKernel%20toolchain%20%28C%2C%20LLVM%2C%20MLIR%20or%20other%29%3A%20%0AModels%20our%20customers%20ask%20for%20first%3A%20%0ATimeline%3A%20%0ANDA%20first%3F%20%28yes%20%2F%20no%29%3A%20%0A%0AHappy%20to%20go%20deeper%20on%20a%20call.%0A">Request a chip assessment</a><a class="btn btn-ghost-dark" href="matrix.html">See the model × chip matrix</a></div></div><div class="wrap phero-obj rise d4">
 <div class="app" role="group" aria-label="FuseZap Core and Serve: where they sit between your customers’ apps and your chip, and the backends that run today">
   <div class="app-bar">
     <span class="app-crumb"><b>FuseZap</b><i>/</i>Core &amp; Serve</span>

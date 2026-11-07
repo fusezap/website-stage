@@ -11,7 +11,7 @@
  },
  "source": "The FuseZap engine repository (private). Commits are named by id; references without one were read at the engine’s main on the snapshot day (9b31ca4).",
  "main_pin": "9b31ca42cb465082a26c11dff9ee8ae8b6648a0a",
- "redaction": "Text files are published as they are in the repository, except that API keys and tokens, IP addresses, private hostnames, instance, pod and container ids, home-directory paths and e-mail addresses are replaced with <redacted>. sha256 is the published file’s; source_sha256, where given, is the original’s.",
+ "redaction": "Text files are published as they are in the repository, except that API keys and tokens, IP addresses, private hostnames, instance, pod and container ids, home-directory paths, e-mail addresses and our own costs are replaced with <redacted>, and internal process notes are reworded. sha256 is the published file’s; source_sha256, where given, is the original’s.",
  "files": [
   {
    "ref": "docs/status/i95-flux2-klein-cuda/README.md",
