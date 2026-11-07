@@ -26,7 +26,7 @@
 <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/fz-serif-latin.woff2" as="font" type="font/woff2" crossorigin media="(min-width: 641px)">
 <link rel="preload" href="fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="site.min.css?v=202611061531">
+<link rel="stylesheet" href="site.min.css?v=202611061706">
 <script>document.documentElement.classList.add('js')</script>
 <noscript><style>
 @font-face { font-family: "FZ Serif"; src: url(fonts/fz-serif-latin.woff2) format("woff2"); font-weight: 300 700; font-style: normal; font-display: swap; }
@@ -100,7 +100,7 @@
 
 <section class="moment night" id="example" aria-labelledby="example-h"><div class="night-glow" aria-hidden="true"></div><div class="wrap"><div class="m-head reveal"><span class="m-n">01</span><span class="m-k">Chapter one · A real run</span><span class="m-rule"></span><span class="m-p">October 2026</span></div><div class="m-grid"><div class="m-text"><h2 class="m-title reveal" id="example-h">What it found<br>in October.</h2>
   <div class="story reveal">
-    <p>We ran Validate against vLLM on two popular open models across two H200s. Qwen2.5-72B passed all 22 gates that ran and got PROMOTE; the other 12 didn’t apply to that run.</p>
+    <p>We ran Validate against vLLM on two popular open models across two H200s. Qwen2.5-72B passed all 22 gates that ran and got PROMOTE. 12 were skipped: 7 need an earlier approved release to compare with, 4 are long-prompt gates we didn’t run, and 1 doesn’t apply.</p>
     <p>The other 70B model passed accuracy and reliability, then got BLOCK: only 51 of its 93 tool calls were right. Again and again it sent numbers and true/false values as text where the tool expected a number. With strict tools turned on, 77 of 81 calls were right.</p>
     <p>That’s the kind of difference you want to know about <em>before</em> a customer’s agent does.</p>
   </div>
@@ -192,7 +192,8 @@
     <div class="dl-row"><span class="dl-k">The sample’s files</span><ul><li><a href="reports/fusezap-validate-qwen2.5-72b-vllm.json" download><b>JSON</b></a></li><li><a href="reports/fusezap-validate-qwen2.5-72b-vllm-junit.xml" download><b>JUnit</b></a></li><li><b>CSV</b> <span class="dl-sub">(<a href="reports/fusezap-validate-qwen2.5-72b-vllm-accuracy.csv" download>accuracy</a>, <a href="reports/fusezap-validate-qwen2.5-72b-vllm-performance.csv" download>performance</a>, <a href="reports/fusezap-validate-qwen2.5-72b-vllm-requests.csv" download>requests</a>, <a href="reports/fusezap-validate-qwen2.5-72b-vllm-checks.csv" download>checks</a>)</span></li><li><a href="reports/fusezap-validate-qwen2.5-72b-vllm.pdf" download><b>PDF</b></a></li></ul></div>
     <figcaption class="cap" id="files-cap"><b>Fig. 3</b><span>One word, and six ways to read the evidence behind it. The files above are the sample report’s own, from the Qwen2.5-72B run.</span></figcaption>
   </figure></div>
-  <div class="words reveal" role="list" aria-label="The three verdicts"><div class="word" role="listitem"><span class="v v-promote">PROMOTE</span><p>Every required check that ran passed on valid data. The report lists what was skipped, and why.</p></div><div class="word" role="listitem"><span class="v v-block">BLOCK</span><p>A check failed on valid data, either against a fixed bar or against the release you approved last time.</p></div><div class="word" role="listitem"><span class="v v-review">REVIEW</span><p>Too close to call, or something couldn’t be measured. A person should look.</p></div></div>
+  <div class="words reveal" role="list" aria-label="The three verdicts"><div class="word" role="listitem"><span class="v v-promote">PROMOTE</span><p>Every gate in the checks you ran passed on valid data. Skipped gates are listed, each with its reason.</p></div><div class="word" role="listitem"><span class="v v-block">BLOCK</span><p>A check failed on valid data, either against a fixed bar or against the release you approved last time.</p></div><div class="word" role="listitem"><span class="v v-review">REVIEW</span><p>Too close to call, or a check ran but couldn’t measure something. A person should look.</p></div></div>
+  <p class="fine reveal">PROMOTE means every gate in the checks you ran passed on valid data. Gates that don’t apply (no earlier release to compare with, a check you didn’t switch on) are listed as skipped, with the reason. If a check runs but can’t measure something, the result is REVIEW, not PROMOTE. Read the scope and the skips before you approve.</p>
 </div></section>
 
 <section class="sec sec-paper" id="sample">
@@ -256,7 +257,10 @@
     const load = style => {
       if (added[style]) return; added[style] = true;
       const f = style === 'italic' ? 'fz-serif-italic-latin' : 'fz-serif-latin';
-      const face = new FontFace('FZ Serif', `url(${new URL('fonts/' + f + '.woff2', css)}) format("woff2")`, { weight: '300 700', style, display: 'swap' });
+      // Phones: 'optional', so a face that isn't ready within ~100 ms waits for the next page (from cache)
+      // instead of swapping in late and moving text (6 Nov a11y/perf audit). Wider screens: 'swap'.
+      const display = matchMedia('(min-width: 641px)').matches ? 'swap' : 'optional';
+      const face = new FontFace('FZ Serif', `url(${new URL('fonts/' + f + '.woff2', css)}) format("woff2")`, { weight: '300 700', style, display });
       document.fonts.add(face); face.load().catch(() => {});
     };
     const serif = () => { load('normal'); load('italic'); };
@@ -286,6 +290,16 @@
   } catch (e) {}
   // Escape closes the phone menu and puts focus back on its button
   addEventListener('keydown', e => { const m = document.querySelector('.nav-more[open]'); if (e.key === 'Escape' && m) { m.open = false; m.querySelector('summary').focus(); } });
+  // Tabbing out of the open phone menu closes it, so focus never sits behind the sheet (6 Nov audit)
+  document.querySelectorAll('.nav-more').forEach(m => m.addEventListener('focusout', e => {
+    if (m.open && e.relatedTarget && !m.contains(e.relatedTarget)) m.open = false;
+  }));
+  // The "On this page" sidebar stays open on wide screens: its heading can't be clicked there, but a
+  // key press (or closing it on a phone, then widening the window) could close it (6 Nov audit)
+  const wide = matchMedia('(min-width: 901px)');
+  const keepToc = () => { if (wide.matches) document.querySelectorAll('details.read-toc:not([open])').forEach(d => { d.open = true; }); };
+  document.querySelectorAll('details.read-toc').forEach(d => d.addEventListener('toggle', keepToc));
+  wide.addEventListener ? wide.addEventListener('change', keepToc) : wide.addListener(keepToc);
   // "Copy address" next to a CTA (components.contact_line). Without the Clipboard API (old browsers,
   // plain http) the address is selected instead, ready for Ctrl+C / Cmd+C.
   document.querySelectorAll('.copy-addr').forEach(b => b.addEventListener('click', async () => {

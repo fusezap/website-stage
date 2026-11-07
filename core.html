@@ -26,7 +26,7 @@
 <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/fz-serif-latin.woff2" as="font" type="font/woff2" crossorigin media="(min-width: 641px)">
 <link rel="preload" href="fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="site.min.css?v=202611061531">
+<link rel="stylesheet" href="site.min.css?v=202611061706">
 <script>document.documentElement.classList.add('js')</script>
 <noscript><style>
 @font-face { font-family: "FZ Serif"; src: url(fonts/fz-serif-latin.woff2) format("woff2"); font-weight: 300 700; font-style: normal; font-display: swap; }
@@ -67,7 +67,7 @@
     <section class="pane" aria-label="The stack">
       <div class="pane-h"><span>The stack</span><span class="mono-dim">top to bottom</span></div>
       <ol class="dstack">
-        <li><span>Your customers’ apps</span><em>Same OpenAI API</em></li>
+        <li><span>Your customers’ apps</span><em>OpenAI-compatible API</em></li>
         <li class="fz"><span>FuseZap Serve<small>OpenAI-compatible: the API your customers already call</small></span><em>FuseZap</em></li>
         <li class="fz"><span>FuseZap Core<small>28 basic operations</small></span><em>FuseZap</em></li>
         <li class="be"><span>One backend for your chip</span><span class="dparts"><i>Renderer</i><i>Compiler hook</i><i>Runtime</i><i>Allocator</i></span></li>
@@ -112,7 +112,7 @@
   <p class="links reveal"><a class="tl" href="chips.html">The Bring-Up Program →</a> <a class="tl" href="engineering.html#contract">What a chip needs to offer →</a></p>
   </div><figure class="plate plate-stack reveal" aria-labelledby="stack-cap">
   <ol class="layers">
-    <li class="ly"><span>Your customers’ apps</span><em>Same OpenAI API</em></li>
+    <li class="ly"><span>Your customers’ apps</span><em>OpenAI-compatible API</em></li>
     <li class="ly ly-fz"><span>FuseZap Serve <small>OpenAI-compatible: the API your customers already call</small></span><em>FuseZap</em></li>
     <li class="ly ly-fz"><span>FuseZap Core <small>28 basic operations</small></span><em>FuseZap</em></li>
     <li class="ly ly-be">
@@ -128,7 +128,7 @@
     <div><dt><span class="idx">03</span>Runtime</dt><dd>Loads kernels and launches them through your driver.</dd></div>
     <div><dt><span class="idx">04</span>Allocator</dt><dd>Device memory, through your driver.</dd></div>
   </dl>
-  <figcaption class="cap" id="stack-cap"><b>Fig. 3</b><span>Where FuseZap sits, from your customers’ apps down to your silicon.</span></figcaption>
+  <figcaption class="cap" id="stack-cap"><b>Fig. 3</b><span>Where FuseZap sits, from your customers’ apps down to your silicon. The API’s <a href="engineering.html#not-done">known limits</a>.</span></figcaption>
 </figure></div></div></section>
 
 <section class="moment night" id="film" aria-labelledby="film-h"><div class="night-glow" aria-hidden="true"></div><div class="wrap"><div class="m-head reveal"><span class="m-n">03</span><span class="m-k">Chapter three · See it work</span><span class="m-rule"></span><span class="m-p">Film</span></div><div class="m-grid"><div class="m-text"><h2 class="m-title reveal" id="film-h">Watch a chip come alive in under a minute.</h2>
@@ -229,7 +229,10 @@
     const load = style => {
       if (added[style]) return; added[style] = true;
       const f = style === 'italic' ? 'fz-serif-italic-latin' : 'fz-serif-latin';
-      const face = new FontFace('FZ Serif', `url(${new URL('fonts/' + f + '.woff2', css)}) format("woff2")`, { weight: '300 700', style, display: 'swap' });
+      // Phones: 'optional', so a face that isn't ready within ~100 ms waits for the next page (from cache)
+      // instead of swapping in late and moving text (6 Nov a11y/perf audit). Wider screens: 'swap'.
+      const display = matchMedia('(min-width: 641px)').matches ? 'swap' : 'optional';
+      const face = new FontFace('FZ Serif', `url(${new URL('fonts/' + f + '.woff2', css)}) format("woff2")`, { weight: '300 700', style, display });
       document.fonts.add(face); face.load().catch(() => {});
     };
     const serif = () => { load('normal'); load('italic'); };
@@ -259,6 +262,16 @@
   } catch (e) {}
   // Escape closes the phone menu and puts focus back on its button
   addEventListener('keydown', e => { const m = document.querySelector('.nav-more[open]'); if (e.key === 'Escape' && m) { m.open = false; m.querySelector('summary').focus(); } });
+  // Tabbing out of the open phone menu closes it, so focus never sits behind the sheet (6 Nov audit)
+  document.querySelectorAll('.nav-more').forEach(m => m.addEventListener('focusout', e => {
+    if (m.open && e.relatedTarget && !m.contains(e.relatedTarget)) m.open = false;
+  }));
+  // The "On this page" sidebar stays open on wide screens: its heading can't be clicked there, but a
+  // key press (or closing it on a phone, then widening the window) could close it (6 Nov audit)
+  const wide = matchMedia('(min-width: 901px)');
+  const keepToc = () => { if (wide.matches) document.querySelectorAll('details.read-toc:not([open])').forEach(d => { d.open = true; }); };
+  document.querySelectorAll('details.read-toc').forEach(d => d.addEventListener('toggle', keepToc));
+  wide.addEventListener ? wide.addEventListener('change', keepToc) : wide.addListener(keepToc);
   // "Copy address" next to a CTA (components.contact_line). Without the Clipboard API (old browsers,
   // plain http) the address is selected instead, ready for Ctrl+C / Cmd+C.
   document.querySelectorAll('.copy-addr').forEach(b => b.addEventListener('click', async () => {

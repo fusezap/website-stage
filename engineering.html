@@ -26,7 +26,7 @@
 <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/fz-serif-latin.woff2" as="font" type="font/woff2" crossorigin media="(min-width: 641px)">
 <link rel="preload" href="fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="site.min.css?v=202611061531">
+<link rel="stylesheet" href="site.min.css?v=202611061706">
 <script>document.documentElement.classList.add('js')</script>
 <noscript><style>
 @font-face { font-family: "FZ Serif"; src: url(fonts/fz-serif-latin.woff2) format("woff2"); font-weight: 300 700; font-style: normal; font-display: swap; }
@@ -112,7 +112,7 @@
   </ul>
   <figure class="plate plate-stack reveal" aria-labelledby="stack-cap">
   <ol class="layers">
-    <li class="ly"><span>Your customers’ apps</span><em>Same OpenAI API</em></li>
+    <li class="ly"><span>Your customers’ apps</span><em>OpenAI-compatible API</em></li>
     <li class="ly ly-fz"><span>FuseZap Serve <small>OpenAI-compatible: the API your customers already call</small></span><em>FuseZap</em></li>
     <li class="ly ly-fz"><span>FuseZap Core <small>28 basic operations</small></span><em>FuseZap</em></li>
     <li class="ly ly-be">
@@ -128,7 +128,7 @@
     <div><dt><span class="idx">03</span>Runtime</dt><dd>Loads kernels and launches them through your driver.</dd></div>
     <div><dt><span class="idx">04</span>Allocator</dt><dd>Device memory, through your driver.</dd></div>
   </dl>
-  <figcaption class="cap" id="stack-cap"><b>Fig. 1</b><span>Where FuseZap sits, from your customers’ apps down to your silicon.</span></figcaption>
+  <figcaption class="cap" id="stack-cap"><b>Fig. 1</b><span>Where FuseZap sits, from your customers’ apps down to your silicon. The API’s <a href="engineering.html#not-done">known limits</a>.</span></figcaption>
 </figure>
   <p>The backend only needs a way to compile a kernel and a way to launch it, so a functional simulator with the same interface should work before silicon exists. That’s how we built our AWS Inferentia2 backend: on AWS’s simulator first, then on the real chip, where almost every test passed on the first full run (<a href="#inferentia2">details below</a>). On a simulator we prove correctness; performance tuning waits for real hardware.</p>
   <p>Four parts get a chip running correctly. Making it fast takes more. On NVIDIA that means hand-written CUDA for matrix multiply, attention, normalisation and token selection, and, across GPUs, an all-reduce fused with the normalisation after it (the same one-kernel approach as vLLM’s custom all-reduce), all plugged in through the custom-kernel hook. Large prompt-processing matrix multiplies call NVIDIA’s cuBLASLt library, used only after a start-up self-check shows its results don’t depend on batch size, and NCCL carries the larger GPU-to-GPU transfers. We expect every chip to need a handful of tuned kernels like these, ideally ones its maker already has.</p>
@@ -382,7 +382,7 @@
   <h2 id="report">Sample Validate report</h2>
   <p>We’d rather show you a real report than describe one.</p>
   <p>A real report, as FuseZap Validate wrote it: Qwen2.5-72B-Instruct on vLLM 0.32.0 across two H200s, decision PROMOTE (<a href="reports/fusezap-validate-qwen2.5-72b-vllm.html">HTML</a>, <a href="reports/fusezap-validate-qwen2.5-72b-vllm.pdf">PDF</a>, and the run’s own <a href="reports/fusezap-validate-qwen2.5-72b-vllm.json">JSON</a>, <a href="reports/fusezap-validate-qwen2.5-72b-vllm-junit.xml">JUnit</a> and CSV files: <a href="reports/fusezap-validate-qwen2.5-72b-vllm-accuracy.csv">accuracy</a>, <a href="reports/fusezap-validate-qwen2.5-72b-vllm-performance.csv">performance</a>, <a href="reports/fusezap-validate-qwen2.5-72b-vllm-requests.csv">requests</a>, <a href="reports/fusezap-validate-qwen2.5-72b-vllm-checks.csv">checks</a>). The only edit is that the validator machine’s container name is removed, in the HTML and the JSON. It covers accuracy against a float32 reference, nine functional checks, tool calls and JSON, speed at three loads, a stability run and eight reliability checks. It was a single-release run, so the comparison against an approved release is listed as skipped.</p>
-  <p>How Validate decides: every gate passes, fails, or is too close to call. Rates such as tool-call validity are judged on 95% Wilson intervals, so a pass needs the whole interval to clear the bar. The run ends with a decision, PROMOTE (every gate that applies passed; the report lists the rest, and why), BLOCK (a gate failed) or REVIEW (too close to call, or something couldn’t run: a person decides), and an exit code of 0, 1, 2 or 3 for CI. Structured-output failures are sorted into 14 error types, from a missing tool call to a wrong argument type, with the exact argument path. Besides the built-in tasks (101 tool-call tasks in 12 categories, 50 JSON tasks in 7), you can add your own tool and JSON task files. Long-context checks hide a fact in prompts of 4k to 32k tokens and judge each length separately; mixed workloads run 512- and 4,096-token prompts together. Evidence comes as JUnit, JSON, CSV, HTML and PDF. A candidate can be compared with a stored report of the release you approved, so the old release doesn’t need to stay running.</p>
+  <p>How Validate decides: every gate passes, fails, or is too close to call. Rates such as tool-call validity are judged on 95% Wilson intervals, so a pass needs the whole interval to clear the bar. The run ends with a decision, PROMOTE (every gate in the checks that ran passed on valid data; gates that don’t apply are listed as skipped, with the reason), BLOCK (a gate failed) or REVIEW (too close to call, or a check ran but couldn’t measure something: a person decides), and an exit code of 0, 1, 2 or 3 for CI. Structured-output failures are sorted into 14 error types, from a missing tool call to a wrong argument type, with the exact argument path. Besides the built-in tasks (101 tool-call tasks in 12 categories, 50 JSON tasks in 7), you can add your own tool and JSON task files. Long-context checks hide a fact in prompts of 4k to 32k tokens and judge each length separately; mixed workloads run 512- and 4,096-token prompts together. Evidence comes as JUnit, JSON, CSV, HTML and PDF. A candidate can be compared with a stored report of the release you approved, so the old release doesn’t need to stay running.</p>
 
   <h2 id="not-done">What isn’t done yet</h2>
   <p>We’d rather you hear this from us than find it yourself.</p>
@@ -446,7 +446,10 @@
     const load = style => {
       if (added[style]) return; added[style] = true;
       const f = style === 'italic' ? 'fz-serif-italic-latin' : 'fz-serif-latin';
-      const face = new FontFace('FZ Serif', `url(${new URL('fonts/' + f + '.woff2', css)}) format("woff2")`, { weight: '300 700', style, display: 'swap' });
+      // Phones: 'optional', so a face that isn't ready within ~100 ms waits for the next page (from cache)
+      // instead of swapping in late and moving text (6 Nov a11y/perf audit). Wider screens: 'swap'.
+      const display = matchMedia('(min-width: 641px)').matches ? 'swap' : 'optional';
+      const face = new FontFace('FZ Serif', `url(${new URL('fonts/' + f + '.woff2', css)}) format("woff2")`, { weight: '300 700', style, display });
       document.fonts.add(face); face.load().catch(() => {});
     };
     const serif = () => { load('normal'); load('italic'); };
@@ -476,6 +479,16 @@
   } catch (e) {}
   // Escape closes the phone menu and puts focus back on its button
   addEventListener('keydown', e => { const m = document.querySelector('.nav-more[open]'); if (e.key === 'Escape' && m) { m.open = false; m.querySelector('summary').focus(); } });
+  // Tabbing out of the open phone menu closes it, so focus never sits behind the sheet (6 Nov audit)
+  document.querySelectorAll('.nav-more').forEach(m => m.addEventListener('focusout', e => {
+    if (m.open && e.relatedTarget && !m.contains(e.relatedTarget)) m.open = false;
+  }));
+  // The "On this page" sidebar stays open on wide screens: its heading can't be clicked there, but a
+  // key press (or closing it on a phone, then widening the window) could close it (6 Nov audit)
+  const wide = matchMedia('(min-width: 901px)');
+  const keepToc = () => { if (wide.matches) document.querySelectorAll('details.read-toc:not([open])').forEach(d => { d.open = true; }); };
+  document.querySelectorAll('details.read-toc').forEach(d => d.addEventListener('toggle', keepToc));
+  wide.addEventListener ? wide.addEventListener('change', keepToc) : wide.addListener(keepToc);
   // "Copy address" next to a CTA (components.contact_line). Without the Clipboard API (old browsers,
   // plain http) the address is selected instead, ready for Ctrl+C / Cmd+C.
   document.querySelectorAll('.copy-addr').forEach(b => b.addEventListener('click', async () => {

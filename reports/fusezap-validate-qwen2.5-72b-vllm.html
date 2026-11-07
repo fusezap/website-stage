@@ -155,10 +155,13 @@ footer.rfoot { margin-top: 28px; padding-top: 12px; border-top: 1px solid var(--
   footer.rfoot { margin-top: 12px; padding-top: 6px; font-size: 9px; }
   .charts { grid-template-columns: 1fr 1fr; }
 }
+.skip { position: absolute; left: -9999px; } .skip:focus { left: 16px; top: 12px; padding: 8px 12px; background: var(--paper); color: var(--fg); z-index: 10; }
+@media print { .skip { display: none; } }
 </style>
 </head>
 <body>
-<main>
+<a class="skip" href="#main">Skip to the report</a>
+<main id="main">
 
 <div class="print-only sumpage">
   <div class="rtop">

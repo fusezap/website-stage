@@ -1525,6 +1525,13 @@ a.card:hover .go { transform: translateX(3px); }
   .read-toc a, .qindex li a { padding-block: 11px; }
   .qindex-h { padding-block: 10px; margin-block: -10px; }
   .read-toc summary { min-height: 40px; align-items: center; }
+  /* 6 Nov a11y audit: components added after v9-qa */
+  .mf-fb, .mf-sel { height: 40px; }
+  .mf-fbs { gap: 8px; }
+  .mf-ev { display: inline-flex; align-items: center; min-height: 40px; margin-top: 0; }
+  .hero-link a, .glog-f a, .gops figcaption a, a.ev-name { display: inline-block; padding-block: 11px; margin-block: -11px; }
+  .dl-row ul { row-gap: 10px; }
+  .dl-row a { display: inline-block; padding-block: 8px; margin-block: -8px; }
 }
 /* end QA fixes (v9-qa) */
 

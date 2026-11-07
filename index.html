@@ -26,7 +26,7 @@
 <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/fz-serif-latin.woff2" as="font" type="font/woff2" crossorigin media="(min-width: 641px)">
 <link rel="preload" href="fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="site.min.css?v=202611061531">
+<link rel="stylesheet" href="site.min.css?v=202611061706">
 <script>document.documentElement.classList.add('js')</script>
 <noscript><style>
 @font-face { font-family: "FZ Serif"; src: url(fonts/fz-serif-latin.woff2) format("woff2"); font-weight: 300 700; font-style: normal; font-display: swap; }
@@ -115,7 +115,7 @@
       <div class="reveal"><a class="verdict" href="reports/fusezap-validate-qwen2.5-72b-vllm.html" aria-label="Sample Validate report: Qwen2.5-72B-Instruct on vLLM 0.32.0, PROMOTE"><div class="vl-h"><span>Validate report · one release</span><span>Exit code 0</span></div><div class="vl-body"><p class="vl-title">Qwen2.5-72B-Instruct on vLLM 0.32.0</p><p class="vl-meta">2× NVIDIA H200 · 25 October 2026</p><div class="vl-word vl-promote"><span class="vl-ring" aria-hidden="true"></span>PROMOTE</div><p class="vl-scope"><b>Scope:</b> the 22 gates that ran. All 22 passed. 12 didn’t run: 7 compare with an earlier approved release (this run had none), 4 are long-prompt gates we didn’t run, and 1 doesn’t apply.</p><div class="gates" aria-label="Gates: 22 passed, 0 failed, 12 skipped"><div class="gate-bar" style="--n:34" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i></div><div class="gate-legend"><span><b>22</b> passed</span><span><b>0</b> failed</span><span><b>12</b> skipped</span></div></div><dl class="vd-dl"><div><dt>Answers vs a float32 reference (top-1)</dt><dd>99.02%</dd></div><div><dt>Tool calls right</dt><dd>98.92%</dd></div><div><dt>JSON valid against its schema</dt><dd>100%</dd></div></dl></div><div class="vl-foot">A PROMOTE covers only the gates that ran. The report lists every gate, and why each skipped one was skipped. <span class="vl-open">Open the sample report →</span></div></a></div>
     </div>
 
-    <div class="words reveal" role="list" aria-label="The three verdicts"><div class="word" role="listitem"><span class="v v-promote">PROMOTE</span><p>Every required check that ran passed on valid data. The report lists what was skipped, and why.</p></div><div class="word" role="listitem"><span class="v v-block">BLOCK</span><p>A check failed on valid data, against a fixed bar or against the release you approved last time.</p></div><div class="word" role="listitem"><span class="v v-review">REVIEW</span><p>Too close to call, or something couldn’t be measured. A person should look.</p></div></div>
+    <div class="words reveal" role="list" aria-label="The three verdicts"><div class="word" role="listitem"><span class="v v-promote">PROMOTE</span><p>Every gate in the checks you ran passed on valid data. Skipped gates are listed, each with its reason.</p></div><div class="word" role="listitem"><span class="v v-block">BLOCK</span><p>A check failed on valid data, against a fixed bar or against the release you approved last time.</p></div><div class="word" role="listitem"><span class="v v-review">REVIEW</span><p>Too close to call, or a check ran but couldn’t measure something. A person should look.</p></div></div>
 
     <ul class="checks">
       <li class="reveal"><b>Answers</b><span>Every token checked against a full-precision reference.</span></li>
@@ -265,7 +265,10 @@
     const load = style => {
       if (added[style]) return; added[style] = true;
       const f = style === 'italic' ? 'fz-serif-italic-latin' : 'fz-serif-latin';
-      const face = new FontFace('FZ Serif', `url(${new URL('fonts/' + f + '.woff2', css)}) format("woff2")`, { weight: '300 700', style, display: 'swap' });
+      // Phones: 'optional', so a face that isn't ready within ~100 ms waits for the next page (from cache)
+      // instead of swapping in late and moving text (6 Nov a11y/perf audit). Wider screens: 'swap'.
+      const display = matchMedia('(min-width: 641px)').matches ? 'swap' : 'optional';
+      const face = new FontFace('FZ Serif', `url(${new URL('fonts/' + f + '.woff2', css)}) format("woff2")`, { weight: '300 700', style, display });
       document.fonts.add(face); face.load().catch(() => {});
     };
     const serif = () => { load('normal'); load('italic'); };
@@ -295,6 +298,16 @@
   } catch (e) {}
   // Escape closes the phone menu and puts focus back on its button
   addEventListener('keydown', e => { const m = document.querySelector('.nav-more[open]'); if (e.key === 'Escape' && m) { m.open = false; m.querySelector('summary').focus(); } });
+  // Tabbing out of the open phone menu closes it, so focus never sits behind the sheet (6 Nov audit)
+  document.querySelectorAll('.nav-more').forEach(m => m.addEventListener('focusout', e => {
+    if (m.open && e.relatedTarget && !m.contains(e.relatedTarget)) m.open = false;
+  }));
+  // The "On this page" sidebar stays open on wide screens: its heading can't be clicked there, but a
+  // key press (or closing it on a phone, then widening the window) could close it (6 Nov audit)
+  const wide = matchMedia('(min-width: 901px)');
+  const keepToc = () => { if (wide.matches) document.querySelectorAll('details.read-toc:not([open])').forEach(d => { d.open = true; }); };
+  document.querySelectorAll('details.read-toc').forEach(d => d.addEventListener('toggle', keepToc));
+  wide.addEventListener ? wide.addEventListener('change', keepToc) : wide.addListener(keepToc);
   // "Copy address" next to a CTA (components.contact_line). Without the Clipboard API (old browsers,
   // plain http) the address is selected instead, ready for Ctrl+C / Cmd+C.
   document.querySelectorAll('.copy-addr').forEach(b => b.addEventListener('click', async () => {

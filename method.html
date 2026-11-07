@@ -26,7 +26,7 @@
 <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/fz-serif-latin.woff2" as="font" type="font/woff2" crossorigin media="(min-width: 641px)">
 <link rel="preload" href="fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="site.min.css?v=202611061531">
+<link rel="stylesheet" href="site.min.css?v=202611061706">
 <script>document.documentElement.classList.add('js')</script>
 <noscript><style>
 @font-face { font-family: "FZ Serif"; src: url(fonts/fz-serif-latin.woff2) format("woff2"); font-weight: 300 700; font-style: normal; font-display: swap; }
@@ -150,7 +150,10 @@
     const load = style => {
       if (added[style]) return; added[style] = true;
       const f = style === 'italic' ? 'fz-serif-italic-latin' : 'fz-serif-latin';
-      const face = new FontFace('FZ Serif', `url(${new URL('fonts/' + f + '.woff2', css)}) format("woff2")`, { weight: '300 700', style, display: 'swap' });
+      // Phones: 'optional', so a face that isn't ready within ~100 ms waits for the next page (from cache)
+      // instead of swapping in late and moving text (6 Nov a11y/perf audit). Wider screens: 'swap'.
+      const display = matchMedia('(min-width: 641px)').matches ? 'swap' : 'optional';
+      const face = new FontFace('FZ Serif', `url(${new URL('fonts/' + f + '.woff2', css)}) format("woff2")`, { weight: '300 700', style, display });
       document.fonts.add(face); face.load().catch(() => {});
     };
     const serif = () => { load('normal'); load('italic'); };
@@ -180,6 +183,16 @@
   } catch (e) {}
   // Escape closes the phone menu and puts focus back on its button
   addEventListener('keydown', e => { const m = document.querySelector('.nav-more[open]'); if (e.key === 'Escape' && m) { m.open = false; m.querySelector('summary').focus(); } });
+  // Tabbing out of the open phone menu closes it, so focus never sits behind the sheet (6 Nov audit)
+  document.querySelectorAll('.nav-more').forEach(m => m.addEventListener('focusout', e => {
+    if (m.open && e.relatedTarget && !m.contains(e.relatedTarget)) m.open = false;
+  }));
+  // The "On this page" sidebar stays open on wide screens: its heading can't be clicked there, but a
+  // key press (or closing it on a phone, then widening the window) could close it (6 Nov audit)
+  const wide = matchMedia('(min-width: 901px)');
+  const keepToc = () => { if (wide.matches) document.querySelectorAll('details.read-toc:not([open])').forEach(d => { d.open = true; }); };
+  document.querySelectorAll('details.read-toc').forEach(d => d.addEventListener('toggle', keepToc));
+  wide.addEventListener ? wide.addEventListener('change', keepToc) : wide.addListener(keepToc);
   // "Copy address" next to a CTA (components.contact_line). Without the Clipboard API (old browsers,
   // plain http) the address is selected instead, ready for Ctrl+C / Cmd+C.
   document.querySelectorAll('.copy-addr').forEach(b => b.addEventListener('click', async () => {
